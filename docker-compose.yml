@@ -1,0 +1,56 @@
+services:
+  mysql-app:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - dlink_net
+
+  spring-app:
+    image: spring-boot-app:dev
+    build:
+      context: ./spring-app/
+      dockerfile: Dockerfile-dev
+    restart: always
+    depends_on:
+      - mysql-app
+    ports:
+      - "9999:9999"
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_DATABASE: ${SPRING_DATASOURCE_DATABASE}
+      SPRING_SERVER_PORT: ${SPRING_SERVER_PORT}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+    volumes:
+      - ./spring-app/src/:/spring-app/src
+      - ./spring-app/build/:/spring-app/build
+    networks:
+      - dlink_net
+
+  next-app:
+    image: next-app:latest
+    build:
+      context: ./next-app/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+    networks:
+      - dlink_net
+
+volumes:
+  mysql_data:
+
+networks:
+  dlink_net:
