@@ -28,12 +28,12 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_DATASOURCE_DATABASE: ${SPRING_DATASOURCE_DATABASE}
       SPRING_SERVER_PORT: ${SPRING_SERVER_PORT}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_JWT_SECRET_KEY: ${SPRING_JWT_SECRET_KEY}
     volumes:
-      - ./spring-app/src/:/spring-app/src
-      - ./spring-app/build/:/spring-app/build
+      - ./spring-app/build/:/app/build
+      - ./spring-app/src:/app/src
     networks:
       - dlink_net
 
