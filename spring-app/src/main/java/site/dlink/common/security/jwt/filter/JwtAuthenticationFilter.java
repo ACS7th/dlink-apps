@@ -80,7 +80,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("인증 성공...");
 
         CustomUserDetails customMember = (CustomUserDetails) authentication.getPrincipal();
-        long id = customMember.getUser().getId();
+        long id = customMember.getUser().getUserId();
         String username = customMember.getUser().getUsername();
 
         List<String> roles = customMember.getUser().getRoles();

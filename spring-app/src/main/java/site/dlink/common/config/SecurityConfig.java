@@ -50,6 +50,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
+                .requestMatchers("/api/v1/auth/join").permitAll()
+                .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
                 .anyRequest().authenticated());
 
         // 로그아웃 설정

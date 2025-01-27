@@ -3,7 +3,10 @@ package site.dlink.common.security.jwt.provider;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.common.entity.User;
 import site.dlink.common.props.JwtProps;
+import site.dlink.common.repository.UserRepository;
+import site.dlink.common.security.custom.CustomUserDetails;
 import site.dlink.common.security.jwt.contants.JwtConstants;
+import site.dlink.common.service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,10 +31,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtTokenProvider {
+
     @Autowired
     private JwtProps jwtProps;
+    @Autowired
+    private UserRepository userRepository;
 
-    public String createToken(long memberIdx, String memberId, List<String> roleList) {
+    public String createToken(long userId, String username, List<String> roles) {
+        log.info("token secret key : {}", jwtProps.getSecretKey());
 
         // JWT 토큰 생성
         String jwt = Jwts.builder()
@@ -40,96 +47,100 @@ public class JwtTokenProvider {
                 .add("typ", JwtConstants.TOKEN_TYPE)                   // 헤더 설정 (JWT)
                 .and()
                 .expiration(new Date(System.currentTimeMillis() + 864000000))  // 토큰 만료 시간 설정 (10일)
-                .claim("uno", "" + memberIdx)                                // 클레임 설정: 사용자 번호
-                .claim("uid", memberId)                                     // 클레임 설정: 사용자 아이디
-                .claim("rol", roleList)                                      // 클레임 설정: 권한
+                .claim("uid", "" + userId)                                // 클레임 설정: 사용자 번호
+                .claim("usn", username)                                     // 클레임 설정: 사용자 아이디
+                .claim("rol", roles)                                      // 클레임 설정: 권한
                 .compact();
 
-        log.info("jwt 생성 완료 : " + jwt);
+        log.info("jwt 생성 완료 : {}", jwt);
 
         return jwt;
     }
 
     /**
-     * 🔐➡👩‍💼 토큰 해석
-     * @param authHeader
-     * @return
-     * @throws Exception
+     * 요청 헤더 내 JWT(Bearer ...)를 파싱하여 인증(Authentication) 객체를 생성
+     *
+     * @param authHeader "Authorization" 헤더값 (예: "Bearer xxxxxxx")
+     * @return UsernamePasswordAuthenticationToken (인증 성공 시), null(인증 실패 시)
      */
     public UsernamePasswordAuthenticationToken getAuthentication(String authHeader) {
-        if (authHeader == null || authHeader.length() == 0)
+        if (authHeader == null || authHeader.isEmpty()) {
+            log.warn("인증 헤더가 비어있습니다.");
             return null;
+        }
 
         try {
-            // jwt 추출 (Bearer + {jwt}) ➡ {jwt}
-            String jwt = authHeader.replace(JwtConstants.TOKEN_PREFIX, "");
+            // "Bearer " 접두어 제거
+            String jwt = authHeader.replace(JwtConstants.TOKEN_PREFIX, "").trim();
+            if (jwt.isEmpty()) {
+                log.warn("JWT 토큰이 비어있습니다.");
+                return null;
+            }
 
-            // 🔐➡👩‍💼 JWT 파싱
+            // JWT 파싱 및 서명 검증
             Jws<Claims> parsedToken = Jwts.parser()
-                    .verifyWith(getShaKey())
+                    .verifyWith(getShaKey()) // secretKey 설정
                     .build()
                     .parseSignedClaims(jwt);
 
-            // 인증된 사용자 번호
-            String memberIdx = parsedToken.getPayload().get("uno").toString();
-            Long no = (memberIdx == null ? 0 : Long.parseLong(memberIdx));
-
-            // 인증된 사용자 아이디
-            String userId = parsedToken.getPayload().get("uid").toString();
-
-            // 인증된 사용자 권한
             Claims claims = parsedToken.getPayload();
 
-            // 토큰에 userId 있는지 확인
-            if (userId == null || userId.length() == 0)
+            // 사용자 식별자
+            Object uidObj = claims.get("uid");
+            if (uidObj == null) {
+                log.warn("JWT 클레임에 사용자 식별자(uid)가 없습니다.");
                 return null;
+            }
+            long userId = Long.parseLong(uidObj.toString());
 
-            // 유저 정보 세팅
-            User user = new User();
-            user.setId(no);
-            user.setUsername(userId);
+            // 사용자 이름/아이디
+            String username = (String) claims.get("usn");
+            if (username == null || username.isEmpty()) {
+                log.warn("JWT 클레임에 사용자 이름(usn)이 없습니다.");
+                return null;
+            }
 
-            // 권한도 바로 Users 객체에 담아보기
-            // List<MemberRole> authList = ((List<?>) roles)
-            //         .stream()
-            //         .map(auth -> new MemberRole(auth.toString(), userId))
-            //         .collect(Collectors.toList());
-            // member.setRoleList(authList);
+            // DB에서 사용자 조회
+            User user;
+            try {
+                user = userRepository.findByUserId(userId).orElseGet(null);
+                if (user == null) {
+                    log.warn("DB에서 해당 사용자(userId={})를 찾을 수 없습니다.", userId);
+                    return null;
+                }
+            } catch (Exception e) {
+                log.error("DB 사용자 조회 중 에러 발생: {}", e.getMessage(), e);
+                return null;
+            }
 
-            // CustomeUser 에 권한 담기
-            // List<SimpleGrantedAuthority> authorities = ((List<?>) roles)
-            //         .stream()
-            //         .map(auth -> new SimpleGrantedAuthority((String) auth))
-            //         .collect(Collectors.toList());
-
-            // 토큰 유효하면
-            // name, email 도 담아주기
-            // try {
-            //     Member userInfo = MemberMapper.selectMember(no);
-            //     if (userInfo != null) {
-            //         CopyBeanUtil.copyNonNullProperties(userInfo, member);
-            //     }
-            // } catch (Exception e) {
-            //     log.error(e.getMessage());
-            //     log.error("토큰 유효 -> DB 추가 정보 조회시 에러 발생...");
-            // }
+            // User 엔티티에 권한 정보가 있다고 가정
+            List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
             // UserDetails 생성
-            // UserDetails userDetails = new CustomMember(member);
+            UserDetails userDetails = new CustomUserDetails(user);
 
-            // new UsernamePasswordAuthenticationToken( 사용자정보객체, 비밀번호, 사용자의 권한(목록)  );
-            // return new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+            // 최종 Authentication 객체 생성
+            return new UsernamePasswordAuthenticationToken(
+                    userDetails,    // 주체(Principal)
+                    null,           // 자격 증명(Credentials) - JWT라 별도 없음
+                    authorities     // 권한 목록
+            );
 
-        } catch (ExpiredJwtException exception) {
-            log.warn("Request to parse expired JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (UnsupportedJwtException exception) {
-            log.warn("Request to parse unsupported JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (MalformedJwtException exception) {
-            log.warn("Request to parse invalid JWT : {} failed : {}", authHeader, exception.getMessage());
-        } catch (IllegalArgumentException exception) {
-            log.warn("Request to parse empty or null JWT : {} failed : {}", authHeader, exception.getMessage());
+        } catch (ExpiredJwtException ex) {
+            log.warn("만료된 JWT 토큰입니다: {}", ex.getMessage());
+        } catch (UnsupportedJwtException ex) {
+            log.warn("지원되지 않는 JWT 토큰입니다: {}", ex.getMessage());
+        } catch (MalformedJwtException ex) {
+            log.warn("손상된 JWT 토큰입니다: {}", ex.getMessage());
+        } catch (SecurityException | IllegalStateException ex) {
+            log.warn("JWT 서명 검증 실패: {}", ex.getMessage());
+        } catch (JwtException ex) {
+            log.warn("JWT 처리 중 예외 발생: {}", ex.getMessage());
         }
 
+        // 모든 예외 상황에서 null 반환 → 인증 실패로 간주
         return null;
     }
 
