@@ -5,8 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.common.security.custom.CustomUserDetails;
 import site.dlink.common.security.jwt.contants.JwtConstants;
+import site.dlink.common.security.jwt.custom.CustomUserDetails;
 import site.dlink.common.security.jwt.provider.JwtTokenProvider;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -81,7 +81,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         CustomUserDetails customMember = (CustomUserDetails) authentication.getPrincipal();
         long id = customMember.getUser().getUserId();
-        String username = customMember.getUser().getUsername();
+        String username = customMember.getUser().getEmail();
 
         List<String> roles = customMember.getUser().getRoles();
 

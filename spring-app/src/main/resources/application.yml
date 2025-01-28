@@ -2,6 +2,15 @@ spring:
   application:
     name: dlink-app
 
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+    group:
+      prod:
+        - oauth
+      dev:
+        - oauth
+        - dev
+
   servlet:
     multipart:
       enabled: true

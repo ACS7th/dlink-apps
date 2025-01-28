@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import site.dlink.common.entity.User;
 import site.dlink.common.props.JwtProps;
 import site.dlink.common.repository.UserRepository;
-import site.dlink.common.security.custom.CustomUserDetails;
 import site.dlink.common.security.jwt.contants.JwtConstants;
-import site.dlink.common.service.AuthService;
+import site.dlink.common.security.jwt.custom.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

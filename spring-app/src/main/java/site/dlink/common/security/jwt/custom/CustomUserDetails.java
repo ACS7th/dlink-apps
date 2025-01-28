@@ -1,4 +1,4 @@
-package site.dlink.common.security.custom;
+package site.dlink.common.security.jwt.custom;
 
 import lombok.Data;
 import site.dlink.common.entity.User;
@@ -33,7 +33,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override

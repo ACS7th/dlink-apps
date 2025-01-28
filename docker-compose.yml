@@ -31,6 +31,12 @@ services:
       SPRING_SERVER_PORT: ${SPRING_SERVER_PORT}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_JWT_SECRET_KEY: ${SPRING_JWT_SECRET_KEY}
+      GOOGLE_CLIENT_ID: 970845425114-9epcg0mr596efr76a5s6hqs6u2jstf8p.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
+      KAKAO_REST_API_KEY: 69a4f6064597e6f48faa3e1ac1d582fe
+      NAVER_CLIENT_ID: RGk68q3Hw8BpaskN4zZD
+      NAVER_SECRET_ID: uzYXxASfEn
+
     volumes:
       - ./spring-app/build/:/app/build
       - ./spring-app/src:/app/src
@@ -38,16 +44,19 @@ services:
       - dlink_net
 
   next-app:
-    image: next-app:latest
+    image: next-app:dev
     build:
       context: ./next-app/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: ${NODE_ENV}
     networks:
       - dlink_net
+    volumes:
+      - ./next-app:/app
+      # - /app/node_modules # node_modules는 컨테이너에서 관리
 
 volumes:
   mysql_data:

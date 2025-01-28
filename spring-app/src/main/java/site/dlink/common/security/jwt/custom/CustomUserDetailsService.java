@@ -1,4 +1,4 @@
-package site.dlink.common.security.custom;
+package site.dlink.common.security.jwt.custom;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         log.info("로그인 시도: {}", username);
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> {
                     log.warn("사용자 없음: {}", username);
                     return new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
