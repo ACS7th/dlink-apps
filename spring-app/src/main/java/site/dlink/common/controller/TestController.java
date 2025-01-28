@@ -3,10 +3,15 @@ package site.dlink.common.controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -19,7 +24,8 @@ public class TestController {
     }
 
     @GetMapping("/redirect")
-    public void getMethodName(ServletServerHttpRequest req, ServletServerHttpResponse res) {
+    public void getMethodName(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        res.sendRedirect("http://localhost:3000/test");
     }
     
 }
