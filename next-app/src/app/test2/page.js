@@ -13,7 +13,7 @@ export default function Test() {
         <ContentLayoutNoSSR
             header={
                 <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
-                    Test
+                    Test2
                 </Header>
             }
         >

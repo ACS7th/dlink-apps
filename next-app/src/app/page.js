@@ -1,8 +1,19 @@
-import Test from "@/components/Test";
+"use client";
 
-export default async function Home() {
+import ContentLayoutClient from "@/components/layout/ContentLayoutClient";
+import CloudScapeLink from "@/components/link/CloudScapeLink";
+import { Header } from "@cloudscape-design/components";
 
-    return <>
-        <Test />
-    </>;
+export default function Home() {
+
+    return (<div>
+        <ContentLayoutClient
+            header={
+                <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
+                    Home
+                </Header>
+            }
+        >
+        </ContentLayoutClient>
+    </div>);
 }
