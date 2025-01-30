@@ -6,7 +6,7 @@ import { Header } from "@cloudscape-design/components";
 
 export default function Home() {
 
-    return (<div>
+    return (
         <ContentLayoutClient
             header={
                 <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
@@ -15,5 +15,5 @@ export default function Home() {
             }
         >
         </ContentLayoutClient>
-    </div>);
+    );
 }

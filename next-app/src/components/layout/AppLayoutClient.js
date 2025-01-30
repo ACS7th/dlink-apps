@@ -1,12 +1,11 @@
 "use client";
 
-import { BreadcrumbGroup } from "@cloudscape-design/components";
+import { BreadcrumbGroup, SideNavigation } from "@cloudscape-design/components";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 const AppLayoutNoSSR = dynamic(() => import("@cloudscape-design/components").then((mod) => mod.AppLayout), { ssr: false });
-const SideNavigationNoSSR = dynamic(() => import("@cloudscape-design/components").then((mod) => mod.SideNavigation), { ssr: false });
 
 export default function AppLayoutClient({ content }) {
     const [navigationOpen, setNavigationOpen] = useState(false);
@@ -31,12 +30,20 @@ export default function AppLayoutClient({ content }) {
 
     return (
         <AppLayoutNoSSR
-            breadcrumbs={<BreadcrumbGroup items={breadcrumbItems} />}
+            breadcrumbs={
+                <BreadcrumbGroup
+                    items={breadcrumbItems}
+                    onFollow={(event) => {
+                        event.preventDefault();
+                        router.push(event.detail.href);
+                    }}
+                />
+            }
             toolsHide={true}
             navigationOpen={navigationOpen}
             onNavigationChange={(e) => setNavigationOpen(e.detail.open)}
             navigation={
-                <SideNavigationNoSSR
+                <SideNavigation
                     header={{ href: "/", text: "Category" }}
                     items={navigationItems}
                     onFollow={(event) => {

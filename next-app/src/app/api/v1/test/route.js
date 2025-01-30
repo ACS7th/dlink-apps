@@ -1,6 +1,5 @@
 import axios from "axios";
 
-import axios from "axios";
 import { redirect } from "next/dist/server/api-utils";
 
 export async function GET(req) {
