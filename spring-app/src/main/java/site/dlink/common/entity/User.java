@@ -37,6 +37,10 @@ public class User {
 
     private String name;
 
+    private String profileImageUri;
+
+    private String authProvider;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")

@@ -3,6 +3,7 @@
 import { Button, ButtonGroup, ColumnLayout, Container, Form, FormField, Header, Input, SpaceBetween, StatusIndicator } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react"
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -10,12 +11,6 @@ export default function LoginPage() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [error, setError] = useState("");
-    const { data: session, status } = useSession();
-
-    useEffect(() => {
-        console.log(session)
-        console.log(status)
-    }, [session])
 
     const isValidEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -75,7 +70,7 @@ export default function LoginPage() {
         }
     };
 
-    const handleBtnGrpClick = ({detail}) => {
+    const handleBtnGrpClick = ({ detail }) => {
         if (detail.id === "google") {
             signIn("google")
         }

@@ -6,14 +6,17 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.common.dto.JoinDto;
+import site.dlink.common.dto.SocialLoginRequest;
 import site.dlink.common.service.AuthService;
 import site.dlink.common.service.UserService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-
 
 @Slf4j
 @RestController
@@ -31,11 +34,24 @@ public class AuthController {
     public ResponseEntity<?> getMethodName() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-    
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
         return ResponseEntity.ok(authService.join(joinDto));
     }
-    
+
+    @PostMapping("/social-login")
+    public ResponseEntity<?> socialLogin(@RequestBody SocialLoginRequest request) {
+        log.info("소셜 로그인 요청: provider={}, email={}", request.getProvider(), request.getEmail());
+
+        try {
+            Map<String, String> result = new HashMap<>();
+            result.put("jwt", authService.loginBySocial(request));
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("소셜 로그인 처리 오류", e);
+            return ResponseEntity.badRequest().body("소셜 로그인 실패");
+        }
+    }
+
 }

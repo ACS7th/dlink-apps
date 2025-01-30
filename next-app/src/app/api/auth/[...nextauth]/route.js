@@ -12,7 +12,7 @@ const authOptions = {
         }),
         // 2) Kakao
         KakaoProvider({
-            clientId: process.env.KAKAO_CLIENT_ID,
+            clientId: process.env.KAKAO_REST_API,
             clientSecret: process.env.KAKAO_CLIENT_SECRET,
         }),
         // 3) Naver
@@ -44,22 +44,21 @@ const authOptions = {
             // account.provider: 어떤 공급자인지 (google, kakao, naver)
             // user.email / profile.email 등: 사용자 이메일 정보 (플랫폼별 지원 다름)
 
-            // 1) 소셜 토큰을 Spring 서버에 전달하여, 우리 서비스용 JWT를 발급받는 예시
+            // 1) 소셜 토큰을 Spring 서버에 전달하여, 우리 서비스용 JWT를 발급
             try {
                 const providerAccessToken = account.access_token
                 const providerType = account.provider // "google" | "kakao" | "naver"
-                console.log(providerAccessToken)
-                console.log(providerType)
 
                 // Spring 서버의 /auth/social-login 엔드포인트로 POST
-                const response = await fetch(`${process.env.SPRING_URI}/auth/social-login`, {
+                const response = await fetch(`${process.env.SPRING_URI}/api/v1/auth/social-login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         provider: providerType,
                         accessToken: providerAccessToken,
-                        // 추가로 필요한 정보 있으면 같이 전달 (ex: email, name)
-                        email: user.email
+                        email: user.email,
+                        name: user.name,
+                        image: user.image
                     })
                 })
 
@@ -69,18 +68,15 @@ const authOptions = {
                 }
 
                 const data = await response.json()
-                /**
-                 * data 내부에 우리 서비스용 JWT(Ex: data.jwt)가 있다고 가정
-                 * 이 토큰을 브라우저 쿠키나 로컬스토리지에 저장할 수 있음
-                 * 
-                 * 다만 NextAuth 자체는 이 토큰을 '자동 보관'해주지는 않음.
+                /** TODO
+                 * NextAuth 자체는 이 토큰을 '자동 보관'해주지는 않음.
                  * - 이 콜백은 서버 측에서 도는 로직이므로, 
                  *   직접 Set-Cookie 헤더를 내려 보내거나
                  *   혹은 이후 session 콜백에서 token에 저장하는 등 커스텀 필요
                  */
 
                 // 여기서는 그냥 로그만 찍고 넘어감.
-                console.log("Spring JWT:", data.jwt)
+                user.springJwt = data.jwt;
 
                 // signIn 성공시키려면 true 리턴
                 return true
@@ -99,6 +95,7 @@ const authOptions = {
             // 예: 로그인 직후(account가 있는 경우) 어떤 custom 필드 저장
             if (account) {
                 token.provider = account.provider
+                token.springJwt = user.springJwt
             }
             return token
         },
@@ -111,7 +108,13 @@ const authOptions = {
         async session({ session, token }) {
             // session.user에 provider 정보를 덧붙이는 예시
             session.user.provider = token.provider
+            session.user.springJwt = token.springJwt
             return session
+        },
+
+        // 로그인 성공시의 redirect
+        async redirect({ url, baseUrl }) {
+            return `${baseUrl}/`;
         },
     },
 }

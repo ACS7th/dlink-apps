@@ -1,21 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { useAuth } from "@/context/AuthProviderClient";
 import { TopNavigation } from "@cloudscape-design/components";
+import { signOut, useSession } from "next-auth/react";
 
 export default function TopNavigationClient() {
-    const { isLoggedIn, login, logout } = useAuth();
     const router = useRouter();
+    const {data: status} = useSession();
+    const user = status?.user;
 
     const handleLogin = () => {
         router.push("/login");
     };
 
     const handleLogout = () => {
-        logout();
-        router.push("/");
+        signOut({callbackUrl: "/"});
     };
 
     return (
@@ -29,7 +28,7 @@ export default function TopNavigationClient() {
                 },
             }}
             utilities={[
-                ...(isLoggedIn
+                ...(user
                     ? [
                           {
                               type: "button",
@@ -51,7 +50,7 @@ export default function TopNavigationClient() {
                           },
                           {
                               type: "menu-dropdown",
-                              text: "email@example.com",
+                              text: `${user.email}`,
                               description: "일반 회원",
                               iconName: "user-profile",
                               onItemClick: (event) => {
@@ -74,16 +73,9 @@ export default function TopNavigationClient() {
                                               externalIconAriaLabel: " (opens in a new tab)",
                                           },
                                           { id: "support", text: "Support" },
-                                          {
-                                              id: "feedback",
-                                              text: "Feedback",
-                                              href: "#",
-                                              external: true,
-                                              externalIconAriaLabel: " (opens in a new tab)",
-                                          },
                                       ],
                                   },
-                                  { id: "signout", text: "Sign out" },
+                                  { id: "signout", text: "Sign out", onclick: handleLogout },
                               ],
                           },
                       ]

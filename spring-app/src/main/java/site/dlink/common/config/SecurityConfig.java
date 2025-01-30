@@ -22,9 +22,6 @@ import site.dlink.common.security.jwt.custom.CustomUserDetailsService;
 import site.dlink.common.security.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.common.security.jwt.filter.JwtRequestFilter;
 import site.dlink.common.security.jwt.provider.JwtTokenProvider;
-import site.dlink.common.security.oauth.custom.CustomAuthenticationFailureHandler;
-import site.dlink.common.security.oauth.custom.CustomAuthenticationSuccessHandler;
-import site.dlink.common.security.oauth.custom.CustomOAuth2UserService;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -35,7 +32,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomOAuth2UserService customOAuth2UserService;
     private final NextProps nextProps;
 
     @Bean
@@ -52,14 +48,6 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
-        // OAuth2 login 설정(OAuth2LoginAuthenticationFilter 등록)
-        http.oauth2Login(oauth -> oauth
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService))
-                    .successHandler(new CustomAuthenticationSuccessHandler(jwtTokenProvider))
-                    .failureHandler(new CustomAuthenticationFailureHandler())
-                    );
-
         // 인증 설정
         http.userDetailsService(customUserDetailsService);
 
@@ -67,7 +55,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers("/api/v1/auth/join").permitAll()
+                .requestMatchers("/api/v1/auth/join","/api/v1/auth/social-login").permitAll()
                 .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
                 .anyRequest().authenticated());
 

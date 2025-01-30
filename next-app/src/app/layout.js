@@ -13,9 +13,7 @@ export default function RootLayout({ children }) {
         <html lang="kr">
             <body>
                 <SessionProviderClient>
-                    <AuthProvider>
-                        {children}
-                    </AuthProvider>
+                    {children}
                 </SessionProviderClient>
             </body>
         </html>
