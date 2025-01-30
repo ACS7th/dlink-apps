@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudscape-design/chat-components": "github:cloudscape-design/chat-components",
     "@cloudscape-design/components": "^3.0.857",
     "@cloudscape-design/global-styles": "^1.0.33",
     "axios": "^1.7.9",

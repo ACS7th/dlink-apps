@@ -1,11 +1,17 @@
 "use client";
 
-import { BreadcrumbGroup, SideNavigation } from "@cloudscape-design/components";
+import { BreadcrumbGroup, SideNavigation, Spinner } from "@cloudscape-design/components";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-const AppLayoutNoSSR = dynamic(() => import("@cloudscape-design/components").then((mod) => mod.AppLayout), { ssr: false });
+const AppLayoutNoSSR = dynamic(
+    () => import("@cloudscape-design/components").then((mod) => mod.AppLayout),
+    {
+        ssr: false,
+        loading: () => <div className="flex justify-center items-center h-screen"><Spinner size="large"/></div>
+    }
+);
 
 export default function AppLayoutClient({ content }) {
     const [navigationOpen, setNavigationOpen] = useState(false);

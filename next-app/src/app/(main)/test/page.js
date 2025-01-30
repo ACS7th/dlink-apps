@@ -2,8 +2,6 @@
 
 import CloudScapeLink from "@/components/link/CloudScapeLink";
 import { ContentLayout, Header } from "@cloudscape-design/components";
-import dynamic from "next/dynamic";
-import Link from "next/link";
 
 export default function Test() {
 

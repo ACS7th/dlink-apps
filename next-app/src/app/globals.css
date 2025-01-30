@@ -1,7 +1,7 @@
+@import "@cloudscape-design/global-styles/index.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 body {
   /* color: var(--foreground);
