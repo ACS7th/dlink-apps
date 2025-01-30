@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties("jwt")
-public class JwtProps {
-    private String secretKey;
+@ConfigurationProperties("next")
+public class NextProps {
+    private String uri;
 }

@@ -1,6 +1,6 @@
 import TopNavigationClient from '@/components/navigation/TopNavigationClient';
 import AppLayoutClient from '@/components/layout/AppLayoutClient';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/context/AuthProviderClient';
 
 export const metadata = {
     title: 'DLink Main',
@@ -9,9 +9,9 @@ export const metadata = {
 
 export default function MainLayout({ children }) {
     return (
-        <AuthProvider>
+        <>
             <TopNavigationClient />
             <AppLayoutClient content={children} />
-        </AuthProvider>
+        </>
     );
 }

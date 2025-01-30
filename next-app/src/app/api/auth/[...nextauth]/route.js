@@ -3,9 +3,6 @@ import GoogleProvider from "next-auth/providers/google"
 import KakaoProvider from "next-auth/providers/kakao"
 import NaverProvider from "next-auth/providers/naver"
 
-/**
- * NextAuth 설정
- */
 const authOptions = {
     providers: [
         // 1) Google
@@ -51,9 +48,11 @@ const authOptions = {
             try {
                 const providerAccessToken = account.access_token
                 const providerType = account.provider // "google" | "kakao" | "naver"
+                console.log(providerAccessToken)
+                console.log(providerType)
 
-                // 예: Spring 서버의 /auth/social-login 엔드포인트로 POST
-                const response = await fetch("http://localhost:8080/auth/social-login", {
+                // Spring 서버의 /auth/social-login 엔드포인트로 POST
+                const response = await fetch(`${process.env.SPRING_URI}/auth/social-login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({

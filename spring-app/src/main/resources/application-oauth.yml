@@ -11,7 +11,8 @@ spring:
             scope: email
 
           kakao:
-            client-id: ${KAKAO_REST_API_KEY}
+            client-id: ${KAKAO_REST_API}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: "http://localhost:3000/"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
@@ -19,7 +20,7 @@ spring:
 
           naver:
             client-id: ${NAVER_CLIENT_ID}
-            client-secret: ${NAVER_SECRET_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
             redirect-uri: "http://localhost:3000/"
             authorization-grant-type: authorization_code
             scope: name, email, profile_image

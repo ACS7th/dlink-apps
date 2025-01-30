@@ -17,6 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.dlink.common.props.NextProps;
 import site.dlink.common.security.jwt.custom.CustomUserDetailsService;
 import site.dlink.common.security.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.common.security.jwt.filter.JwtRequestFilter;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final NextProps nextProps;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -96,7 +98,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://next-app:3000"));
+        configuration.setAllowedOrigins(Arrays.asList(nextProps.getUri()));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));

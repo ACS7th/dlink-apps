@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthProviderClient";
 import { TopNavigation } from "@cloudscape-design/components";
 
 export default function TopNavigationClient() {

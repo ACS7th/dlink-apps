@@ -1,7 +1,8 @@
 "use client";
 
 import { Button, ButtonGroup, ColumnLayout, Container, Form, FormField, Header, Input, SpaceBetween, StatusIndicator } from "@cloudscape-design/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -9,6 +10,12 @@ export default function LoginPage() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [error, setError] = useState("");
+    const { data: session, status } = useSession();
+
+    useEffect(() => {
+        console.log(session)
+        console.log(status)
+    }, [session])
 
     const isValidEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -68,6 +75,18 @@ export default function LoginPage() {
         }
     };
 
+    const handleBtnGrpClick = ({detail}) => {
+        if (detail.id === "google") {
+            signIn("google")
+        }
+        if (detail.id === "naver") {
+            signIn("naver")
+        }
+        if (detail.id === "kakao") {
+            signIn("kakao")
+        }
+    }
+
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
             <Container className="max-w-lg w-full bg-white p-6 shadow-lg rounded-lg">
@@ -109,7 +128,6 @@ export default function LoginPage() {
                                     onBlur={handleEmailBlur}
                                     onKeyDown={handleKeyDown}
                                     inputMode="email"
-                                    autoFocus
                                 />
                             </FormField>
 
@@ -129,6 +147,7 @@ export default function LoginPage() {
                         </SpaceBetween>
                     </Container>
                 </Form>
+
                 <Container
                     className="mt-4"
                 >
@@ -136,18 +155,7 @@ export default function LoginPage() {
                     <ButtonGroup
                         className="justify-evenly mt-4 login-btn-grp"
                         text="sdfsdf"
-                        onItemClick={({ detail }) => {
-                            if (detail.id === "google") {
-                                
-                            }
-                            if (detail.id === "naver") {
-                                alert(detail.id)
-                            }
-                            if (detail.id === "kakao") {
-                                alert(detail.id)
-                            }
-                        }
-                        }
+                        onItemClick={handleBtnGrpClick}
                         items={[
                             {
                                 type: "icon-button",
