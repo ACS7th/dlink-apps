@@ -11,6 +11,15 @@ export default function LoginPage() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [error, setError] = useState("");
+    const router = useRouter();
+    const {data: session, status} = useSession();
+    const user = session?.user;
+
+    useEffect(() => {
+        if (user) {
+            router.push("/");
+        }
+    }, [user, router]);
 
     const isValidEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

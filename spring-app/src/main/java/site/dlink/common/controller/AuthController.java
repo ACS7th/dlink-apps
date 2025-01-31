@@ -30,12 +30,12 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @GetMapping("/info")
+    @GetMapping("/users")
     public ResponseEntity<?> getMethodName() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PostMapping("/join")
+    @PostMapping("/user")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
         return ResponseEntity.ok(authService.join(joinDto));
     }

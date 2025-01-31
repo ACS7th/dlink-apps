@@ -1,0 +1,12 @@
+import { signOut } from "next-auth/react";
+import axios from "axios";
+
+export default async function signOutClient() {
+    try {
+        await signOut({ callbackUrl: "/" });
+        await axios.delete("/api/auth/cookie", {}, { withCredentials: true });
+
+    } catch (error) {
+        console.error("로그아웃 실패:", error);
+    }
+}

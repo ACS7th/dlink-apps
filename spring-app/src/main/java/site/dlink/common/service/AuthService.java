@@ -30,13 +30,13 @@ public class AuthService {
         return userRepository.save(newUser);
     }
 
-    public User joinBySocial(String email, String name, String image, String provider) {
+    public User joinBySocial(SocialLoginRequest request) {
 
         User user = User.builder()
-                .email(email)
-                .name(name)
-                .profileImageUri(image)
-                .authProvider(provider)
+                .email(request.getEmail())
+                .name(request.getName())
+                .profileImageUri(request.getImage())
+                .authProvider(request.getProvider())
                 .password("")
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
@@ -50,11 +50,7 @@ public class AuthService {
 
         // 2) 유저 조회 후, 없으면 바로 회원가입
         User user = userService.findByEmail(request.getEmail())
-                                .orElseGet(() -> joinBySocial(
-                                        request.getEmail(),
-                                        request.getName(),
-                                        request.getImage(),
-                                        request.getProvider()));
+                                .orElseGet(() -> joinBySocial(request));
 
         // 3) JWT 발급
         return jwtTokenProvider.createToken(

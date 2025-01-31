@@ -1,60 +1,31 @@
-import axios from "axios";
+import apiSpring from "@/utils/apiSpring";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-import { redirect } from "next/dist/server/api-utils";
-
-export async function GET(req) {
+export async function GET() {
     try {
-        const springResponse = await axios.get("http://spring-app:9999/api/test/redirect", {
-            maxRedirects: 0, // Spring의 리다이렉트를 추적하지 않음
-            validateStatus: (status) => status >= 200 && status < 400,
-        });
+        const { data } = await apiSpring.get("/api/v1/auth/info");
 
-        const location = springResponse.headers.location;
-
-        if (location) {
-            redirect(location)
-            return new Response(null, {
-                status: 302,
-                headers: {
-                    Location: location,
-                },
-            });
-        } else {
-            return new Response(
-                JSON.stringify({ message: "Redirect failed: No Location header" }),
-                { status: 400, headers: { "Content-Type": "application/json" } }
-            );
-        }
+        return NextResponse.json(data);
     } catch (error) {
-        console.error("Error during redirect:", error);
-        return new Response(
-            JSON.stringify({ message: "Error during redirect" }),
-            { status: 500, headers: { "Content-Type": "application/json" } }
-        );
+        console.error("Spring API 요청 실패:", error);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 }
-
 
 
 export async function POST(req) {
-    const serverUrl = process.env.API_SERVER_URL
-        ? `http://${process.env.API_SERVER_URL}`
-        : "http://localhost:8765";
-
     try {
-        const formData = await req.formData();
-        const response = await axios.post(`${serverUrl}/api/post`, formData);
+        const cookieStore = await cookies();
+        const jwtCookie = cookieStore.get("springJwt")?.value;
 
-        return new Response(JSON.stringify(response.data), {
-            status: response.status,
-            headers: { "Content-Type": "application/json" },
-        });
+        if (!jwtCookie) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        return NextResponse.json({ jwt: jwtCookie });
     } catch (error) {
-        console.error("Error submitting post:", error);
-        return new Response(
-            JSON.stringify({ message: "Error submitting post" }),
-            { status: 500, headers: { "Content-Type": "application/json" } }
-        );
+        console.error("Spring API 요청 실패:", error);
+        return NextResponse.json({ error: "Spring API 요청 실패" }, { status: 500 });
     }
 }
-

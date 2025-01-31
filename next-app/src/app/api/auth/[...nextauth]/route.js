@@ -2,8 +2,9 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import KakaoProvider from "next-auth/providers/kakao"
 import NaverProvider from "next-auth/providers/naver"
+import { cookies } from "next/headers"
 
-const authOptions = {
+export const authOptions = {
     providers: [
         // 1) Google
         GoogleProvider({
@@ -68,21 +69,22 @@ const authOptions = {
                 }
 
                 const data = await response.json()
-                /** TODO
-                 * NextAuth 자체는 이 토큰을 '자동 보관'해주지는 않음.
-                 * - 이 콜백은 서버 측에서 도는 로직이므로, 
-                 *   직접 Set-Cookie 헤더를 내려 보내거나
-                 *   혹은 이후 session 콜백에서 token에 저장하는 등 커스텀 필요
-                 */
+                const cookie = await cookies();
 
-                // 여기서는 그냥 로그만 찍고 넘어감.
-                user.springJwt = data.jwt;
+                // ✅ httpOnly 쿠키 저장
+                cookie.set({
+                    name: "springJwt",
+                    value: data.jwt,
+                    path: "/",
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "Strict",
+                });
 
-                // signIn 성공시키려면 true 리턴
-                return true
-            } catch (e) {
-                console.error("Spring 연동 실패:", e)
-                return false
+                return true;
+            } catch (error) {
+                console.error("Spring 연동 실패:", error);
+                return false;
             }
         },
 
@@ -94,8 +96,8 @@ const authOptions = {
         async jwt({ token, user, account }) {
             // 예: 로그인 직후(account가 있는 경우) 어떤 custom 필드 저장
             if (account) {
-                token.provider = account.provider
-                token.springJwt = user.springJwt
+                // token.provider = account.provider
+                // token.springJwt = user.springJwt
             }
             return token
         },
@@ -106,9 +108,8 @@ const authOptions = {
          * token에 있던 정보를 session.user 등에 담아줄 수 있음.
          */
         async session({ session, token }) {
-            // session.user에 provider 정보를 덧붙이는 예시
-            session.user.provider = token.provider
-            session.user.springJwt = token.springJwt
+            // session.user.provider = token.provider
+            // session.user.springJwt = token.springJwt
             return session
         },
 
