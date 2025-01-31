@@ -2,10 +2,13 @@ package site.dlink.common.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import site.dlink.common.dto.JoinDto;
@@ -29,6 +32,18 @@ public class AuthService {
         User newUser = modelMapper.map(joinDto, User.class);
         return userRepository.save(newUser);
     }
+
+    @Transactional
+    public User updateUser(JoinDto joinDto) {
+        return userRepository.findByEmail(joinDto.getEmail())
+                .map(existingUser -> {
+                    existingUser.setName(joinDto.getName());
+                    existingUser.setPassword(passwordEncoder.encode(joinDto.getPassword()));
+                    return userRepository.save(existingUser); // 기존 userId 유지됨
+                })
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + joinDto.getEmail()));
+    }
+    
 
     public User joinBySocial(SocialLoginRequest request) {
 

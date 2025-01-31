@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { Button, Container, Form, FormField, Header, Input, SpaceBetween } from "@cloudscape-design/components";
 
@@ -16,10 +16,15 @@ export default function SignupPage() {
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
     const [error, setError] = useState("");
-
+    const emailParam = useSearchParams().get("email");
     const router = useRouter();
-
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    useEffect(() => {
+        if (emailParam) {
+            setEmail(emailParam);
+        }
+    }, []);
 
     const handleNameChange = (e) => {
         setName(e.detail.value);
@@ -104,20 +109,30 @@ export default function SignupPage() {
         }
 
         try {
-            const response = await axios.post("/api/v1/auth/signup", {
-                name,
-                email,
-                password,
-            });
+            let response;
+            if (emailParam) {
+                response = await axios.put("/api/v1/auth/update", {
+                    name,
+                    email: emailParam,
+                    password,
+                })
+            } else {
+                response = await axios.post("/api/v1/auth/signup", {
+                    name,
+                    email,
+                    password,
+                });
+            }
 
             if (response.status === 200) {
                 alert("회원가입 완료! 로그인 페이지로 이동합니다.");
                 router.push("/login");
-            } else {
-                setError("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+                return;
             }
-        } catch (error) {
+
             setError("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+        } catch (error) {
+            setError("회원가입 중 서버 오류가 발생했습니다. 다시 시도해주세요.");
         }
     };
 
@@ -160,6 +175,7 @@ export default function SignupPage() {
                                     onChange={handleEmailChange}
                                     onBlur={handleEmailBlur}
                                     inputMode="email"
+                                    disabled={emailParam ? true : false}
                                 />
                             </FormField>
 

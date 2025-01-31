@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -35,11 +36,20 @@ public class AuthController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    // 회원 가입
     @PostMapping("/user")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
         log.info("가입 요청: email={}, name={}", joinDto.getEmail(), joinDto.getName());
         return ResponseEntity.ok(authService.join(joinDto));
     }
+
+    // 회원 정보 수정
+    @PutMapping("/user")
+    public ResponseEntity<?> updateUser(@RequestBody @Valid JoinDto joinDto) {
+        log.info("회원 정보 수정 요청: email={}, name={}", joinDto.getEmail(), joinDto.getName());
+        return ResponseEntity.ok(authService.updateUser(joinDto));
+    }
+    
 
     @PostMapping("/social-login")
     public ResponseEntity<?> socialLogin(@RequestBody SocialLoginRequest request) {

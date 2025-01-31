@@ -15,26 +15,29 @@ export const authOptions = {
                 email: { label: "이메일", type: "email", placeholder: "example@example.com" },
                 password: { label: "비밀번호", type: "password" }
             },
+
             async authorize(credentials) {
                 try {
                     const formData = new URLSearchParams();
                     formData.append("username", credentials.email);
                     formData.append("password", credentials.password);
-            
+
                     const response = await fetch(`${process.env.SPRING_URI}/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/x-www-form-urlencoded" },
                         body: formData.toString()
                     });
 
+                    // ✅ 에러 처리
                     if (!response.ok) {
-                        throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
+                        const result = await response.json();
+                        throw new Error(result.error);
                     }
 
                     // ✅ 헤더에서 JWT 추출
                     const jwt = response.headers.get("Authorization")?.replace("Bearer ", "");
                     if (!jwt) {
-                        throw new Error("JWT 토큰이 존재하지 않습니다.");
+                        throw new Error("JWT 토큰 없음");
                     }
 
                     // ✅ Spring JWT를 httpOnly 쿠키에 저장
@@ -48,14 +51,9 @@ export const authOptions = {
                         sameSite: "Strict",
                     });
 
-                    return {
-                        id: credentials.email, 
-                        email: credentials.email,
-                        jwt: jwt
-                    };
+                    return { id: credentials.email, email: credentials.email, jwt };
                 } catch (error) {
-                    console.error("로그인 실패:", error.message);
-                    return null;
+                    throw new Error(error.message);
                 }
             }
         }),
@@ -118,9 +116,9 @@ export const authOptions = {
                     }
 
                     const data = await response.json();
-                    const cookieStore = cookies();
+                    const cookieStore = await cookies();
 
-                    // ✅ Spring JWT 저장 (OAuth 로그인 후)
+                    // ✅ Spring JWT 쿠키 저장
                     cookieStore.set({
                         name: "springJwt",
                         value: data.jwt,

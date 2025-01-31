@@ -1,0 +1,59 @@
+package site.dlink.common.security.jwt.provider;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import site.dlink.common.entity.User;
+import site.dlink.common.repository.UserRepository;
+import site.dlink.common.security.jwt.custom.CustomUserDetails;
+import site.dlink.common.security.jwt.exception.OAuthUserWithoutPasswordException;
+
+import java.util.Optional;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class CustomAuthenticationProvider implements AuthenticationProvider {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String username = authentication.getName();
+        String password = authentication.getCredentials().toString();
+
+        Optional<User> optionalUser = userRepository.findByEmail(username);
+        if (optionalUser.isEmpty()) {
+            throw new BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        User user = optionalUser.get();
+
+        // ✅ OAuth 가입자인데 비밀번호가 없는 경우 → 409 Conflict 처리
+        if (user.getAuthProvider() != null && (user.getPassword() == null || user.getPassword().isEmpty())) {
+            throw new OAuthUserWithoutPasswordException(username);
+        }
+
+        // ✅ 비밀번호 검증
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        // ✅ 인증 객체 반환 (Spring Security에서 사용자 인증 성공)
+        return new UsernamePasswordAuthenticationToken(
+                new CustomUserDetails(user), null, new CustomUserDetails(user).getAuthorities()
+        );
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
+}

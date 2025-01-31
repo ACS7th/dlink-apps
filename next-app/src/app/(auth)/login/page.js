@@ -13,7 +13,7 @@ export default function LoginPage() {
     const [passwordError, setPasswordError] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
-    const {data: session, status} = useSession();
+    const { data: session, status } = useSession();
     const user = session?.user;
 
     useEffect(() => {
@@ -52,7 +52,7 @@ export default function LoginPage() {
 
     const handleSubmit = async () => {
         let isValid = true;
-    
+
         if (!email) {
             setEmailError("이메일을 입력해주세요.");
             isValid = false;
@@ -60,37 +60,44 @@ export default function LoginPage() {
             setEmailError("올바른 이메일 형식을 입력해주세요.");
             isValid = false;
         }
-    
+
         if (!password) {
             setPasswordError("비밀번호를 입력해주세요.");
             isValid = false;
         }
-    
+
         if (!isValid) {
             setError("입력한 정보를 다시 확인해주세요.");
             return;
         }
-    
+
         setError("");
-    
+
         try {
             const result = await signIn("credentials", {
                 email: email,
                 password: password,
                 redirect: false, // 페이지 이동을 직접 처리하기 위해 false 설정
             });
-    
-            if (result?.error) {
-                setError("이메일 또는 비밀번호가 일치하지 않습니다.");
-            } else {
+
+            if (result.ok) {
                 router.push("/");
+                return;
             }
+
+            if (result.error.includes("회원가입이 필요합니다.")) {
+                alert(result.error);
+                router.push(`/signup?email=${email}`);
+                return;
+            }
+
+            setError(result.error)
         } catch (error) {
             console.error("로그인 오류:", error);
             setError("로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
-    
+
 
     const handleKeyDown = (e) => {
         if (e.detail.key === 'Enter') {
@@ -118,11 +125,11 @@ export default function LoginPage() {
                     errorText={error}
                     actions={
                         <SpaceBetween direction="horizontal" size="xs">
-                            <Button 
+                            <Button
                                 formAction="none"
                                 variant="link"
                                 onClick={() => router.push("/")}
-                                >
+                            >
                                 취소
                             </Button>
                             <Button

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.common.security.jwt.contants.JwtConstants;
 import site.dlink.common.security.jwt.custom.CustomUserDetails;
+import site.dlink.common.security.jwt.exception.OAuthUserWithoutPasswordException;
 import site.dlink.common.security.jwt.provider.JwtTokenProvider;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,12 +16,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
- * client가 /login으로 요청  ➡  이 클래스 필터  ➡  server가 받음
- * username, password을 사용하여 인증 시도  (attemptAuthentication 메소드)
+ * client가 /login으로 요청 ➡ 이 클래스 필터 ➡ server가 받음
+ * username, password을 사용하여 인증 시도 (attemptAuthentication 메소드)
  * ❌ 인증 실패 : response > status : 401 (UNAUTHORIZED)
  * ⭕ 인증 성공 (successfulAuthentication 메소드) ➡ JWT 생성
  * ➡ response안에 headers안에 authorization에 JWT 담기
@@ -43,26 +47,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      * : /login 경로로 요청하면, 필터로 걸러서 인증을 시도
      */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+            throws AuthenticationException {
         log.info("로그인 인증 시도...");
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        // 사용자 인증 정보 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+        // ✅ Authentication 객체 생성 후 authenticationManager에게 전달
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
 
-        // 사용자 인증 (로그인)
-        // authenticate 메소드는 UserDetailService + PasswordEncoder를 사용해 인증을 확인함
-        authentication = authenticationManager.authenticate(authentication);
-        // CustomUser customMember = (CustomUser) authentication.getPrincipal();
-
-        if (!authentication.isAuthenticated()) {
-            log.info("인증 실패");
-            response.setStatus(401);
+        try {
+            return authenticationManager.authenticate(authRequest); // 인증 객체를 SecurityContextHolder에 저장
+        } catch (OAuthUserWithoutPasswordException e) {
+            log.warn("인증 실패: {}", e.getMessage());
+            sendErrorResponse(response, HttpServletResponse.SC_CONFLICT, "소셜 계정 가입자입니다. 회원가입이 필요합니다.");
+            return null;
+        } catch (AuthenticationException e) {
+            log.info("인증 실패: {}", e.getMessage());
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다.");
+            return null;
         }
-
-        return authentication; // SecurityContextHolder에 Authentication을 설정
     }
 
     /**
@@ -73,9 +78,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authentication) throws IOException, ServletException {
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authentication) throws IOException, ServletException {
 
         log.info("인증 성공...");
 
@@ -91,5 +96,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 💍 { Authorization : Bearer + {jwt} }
         response.addHeader(JwtConstants.TOKEN_HEADER, JwtConstants.TOKEN_PREFIX + jwt);
         response.setStatus(200);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, int status, String message) {
+        try {
+            response.setStatus(status);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(
+                    Map.of("status", status, "error", message));
+
+            response.getWriter().write(jsonResponse);
+        } catch (IOException e) {
+            log.error("에러 응답을 생성하는 중 오류 발생", e);
+        }
     }
 }
