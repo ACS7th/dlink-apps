@@ -50,9 +50,9 @@ export default function LoginPage() {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let isValid = true;
-
+    
         if (!email) {
             setEmailError("이메일을 입력해주세요.");
             isValid = false;
@@ -60,27 +60,37 @@ export default function LoginPage() {
             setEmailError("올바른 이메일 형식을 입력해주세요.");
             isValid = false;
         }
-
+    
         if (!password) {
             setPasswordError("비밀번호를 입력해주세요.");
             isValid = false;
         }
-
+    
         if (!isValid) {
             setError("입력한 정보를 다시 확인해주세요.");
-        } else {
-            axios.post("/api/v1/auth/login", {
+            return;
+        }
+    
+        setError("");
+    
+        try {
+            const result = await signIn("credentials", {
                 email: email,
-                password: password
-            }).then((response) => {
-                if (response.status === 200) {
-                    router.push("/");
-                }
-            }).catch((error) => {
+                password: password,
+                redirect: false, // 페이지 이동을 직접 처리하기 위해 false 설정
+            });
+    
+            if (result?.error) {
                 setError("이메일 또는 비밀번호가 일치하지 않습니다.");
-            })
+            } else {
+                router.push("/");
+            }
+        } catch (error) {
+            console.error("로그인 오류:", error);
+            setError("로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
+    
 
     const handleKeyDown = (e) => {
         if (e.detail.key === 'Enter') {
