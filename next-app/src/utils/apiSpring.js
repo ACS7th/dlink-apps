@@ -9,7 +9,7 @@ const apiSpring = axios.create({
 });
 
 apiSpring.interceptors.request.use(async (config) => {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get("springJwt")?.value;
 
     if (token) {

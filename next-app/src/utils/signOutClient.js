@@ -4,7 +4,7 @@ import axios from "axios";
 export default async function signOutClient() {
     try {
         await signOut({ callbackUrl: "/" });
-        await axios.delete("/api/auth/cookie", {}, { withCredentials: true });
+        await axios.delete("/api/v1/cookie", {}, { withCredentials: true });
 
     } catch (error) {
         console.error("로그아웃 실패:", error);

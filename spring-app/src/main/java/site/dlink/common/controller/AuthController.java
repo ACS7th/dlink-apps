@@ -37,6 +37,7 @@ public class AuthController {
 
     @PostMapping("/user")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
+        log.info("가입 요청: email={}, name={}", joinDto.getEmail(), joinDto.getName());
         return ResponseEntity.ok(authService.join(joinDto));
     }
 

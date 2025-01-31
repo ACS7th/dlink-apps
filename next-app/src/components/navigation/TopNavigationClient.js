@@ -19,6 +19,10 @@ export default function TopNavigationClient() {
         signOutClient();
     };
 
+    const handleSignup = () => {
+        router.push("/signup")
+    }
+
     return (
         <TopNavigation
             identity={{
@@ -29,6 +33,7 @@ export default function TopNavigationClient() {
                     alt: "DLink",
                 },
             }}
+
             utilities={[
                 ...(user
                     ? [
@@ -50,6 +55,7 @@ export default function TopNavigationClient() {
                                   { id: "settings-project", text: "Project settings" },
                               ],
                           },
+
                           {
                               type: "menu-dropdown",
                               text: `${user.email}`,
@@ -81,11 +87,17 @@ export default function TopNavigationClient() {
                               ],
                           },
                       ]
+                      
                     : [
                           {
                               type: "button",
-                              text: "Sign in",
+                              text: "Log in",
                               onClick: handleLogin,
+                          },
+                          {
+                              type: "button",
+                              text: "Sign up",
+                              onClick: handleSignup,
                           },
                       ])
             ]}

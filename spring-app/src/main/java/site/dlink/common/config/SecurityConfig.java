@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -55,7 +56,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers("/api/v1/auth/join","/api/v1/auth/social-login").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/v1/auth/user","/api/v1/auth/social-login").permitAll()
                 .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
                 .anyRequest().authenticated());
 

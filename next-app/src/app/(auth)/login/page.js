@@ -4,6 +4,7 @@ import { Button, ButtonGroup, ColumnLayout, Container, Form, FormField, Header, 
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -68,7 +69,16 @@ export default function LoginPage() {
         if (!isValid) {
             setError("입력한 정보를 다시 확인해주세요.");
         } else {
-            alert("로그인 성공! 🎉");
+            axios.post("/api/v1/auth/login", {
+                email: email,
+                password: password
+            }).then((response) => {
+                if (response.status === 200) {
+                    router.push("/");
+                }
+            }).catch((error) => {
+                setError("이메일 또는 비밀번호가 일치하지 않습니다.");
+            })
         }
     };
 
@@ -98,15 +108,19 @@ export default function LoginPage() {
                     errorText={error}
                     actions={
                         <SpaceBetween direction="horizontal" size="xs">
-                            <Button formAction="none" variant="link">
-                                Cancel
+                            <Button 
+                                formAction="none"
+                                variant="link"
+                                onClick={() => router.push("/")}
+                                >
+                                취소
                             </Button>
                             <Button
                                 variant="primary"
                                 onClick={handleSubmit}
                                 formAction="none"
                             >
-                                Submit
+                                로그인
                             </Button>
                         </SpaceBetween>
                     }
@@ -122,7 +136,7 @@ export default function LoginPage() {
                     <Container className="p-4">
                         <SpaceBetween direction="vertical" size="l">
                             <FormField
-                                label="Email"
+                                label="이메일"
                                 errorText={emailError}
                             >
                                 <Input
@@ -136,7 +150,7 @@ export default function LoginPage() {
                             </FormField>
 
                             <FormField
-                                label="Password"
+                                label="비밀번호"
                                 errorText={passwordError}
                             >
                                 <Input

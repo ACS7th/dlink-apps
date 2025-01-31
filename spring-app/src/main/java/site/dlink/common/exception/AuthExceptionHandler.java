@@ -40,7 +40,7 @@ public class AuthExceptionHandler {
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body("데이터베이스 무결성 위반: " + ex.getMostSpecificCause().getMessage());
+                .body("데이터베이스 무결성 위반");
     }
 
     /**

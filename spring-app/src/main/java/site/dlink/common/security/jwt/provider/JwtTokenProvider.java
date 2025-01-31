@@ -102,7 +102,7 @@ public class JwtTokenProvider {
             // DB에서 사용자 조회
             User user;
             try {
-                user = userRepository.findByUserId(userId).orElseGet(null);
+                user = userRepository.findByUserId(userId).orElse(null);
                 if (user == null) {
                     log.warn("DB에서 해당 사용자(userId={})를 찾을 수 없습니다.", userId);
                     return null;
