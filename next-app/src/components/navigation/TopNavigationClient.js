@@ -59,7 +59,7 @@ export default function TopNavigationClient() {
                           {
                               type: "menu-dropdown",
                               text: `${user.email}`,
-                              description: "일반 회원",
+                              description: `${user.name}(일반 회원)`,
                               iconName: "user-profile",
                               onItemClick: (event) => {
                                   if (event.detail.id === "signout") {

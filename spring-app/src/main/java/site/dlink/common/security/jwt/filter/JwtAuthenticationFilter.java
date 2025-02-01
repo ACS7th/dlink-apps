@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(authRequest); // 인증 객체를 SecurityContextHolder에 저장
         } catch (OAuthUserWithoutPasswordException e) {
             log.warn("인증 실패: {}", e.getMessage());
-            sendErrorResponse(response, HttpServletResponse.SC_CONFLICT, "소셜 계정 가입자입니다. 회원가입이 필요합니다.");
+            sendErrorResponse(response, HttpServletResponse.SC_CONFLICT, "소셜 계정 가입자입니다.");
             return null;
         } catch (AuthenticationException e) {
             log.info("인증 실패: {}", e.getMessage());

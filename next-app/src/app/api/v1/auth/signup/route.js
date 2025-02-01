@@ -12,6 +12,7 @@ export async function POST(request) {
             }
         },
     ).then((res) => {
+        console.log("정상 응답")
         return NextResponse.json(res.data);
     }).catch((error) => {
         return NextResponse.json(error.response);

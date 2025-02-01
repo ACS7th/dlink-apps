@@ -87,7 +87,6 @@ export default function LoginPage() {
 
             if (result.error.includes("회원가입이 필요합니다.")) {
                 alert(result.error);
-                router.push(`/signup?email=${email}`);
                 return;
             }
 

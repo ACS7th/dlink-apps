@@ -31,6 +31,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         Optional<User> optionalUser = userRepository.findByEmail(username);
         if (optionalUser.isEmpty()) {
+            log.error("존재하지 않는 사용자: {}", username);
             throw new BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
@@ -43,6 +44,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         // ✅ 비밀번호 검증
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            log.error("비밀번호 불일치: {}", username);
             throw new BadCredentialsException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
