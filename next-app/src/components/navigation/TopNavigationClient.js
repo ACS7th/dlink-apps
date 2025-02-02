@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { TopNavigation } from "@cloudscape-design/components";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect } from "react";
-import signOutClient from "@/utils/signOutClient";
+import customSignOut from "@/utils/signOut";
 
 export default function TopNavigationClient() {
     const router = useRouter();
@@ -16,7 +15,7 @@ export default function TopNavigationClient() {
     };
 
     const handleLogout = () => {
-        signOutClient();
+        customSignOut();
     };
 
     const handleSignup = () => {

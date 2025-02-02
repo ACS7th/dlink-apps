@@ -1,7 +1,7 @@
 import { signOut } from "next-auth/react";
 import axios from "axios";
 
-export default async function signOutClient() {
+export default async function customSignOut() {
     try {
         await signOut({ callbackUrl: "/" });
         await axios.delete("/api/v1/cookie", {}, { withCredentials: true });

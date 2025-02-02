@@ -1,6 +1,5 @@
 import TopNavigationClient from '@/components/navigation/TopNavigationClient';
 import AppLayoutClient from '@/components/layout/AppLayoutClient';
-import { AuthProvider } from '@/context/AuthProviderClient';
 
 export const metadata = {
     title: 'DLink Main',
