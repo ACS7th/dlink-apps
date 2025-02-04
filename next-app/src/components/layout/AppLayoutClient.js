@@ -30,8 +30,8 @@ export default function AppLayoutClient({ content }) {
     ];
 
     const navigationItems = [
-        { type: "link", text: "test", href: "/test" },
-        { type: "link", text: "test2", href: "/test2" }
+        { type: "link", text: "wine", href: "/wine" },
+        { type: "link", text: "whiskey", href: "/whiskey" }
         // { type: "link", text: "Brandy", href: "/brandy" },
         // { type: "link", text: "Vodka", href: "/vodka" },
         // { type: "link", text: "Tequila", href: "/tequila" },
