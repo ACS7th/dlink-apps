@@ -9,7 +9,7 @@ const AppLayoutNoSSR = dynamic(
     () => import("@cloudscape-design/components").then((mod) => mod.AppLayout),
     {
         ssr: false,
-        loading: () => <div className="flex justify-center items-center h-screen"><Spinner size="large"/></div>
+        loading: () => <div className="flex justify-center items-center h-screen"><Spinner size="large" /></div>
     }
 );
 
@@ -19,7 +19,7 @@ export default function AppLayoutClient({ content }) {
     const router = useRouter();
 
     const breadcrumbItems = [
-        { text: "Home", href: "/" },
+        { text: "", href: "/" },
         ...pathname
             .split("/")
             .filter((segment) => segment)
@@ -30,8 +30,14 @@ export default function AppLayoutClient({ content }) {
     ];
 
     const navigationItems = [
-        { type: "link", text: "테스트", href: "/test" },
-        { type: "link", text: "테스트2", href: "/test2" },
+        { type: "link", text: "wine", href: "/wine" },
+        { type: "link", text: "whiskey", href: "/whiskey" },
+        { type: "link", text: "Brandy", href: "/brandy" },
+        { type: "link", text: "Vodka", href: "/vodka" },
+        { type: "link", text: "Tequila", href: "/tequila" },
+        { type: "link", text: "Gin", href: "/gin" },
+        { type: "link", text: "Rum", href: "/rum" },
+        { type: "link", text: "Cocktail", href: "/cocktail" }
     ];
 
     return (

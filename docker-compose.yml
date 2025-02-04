@@ -1,18 +1,19 @@
 services:
-  mysql-app:
-    image: mysql:latest
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - dlink_net
+
+  # mysql-app:
+  #   image: mysql:latest
+  #   restart: always
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   networks:
+  #     - dlink_net
 
   spring-app:
     image: spring-boot-app:dev
@@ -20,8 +21,8 @@ services:
       context: ./spring-app/
       dockerfile: Dockerfile-dev
     restart: always
-    depends_on:
-      - mysql-app
+    # depends_on:
+    #   - mysql-app
     ports:
       - "9999:9999"
     environment:
