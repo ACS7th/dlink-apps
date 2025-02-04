@@ -2,6 +2,9 @@
 
 import CloudScapeLink from "@/components/link/CloudScapeLink";
 import { ContentLayout, Header } from "@cloudscape-design/components";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Test() {
 
@@ -9,7 +12,7 @@ export default function Test() {
         <ContentLayout
             header={
                 <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
-                    Test2
+                    검색 결과
                 </Header>
             }
         >
