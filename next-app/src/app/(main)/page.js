@@ -68,7 +68,7 @@ export default function Home() {
 
           {showAlert && (
             <div className="alert-container">
-              <Alert header="검색어 미입력">{`검색어를 입력하세요.`}</Alert>
+              <Alert header="검색어 미입력"></Alert>
             </div>
           )}
         </div>
