@@ -22,7 +22,8 @@ export default function Home() {
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
-    } else {
+    }
+    else {
       router.push('/search-result')
     }
 
@@ -45,14 +46,14 @@ export default function Home() {
         <div className="flex flex-col items-center">
           <Image
             className="mb-4"
-            src="/logo2.png"
+            src="/LOGO2.png"
             alt="logo"
             width={300}
             height={300}
           />
           <div className="flex">
             <Input
-              className="min-w-[220px] mr-2"
+              className="min-w-[300px] mr-2"
               onChange={({ detail }) => setValue(detail.value)}
               value={value}
               placeholder="검색하고 싶은 주류를 입력하세요."
@@ -68,14 +69,14 @@ export default function Home() {
               onClick={handleButtonClick}
               iconName="search"
             >
-              찾기
             </Button>
 
           </div>
+
         </div>
         {showAlert && (
           <div className="alert-container">
-            <Alert header="검색어 미입력">{`검색어를 입력하세요.`}</Alert>
+            <Alert header="검색어 미입력"></Alert>
           </div>
         )}
 
