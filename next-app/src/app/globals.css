@@ -15,14 +15,14 @@ body {
   height: 30px !important;
 }
 
-.main-container {
+/* .main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
+} */
 
-.logo-container {
+/* .logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,12 +56,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.search-icon {
-  width: 20px;
-  height: 20px;
-}
+} */
 
 .alert-container {
   display: flex;
@@ -70,7 +65,7 @@ body {
   justify-content: center;
   position: absolute;
   z-index: 1;
-  top: 33%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: fit-content;
@@ -92,18 +87,14 @@ body {
   }
 }
 
-/* 전체 컨테이너 */
-.container {
+.gridBox {
   display: grid;
   gap: 10px;
   padding: 10px;
   justify-content: center;
-
-  /* 기본 375px에서는 3개 */
   grid-template-columns: repeat(3, 1fr);
 }
 
-/* 화면 크기에 따라 반응형 조정 */
 @media (min-width: 600px) {
   .container {
     grid-template-columns: repeat(4, 1fr);
@@ -122,17 +113,14 @@ body {
   }
 }
 
-/* 이미지 박스 */
 .imageBox {
   width: 100%;
   text-align: center;
 }
 
-/* 이미지 자리 (정사각형 박스) */
 .imagePlaceholder {
   width: 100%;
   aspect-ratio: 1 / 1;
-  /* 정사각형 유지 */
   border: 2px dashed #888;
   display: flex;
   justify-content: center;
@@ -141,8 +129,7 @@ body {
   color: #666;
 }
 
-/* 상품명 */
-.name {
+.imageName {
   font-size: 16px;
   font-weight: bold;
   color: #333;

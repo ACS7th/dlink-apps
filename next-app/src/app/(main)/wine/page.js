@@ -7,6 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import Grid from "@cloudscape-design/components/grid";
+import Image from "next/image";
 
 export default function Wine_list() {
   const placeholderItems = new Array(12).fill(null); // 더 많은 박스 추가
@@ -25,17 +26,22 @@ export default function Wine_list() {
         </Header>
       }
     >
-      <div className="container">
+      <div className="gridBox">
         {placeholderItems.map((_, index) => (
           <div key={index} className="imageBox">
             <div className="imagePlaceholder">
-              <img src="/LOGO2.png"></img>
+              <Image
+                src="/LOGO2.png"
+                alt="Image"
+                width={100}
+                height={100}
+              />
             </div>
-            <p className="name">상품명</p>
+            <p className="imageName">상품명</p>
           </div>
         ))}
       </div>
 
-    </ContentLayout>
+    </ContentLayout >
   );
 }
