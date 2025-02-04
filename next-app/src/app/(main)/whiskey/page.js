@@ -9,7 +9,7 @@ export default function Test() {
         <ContentLayout
             header={
                 <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
-                    Test2
+                    Whiskey
                 </Header>
             }
         >

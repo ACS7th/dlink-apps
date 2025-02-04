@@ -31,13 +31,13 @@ export default function AppLayoutClient({ content }) {
 
     const navigationItems = [
         { type: "link", text: "wine", href: "/wine" },
-        { type: "link", text: "whiskey", href: "/whiskey" }
-        // { type: "link", text: "Brandy", href: "/brandy" },
-        // { type: "link", text: "Vodka", href: "/vodka" },
-        // { type: "link", text: "Tequila", href: "/tequila" },
-        // { type: "link", text: "Gin", href: "/gin" },
-        // { type: "link", text: "Rum", href: "/rum" },
-        // { type: "link", text: "Cocktail", href: "/cocktail" }
+        { type: "link", text: "whiskey", href: "/whiskey" },
+        { type: "link", text: "Brandy", href: "/brandy" },
+        { type: "link", text: "Vodka", href: "/vodka" },
+        { type: "link", text: "Tequila", href: "/tequila" },
+        { type: "link", text: "Gin", href: "/gin" },
+        { type: "link", text: "Rum", href: "/rum" },
+        { type: "link", text: "Cocktail", href: "/cocktail" }
     ];
 
     return (
