@@ -2,9 +2,8 @@
 
 import { Button, ButtonGroup, ColumnLayout, Container, Form, FormField, Header, Input, SpaceBetween, StatusIndicator } from "@cloudscape-design/components";
 import { useEffect, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");

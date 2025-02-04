@@ -69,6 +69,7 @@ public class JwtTokenProvider {
         }
 
         try {
+
             // "Bearer " 접두어 제거
             String jwt = authHeader.replace(JwtConstants.TOKEN_PREFIX, "").trim();
             if (jwt.isEmpty()) {

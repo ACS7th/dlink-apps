@@ -5,9 +5,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import site.dlink.common.exception.OAuthUserWithoutPasswordException;
 import site.dlink.common.security.jwt.contants.JwtConstants;
 import site.dlink.common.security.jwt.custom.CustomUserDetails;
-import site.dlink.common.security.jwt.exception.OAuthUserWithoutPasswordException;
 import site.dlink.common.security.jwt.provider.JwtTokenProvider;
 
 import org.springframework.security.authentication.AuthenticationManager;

@@ -10,9 +10,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import site.dlink.common.entity.User;
+import site.dlink.common.exception.OAuthUserWithoutPasswordException;
 import site.dlink.common.repository.UserRepository;
 import site.dlink.common.security.jwt.custom.CustomUserDetails;
-import site.dlink.common.security.jwt.exception.OAuthUserWithoutPasswordException;
 
 import java.util.Optional;
 

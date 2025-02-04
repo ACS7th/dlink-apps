@@ -9,6 +9,7 @@ import Alert from "@cloudscape-design/components/alert";
 import Button from "@cloudscape-design/components/button";
 import ContentLayoutServer from "@/components/layout/ContentLayoutServer";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Home() {
   const [value, setValue] = React.useState("");
@@ -34,50 +35,51 @@ export default function Home() {
   return (
     <>
       <ContentLayoutClient
+        className="flex justify-center items-center h-[80vh] mt-[-5vh]"
       // header={
       //   <Header variant="h1" info={<CloudScapeLink variant="info">Info</CloudScapeLink>}>
       //     Home
       //   </Header>
       // }
       >
-        <div className="main-container">
-          <div className="logo-container">
-            <img src="/LOGO2.png" className="logo-icon" />
+        <div className="flex flex-col items-center">
+          <Image
+            className="mb-4"
+            src="/logo2.png"
+            alt="logo"
+            width={300}
+            height={300}
+          />
+          <div className="flex">
+            <Input
+              className="min-w-[220px] mr-2"
+              onChange={({ detail }) => setValue(detail.value)}
+              value={value}
+              placeholder="검색하고 싶은 주류를 입력하세요."
+              onKeyDown={(e) => {
+                if (e.detail.key === "Enter") {
+                  handleButtonClick();
+                }
+              }}
+            />
+
+            <Button
+              variant="primary"
+              onClick={handleButtonClick}
+              iconName="search"
+            >
+              찾기
+            </Button>
+
           </div>
-
-          <div className="search-container">
-            <div className="search-input">
-              <Input
-                onChange={({ detail }) => setValue(detail.value)}
-                value={value}
-                placeholder="검색하고 싶은 주류를 입력하세요."
-                onKeyDown={(e) => {
-                  if (e.detail.key === "Enter") {
-                    handleButtonClick();
-                  }
-                }}
-              />
-            </div>
-
-            <div className="search-button">
-              <Button variant="primary" onClick={handleButtonClick}>
-                <img src="/search.png" className="search-icon" />
-              </Button>
-            </div>
-          </div>
-
-          {showAlert && (
-            <div className="alert-container">
-              <Alert header="검색어 미입력"></Alert>
-            </div>
-          )}
         </div>
+        {showAlert && (
+          <div className="alert-container">
+            <Alert header="검색어 미입력">{`검색어를 입력하세요.`}</Alert>
+          </div>
+        )}
+
       </ContentLayoutClient>
-
-      <ContentLayoutServer>
-
-      </ContentLayoutServer>
-
     </>
   );
 }
