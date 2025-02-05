@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.common.props.NextProps;
+import site.dlink.auth.props.NextProps;
 import site.dlink.common.security.jwt.custom.CustomUserDetailsService;
 import site.dlink.common.security.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.common.security.jwt.filter.JwtRequestFilter;
@@ -34,6 +35,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final NextProps nextProps;
+    private final Environment environment;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -42,7 +44,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()); // csrf의 경우 Rest 서버에선 필요 없음
         http.httpBasic(basic -> basic.disable()); // httpbasic은 기본 autorization 헤더 사용, jwt를 위해 비활성화
         http.formLogin(login -> login.disable()); // form기반 인증 비활성화
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // jwt 사용을 위해 jsessionid 비활성화
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // jwt 사용을 위해
+                                                                                                           // jsessionid
+                                                                                                           // 비활성화
 
         // jwt 필터 설정
         http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),
@@ -52,13 +56,24 @@ public class SecurityConfig {
         // 인증 설정
         http.userDetailsService(customUserDetailsService);
 
+        // dev 환경에서 swagger-ui 허용
+        if (environment.matchesProfiles("dev")) {
+            http.authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/v3/api-docs/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/swagger-resources/**").permitAll()
+                    .requestMatchers("/api-docs/**").permitAll()
+                    .requestMatchers("/webjars/**").permitAll());
+        }
+
         // 인가 설정
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers(HttpMethod.POST,"/api/v1/auth/user","/api/v1/auth/social-login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/social-login").permitAll()
                 .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
                 .anyRequest().authenticated());
+
 
         // 로그아웃 설정
         http.logout(logout -> logout.logoutUrl("/logout")

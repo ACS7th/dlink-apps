@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.common.entity.User;
-import site.dlink.common.repository.UserRepository;
+import site.dlink.auth.entity.User;
+import site.dlink.auth.repository.UserRepository;
 
 @Slf4j
 @Service
