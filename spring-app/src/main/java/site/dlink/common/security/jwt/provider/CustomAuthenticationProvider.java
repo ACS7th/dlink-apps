@@ -2,6 +2,11 @@ package site.dlink.common.security.jwt.provider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.dlink.auth.entity.User;
+import site.dlink.auth.exception.OAuthUserWithoutPasswordException;
+import site.dlink.auth.repository.UserRepository;
+import site.dlink.common.security.jwt.custom.CustomUserDetails;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,10 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import site.dlink.common.entity.User;
-import site.dlink.common.exception.OAuthUserWithoutPasswordException;
-import site.dlink.common.repository.UserRepository;
-import site.dlink.common.security.jwt.custom.CustomUserDetails;
 
 import java.util.Optional;
 

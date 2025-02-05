@@ -1,9 +1,9 @@
 package site.dlink.common.security.jwt.provider;
 
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.common.entity.User;
-import site.dlink.common.props.JwtProps;
-import site.dlink.common.repository.UserRepository;
+import site.dlink.auth.entity.User;
+import site.dlink.auth.props.JwtProps;
+import site.dlink.auth.repository.UserRepository;
 import site.dlink.common.security.jwt.contants.JwtConstants;
 import site.dlink.common.security.jwt.custom.CustomUserDetails;
 

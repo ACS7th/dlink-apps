@@ -1,7 +1,7 @@
 package site.dlink.common.security.jwt.custom;
 
 import lombok.Data;
-import site.dlink.common.entity.User;
+import site.dlink.auth.entity.User;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;

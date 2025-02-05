@@ -1,4 +1,4 @@
-package site.dlink.common.exception;
+package site.dlink.auth.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
