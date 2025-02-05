@@ -25,7 +25,7 @@ export default function Home() {
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
-      }, 3000);
+      }, 2000);
     }
     else {
       router.push('/search-result')
