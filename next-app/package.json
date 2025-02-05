@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-textract": "^3.741.0",
     "@cloudscape-design/chat-components": "github:cloudscape-design/chat-components",
     "@cloudscape-design/components": "^3.0.857",
     "@cloudscape-design/global-styles": "^1.0.33",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
+    "formidable": "^3.5.2",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "react": "^18.3.1",

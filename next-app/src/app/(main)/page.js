@@ -25,7 +25,7 @@ export default function Home() {
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
-      }, 2000);
+      }, 700);
     }
     else {
       router.push('/search-result')
@@ -78,13 +78,13 @@ export default function Home() {
             </Button>
 
           </div>
-          <ImageUploadButton />
         </div>
         {showAlert && (
           <div className="alert-container">
             <Alert header="검색어 미입력"></Alert>
           </div>
         )}
+        <ImageUploadButton />
 
       </ContentLayoutClient>
     </>

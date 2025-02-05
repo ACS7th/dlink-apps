@@ -88,7 +88,8 @@ body {
 }
 
 .filebox {
-  display: flex;
+  display: block;
+  flex-direction: column;
 
 }
 
