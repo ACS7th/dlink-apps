@@ -10,9 +10,13 @@ import Button from "@cloudscape-design/components/button";
 import ContentLayoutServer from "@/components/layout/ContentLayoutServer";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FileUpload from "@cloudscape-design/components/file-upload";
+import ImageUploadButton from "@/components/button/ImageUploadButton";
+
 
 export default function Home() {
   const [value, setValue] = React.useState("");
+  const [imagevalue, setimageValue] = React.useState([]);
   const [showAlert, setShowAlert] = React.useState(false);
   const router = useRouter();
 
@@ -60,7 +64,9 @@ export default function Home() {
               onKeyDown={(e) => {
                 if (e.detail.key === "Enter") {
                   handleButtonClick();
+                  console.log("value:", value);
                 }
+
               }}
             />
 
@@ -72,7 +78,7 @@ export default function Home() {
             </Button>
 
           </div>
-
+          <ImageUploadButton />
         </div>
         {showAlert && (
           <div className="alert-container">

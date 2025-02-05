@@ -87,6 +87,11 @@ body {
   }
 }
 
+.filebox {
+  display: flex;
+
+}
+
 .gridBox {
   display: grid;
   gap: 10px;
