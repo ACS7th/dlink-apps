@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Content() {
     return (
-        <div className="flex flex-col justify-center items-center h-[calc(100vh-120px)]">
+        <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
             <Image
                 src="/LOGO2.png"
                 alt="logo"
@@ -11,7 +11,7 @@ export default function Content() {
                 height={300}
             />
 
-            <div className="flex w-full max-w-md">
+            <div className="flex w-full max-w-md mb-10">
                 <Input
                     className="flex-1 mr-2"
                     placeholder="검색하고 싶은 주류를 입력하세요."
