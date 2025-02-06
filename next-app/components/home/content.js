@@ -5,8 +5,10 @@ import { Input, Button } from "@heroui/react";
 import NextImage from "next/image";
 import { Alert } from "@heroui/alert";
 import ImageUploadButton from "@/components/buttons/imageUploadButton";
+import { useRouter } from "next/navigation";
 
 export default function Content() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
@@ -15,6 +17,10 @@ export default function Content() {
     if (!searchQuery.trim()) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 1000);
+    }
+    else {
+      router.push('/search-result')
+      console.log("검색어: ", searchQuery);
     }
   };
 
