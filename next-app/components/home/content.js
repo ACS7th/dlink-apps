@@ -18,7 +18,7 @@ export default function Content() {
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 1000);
+      setTimeout(() => setShowAlert(false), 2000);
     }
   };
 
