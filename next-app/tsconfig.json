@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "app/(auth)/layout.js", "components/home/content.js"  ],
+, "app/(auth)/layout.js", "components/home/content.js", "app/api/auth/[...nextauth]/route.ts", "components/auth/login.tsx"  ],
   "exclude": [
     "node_modules"
   ]

@@ -3,8 +3,9 @@ import Image from "next/image";
 
 export default function Content() {
     return (
-        <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
+        <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)] mx-4">
             <Image
+                className="mb-4"
                 src="/LOGO2.png"
                 alt="logo"
                 width={300}
