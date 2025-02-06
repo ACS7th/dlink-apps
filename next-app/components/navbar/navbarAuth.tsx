@@ -6,7 +6,7 @@ import LoginIcon from "../icons/loginIcon";
 import { UserDropdown } from "./user-dropdown";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default async function NavbarAuth() {
+export default async function NavbarAuth(){
     const session = await getServerSession(authOptions);
 
     return (
