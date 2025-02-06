@@ -21,7 +21,7 @@ export default function Content() {
   return (
     <div className="flex flex-col justify-center items-center h-[calc(100vh-150px)]">
       {/* 로고 */}
-      <NextImage src="/LOGO2.png" alt="logo" width={300} height={300} />
+      <NextImage className="mb-4" src="/LOGO2.png" alt="logo" width={300} height={300} />
 
       {/* 검색바, 검색 버튼, 이미지 업로드 버튼을 한 줄로 배치 */}
       <div className="flex w-full max-w-md-23 space-x-2 items-center">

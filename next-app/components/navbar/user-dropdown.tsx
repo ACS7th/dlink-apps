@@ -8,17 +8,11 @@ import {
   NavbarItem,
 } from "@heroui/react";
 import React, { useCallback } from "react";
-import { DarkModeSwitch } from "./darkmodeswitch";
 import { useRouter } from "next/navigation";
-import { deleteAuthCookie } from "@/actions/auth.action";
+import customSignOut  from "@/helpers/signOut";
 
 export const UserDropdown = () => {
   const router = useRouter();
-
-  const handleLogout = useCallback(async () => {
-    await deleteAuthCookie();
-    router.replace("/");
-  }, [router]);
 
   return (
     <Dropdown>
@@ -26,9 +20,8 @@ export const UserDropdown = () => {
         <DropdownTrigger>
           <Avatar
             as='button'
-            color='secondary'
             size='md'
-            src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
+            src=''
           />
         </DropdownTrigger>
       </NavbarItem>
@@ -46,7 +39,7 @@ export const UserDropdown = () => {
           key='logout'
           color='danger'
           className='text-danger'
-          onPress={handleLogout}>
+          onPress={() => customSignOut()}>
           Log Out
         </DropdownItem>
       </DropdownMenu>
