@@ -1,22 +1,20 @@
-import apiSpring from '@/utils/apiSpring';
+import apiSpring from '@/helpers/apiSpring';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
-    const data = await request.json();
+    try {
+        const data = await request.json();
 
-    apiSpring.post('/api/v1/auth/user',
-        data,
-        {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        },
-    ).then((res) => {
-        console.log("정상 응답")
-        return NextResponse.json(res.data);
-    }).catch((error) => {
-        return NextResponse.json(error.response);
-    });
+        const response = await apiSpring.post('/api/v1/auth/user', data);
 
-    return NextResponse.json({ message: "알 수 없는 오류" });
+        return NextResponse.json(response.data, { status: 201 });
+
+    } catch (error) {
+        if (error.response) {
+            return NextResponse.json({ message: "이미 존재하는 회원입니다." },
+                                        { status: error.response.status });
+        }
+
+        return NextResponse.json({ message: "서버 오류 발생" }, { status: 500 });
+    }
 }

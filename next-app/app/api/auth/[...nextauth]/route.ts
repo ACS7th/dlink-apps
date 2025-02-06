@@ -11,7 +11,11 @@ export const authOptions: NextAuthOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: { label: "이메일", type: "email", placeholder: "example@example.com" },
+                email: {
+                    label: "이메일",
+                    type: "email",
+                    placeholder: "example@example.com",
+                },
                 password: { label: "비밀번호", type: "password" },
             },
 
@@ -25,33 +29,36 @@ export const authOptions: NextAuthOptions = {
                     formData.append("username", credentials.email);
                     formData.append("password", credentials.password);
 
-                    const response = await fetch(`${process.env.SPRING_URI as string}/login`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: formData.toString(),
-                    });
+                    const response = await fetch(
+                        `${process.env.SPRING_URI as string}/login`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded",
+                            },
+                            body: formData.toString(),
+                        }
+                    );
 
-                    // ✅ 에러 처리
                     if (!response.ok) {
                         const result = await response.json();
                         throw new Error(result.error || "로그인 실패");
                     }
 
                     // ✅ 헤더에서 Spring 서버가 발급한 JWT 추출
-                    const jwt = response.headers.get("Authorization")?.replace("Bearer ", "");
+                    const jwt = response.headers
+                        .get("Authorization")
+                        ?.replace("Bearer ", "");
                     if (!jwt) {
                         throw new Error("JWT 토큰 없음");
                     }
 
-                    // ✅ Spring JWT를 httpOnly 쿠키에 저장
-                    cookies().set("springJwt", jwt, {
-                        path: "/",
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === "production",
-                        sameSite: "strict",
-                    });
-
-                    return { id: credentials.email, email: credentials.email, jwt };
+                    return {
+                        id: credentials.email,
+                        email: credentials.email,
+                        jwt,
+                    };
                 } catch (error: any) {
                     throw new Error(error.message);
                 }
@@ -76,13 +83,13 @@ export const authOptions: NextAuthOptions = {
     ],
 
     session: {
-        strategy: "jwt", // ✅ JWT 사용
+        strategy: "jwt",
     },
 
     secret: process.env.NEXTAUTH_SECRET as string,
 
     callbacks: {
-        async signIn({ user, account }) {
+        async signIn({ user, account}) {
             if (account?.provider === "credentials") {
                 if (!user || !user.email) {
                     console.log("일반 로그인 실패: 사용자 정보 없음");
@@ -92,39 +99,32 @@ export const authOptions: NextAuthOptions = {
             }
 
             if (account?.provider) {
-                console.log(`OAuth 로그인 성공: ${account.provider}, 이메일: ${user.email}`);
+                console.log(
+                    `OAuth 로그인 성공: ${account.provider}, 이메일: ${user.email}`
+                );
 
                 try {
-                    // ✅ OAuth 로그인 후 Spring 서버와 연동하여 JWT 발급
-                    const response = await fetch(`${process.env.SPRING_URI as string}/api/v1/auth/social-login`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            provider: account.provider,
-                            accessToken: account.access_token,
-                            email: user.email,
-                            name: user.name,
-                            image: user.image,
-                        }),
-                    });
+                    const response = await fetch(
+                        `${
+                            process.env.SPRING_URI as string
+                        }/api/v1/auth/social-login`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                provider: account.provider,
+                                accessToken: account.access_token,
+                                email: user.email,
+                                name: user.name,
+                                image: user.image,
+                            }),
+                        }
+                    );
 
                     if (!response.ok) {
                         console.error("Spring 서버 소셜 로그인 연동 실패");
                         return false;
                     }
-
-                    const data = await response.json();
-
-                    // ✅ Spring JWT를 NextAuth JWT 토큰에 저장
-                    user.jwt = data.jwt;
-
-                    // ✅ Spring JWT를 쿠키에도 저장
-                    cookies().set("springJwt", data.jwt, {
-                        path: "/",
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === "production",
-                        sameSite: "strict",
-                    });
 
                     return true;
                 } catch (error: any) {
@@ -139,14 +139,14 @@ export const authOptions: NextAuthOptions = {
         // ✅ Spring 서버의 JWT를 NextAuth의 JWT 토큰으로 저장
         async jwt({ token, user }) {
             if (user?.jwt) {
-                token.jwt = user.jwt; // ✅ Spring JWT를 NextAuth의 JWT로 저장
+                token.jwt = user.jwt;
             }
             return token;
         },
 
         // ✅ 클라이언트에서 NextAuth 세션을 요청하면 Spring JWT를 반환
         async session({ session, token }) {
-            session.user.jwt = token.jwt as string; // ✅ 클라이언트에서 JWT 접근 가능
+            session.user.jwt = token.jwt as string; 
             return session;
         },
 

@@ -5,32 +5,30 @@ import { Input, Button } from "@heroui/react";
 import NextImage from "next/image";
 import { Alert } from "@heroui/alert";
 import ImageUploadButton from "@/components/buttons/imageUploadButton";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export default function Content() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
+  const { data: session } = useSession();
 
   // 📌 검색 버튼 클릭 (경고 알람)
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 1000);
-    }
-    else {
-      router.push('/search-result')
-      console.log("검색어: ", searchQuery);
+      setTimeout(() => setShowAlert(false), 2000);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-[calc(100vh-150px)]">
+    <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
       {/* 로고 */}
-      <NextImage className="mb-4" src="/LOGO2.png" alt="logo" width={300} height={300} />
-
+      <NextImage className="mb-6" src={resolvedTheme === 'dark' ? '/LOGO3.png' : '/LOGO2.png'} alt="logo" width={300} height={300} />
       {/* 검색바, 검색 버튼, 이미지 업로드 버튼을 한 줄로 배치 */}
-      <div className="flex w-full max-w-md-23 space-x-2 items-center">
+      <div className="flex space-x-2 w-full items-center mb-10 md:w-1/2 px-4">
         {/* 검색 입력창 */}
         <Input
           className="flex-1"
@@ -58,6 +56,7 @@ export default function Content() {
         {/* 이미지 업로드 버튼 */}
         <ImageUploadButton />
       </div>
+
 
       {/* 검색어 미입력 알림 */}
       {showAlert && (
