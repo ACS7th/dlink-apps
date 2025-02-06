@@ -12,13 +12,9 @@ export default function Login() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [error, setError] = useState("");
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
     const router = useRouter();
     const { data: session } = useSession();
-
-    useEffect(() => {
-        console.log(session)
-    }, []);
-
 
     const isValidEmail = (email: string) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -35,6 +31,7 @@ export default function Login() {
 
     const handleSubmit = async () => {
         let isValid = true;
+        setError("");
 
         if (!email) {
             setEmailError("이메일을 입력해주세요.");
@@ -54,9 +51,8 @@ export default function Login() {
             return;
         }
 
-        setError("");
-
         try {
+            setIsLoginLoading(true);
             const result = await signIn("credentials", {
                 email,
                 password,
@@ -72,12 +68,15 @@ export default function Login() {
         } catch (error) {
             console.error("로그인 오류:", error);
             setError("로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsLoginLoading(false);
         }
+
     };
 
     return (
-        <div className="flex flex-col w-1/2">
-            <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
+        <div className="flex flex-col w-2/3">
+            <div className="text-center text-[25px] font-bold mb-6">로그인</div>
 
             <div className="flex flex-col gap-4">
                 {/* 이메일 입력 */}
@@ -101,12 +100,22 @@ export default function Login() {
                     errorMessage={passwordError}
                     onChange={handlePasswordChange}
                 />
-
-                {error && <Alert color="danger">{error}</Alert>}
+                {error && (
+                    <Alert isClosable className="text-sm md:text-base" color="danger">
+                        {error}
+                    </Alert>
+                )}
             </div>
 
             <div className="flex justify-center mt-6">
-                <Button onPress={handleSubmit}>로그인</Button>
+                <Button
+                    color="primary"
+                    variant="flat"
+                    onPress={handleSubmit}
+                    isLoading={isLoginLoading}
+                >
+                    로그인
+                </Button>
             </div>
 
             {/* 소셜 로그인 */}
@@ -115,22 +124,41 @@ export default function Login() {
                     SNS 계정으로 간편 로그인
                 </p>
                 <div className="flex justify-center gap-4 mt-4">
-                    <Button isIconOnly variant="light" onPress={() => signIn("google")}>
+                    <Button
+                        isIconOnly
+                        variant="light"
+                        onPress={() => signIn("google")}
+                    >
                         <Image src="/google.svg" alt="Google" className="p-1" />
                     </Button>
-                    <Button isIconOnly variant="light" onPress={() => signIn("naver")}>
+                    <Button
+                        isIconOnly
+                        variant="light"
+                        onPress={() => signIn("naver")}
+                    >
                         <Image src="/naver.svg" alt="Naver" className="p-1" />
                     </Button>
-                    <Button isIconOnly variant="light" onPress={() => signIn("kakao")}>
+                    <Button
+                        isIconOnly
+                        variant="light"
+                        onPress={() => signIn("kakao")}
+                    >
                         <Image src="/kakao.svg" alt="Kakao" className="p-1" />
                     </Button>
                 </div>
             </div>
             <div className="text-sm text-center text-gray-600 mt-4">
-                계정이 없으신가요?{" "}
-                <Link href="/register" className="text-primary-500 font-bold">
+                계정이 없으신가요?
+                <Button
+                    as={Link}
+                    href="/signup"
+                    variant="light"
+                    color="primary"
+                    className="px-0"
+                    disableAnimation
+                >
                     회원가입
-                </Link>
+                </Button>
             </div>
         </div>
     );

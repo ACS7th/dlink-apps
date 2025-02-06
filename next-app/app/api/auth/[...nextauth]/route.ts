@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
     ],
 
     session: {
-        strategy: "jwt", // ✅ JWT 사용
+        strategy: "jwt", 
     },
 
     secret: process.env.NEXTAUTH_SECRET as string,
@@ -115,10 +115,8 @@ export const authOptions: NextAuthOptions = {
 
                     const data = await response.json();
 
-                    // ✅ Spring JWT를 NextAuth JWT 토큰에 저장
                     user.jwt = data.jwt;
 
-                    // ✅ Spring JWT를 쿠키에도 저장
                     cookies().set("springJwt", data.jwt, {
                         path: "/",
                         httpOnly: true,
@@ -139,7 +137,7 @@ export const authOptions: NextAuthOptions = {
         // ✅ Spring 서버의 JWT를 NextAuth의 JWT 토큰으로 저장
         async jwt({ token, user }) {
             if (user?.jwt) {
-                token.jwt = user.jwt; // ✅ Spring JWT를 NextAuth의 JWT로 저장
+                token.jwt = user.jwt;
             }
             return token;
         },
