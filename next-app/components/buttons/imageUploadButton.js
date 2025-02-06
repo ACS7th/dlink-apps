@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@heroui/react";
 import { Alert } from "@heroui/alert";
+import { CameraIcon } from "@/components/icons/cameraicon";
 
 export default function ImageUploadButton() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -23,7 +24,7 @@ export default function ImageUploadButton() {
 
       // 파일 형식 검증
       if (!allowedTypes.includes(file.type)) {
-        setErrorMessage("허용되지 않는 파일 형식입니다. JPG 또는 PNG 이미지를 선택하세요.");
+        setErrorMessage("File type error");
         return;
       }
 
@@ -36,7 +37,9 @@ export default function ImageUploadButton() {
       // 오류 메시지 초기화 및 업로드 완료 알림
       setErrorMessage("");
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000); // 2초 후 알림 숨김
+      setTimeout(() => setShowAlert(false), 1000); // 1초 후 알림 숨김
+      setTimeout(() => setErrorMessage(false), 1000); // 1초 후 알림 숨김
+
 
       // 콘솔에 업로드된 파일 정보 출력
       console.log("업로드된 파일:", file.name, `${(file.size / 1024).toFixed(2)} KB`);
@@ -44,13 +47,15 @@ export default function ImageUploadButton() {
   };
 
   return (
-    <div className="flex flex-col mt-5 w-130 max-w-md">
+    <div className="flex flex-col mr-2">
       {/* 이미지 업로드 버튼 */}
       <Button
+        isIconOnly
         color="primary"
-        className="bg-blue-600"
-        onPress={triggerFileInput}>
-        이미지 업로드
+        className="bg-red-900"
+        onPress={triggerFileInput}
+      >
+        <CameraIcon />
       </Button>
 
       {/* 숨겨진 파일 입력 */}
@@ -64,14 +69,14 @@ export default function ImageUploadButton() {
 
       {/* 파일 검증 오류 메시지 */}
       {errorMessage && (
-        <div className="alert-container">
+        <div className="alert-container mt-2">
           <Alert color="danger" title={errorMessage} />
         </div>
       )}
 
       {/* 파일 업로드 성공 알림 */}
       {showAlert && (
-        <div className="alert-container">
+        <div className="alert-container mt-2">
           <Alert color="success" title="파일 업로드 완료" />
         </div>
       )}
