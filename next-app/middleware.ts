@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = request.nextUrl;
 
-  if (
-    (pathname === "/login" || pathname === "/register") &&
-    request.cookies.has("userAuth")
-  )
+  if (token && (pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/", request.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/accounts", "/login", "/register"],
+  matcher: ["/", "/login", "/signup"],
 };

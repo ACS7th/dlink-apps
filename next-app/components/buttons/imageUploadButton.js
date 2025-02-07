@@ -37,8 +37,8 @@ export default function ImageUploadButton() {
       // 오류 메시지 초기화 및 업로드 완료 알림
       setErrorMessage("");
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 1000); // 1초 후 알림 숨김
-      setTimeout(() => setErrorMessage(false), 1000); // 1초 후 알림 숨김
+      setTimeout(() => setShowAlert(false), 2000); // 1초 후 알림 숨김
+      setTimeout(() => setErrorMessage(false), 2000); // 1초 후 알림 숨김
 
 
       // 콘솔에 업로드된 파일 정보 출력

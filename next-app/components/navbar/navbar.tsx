@@ -1,15 +1,21 @@
 "use client";
 
-import { Input, Navbar, NavbarContent, Button, Divider } from "@heroui/react";
+import {
+    Input,
+    Navbar,
+    NavbarContent,
+    Button,
+    Divider,
+    Spinner,
+} from "@heroui/react";
 import React from "react";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { BurguerButton } from "./burguer-button";
-import { NotificationsDropdown } from "./notifications-dropdown";
-import { UserDropdown } from "./user-dropdown";
 import { DarkModeSwitch } from "./darkmodeswitch";
 import Link from "next/link";
 import UserIcon from "../icons/userIcon";
 import LoginIcon from "../icons/loginIcon";
+import { UserDropdown } from "./user-dropdown";
 
 interface Props {
     children: React.ReactNode;
@@ -37,11 +43,10 @@ export const NavbarWrapper = ({ children }: Props) => {
                     justify="end"
                     className="w-fit data-[justify=end]:flex-grow-0"
                 >
-                    {status === "authenticated" ? (
-                        <>
-                            {/* <NotificationsDropdown /> */}
-                            <UserDropdown />
-                        </>
+                    {status === "loading" ? (
+                        <Spinner size="sm" color="primary" />
+                    ) : status === "authenticated" ? (
+                        <UserDropdown />
                     ) : (
                         <>
                             <Button
@@ -53,9 +58,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                             >
                                 Login
                             </Button>
-
                             <Divider orientation="vertical" className="h-6" />
-
                             <Button
                                 as={Link}
                                 href="/signup"
