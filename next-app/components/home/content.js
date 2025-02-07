@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 
 export default function Content() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();

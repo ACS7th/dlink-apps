@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@heroui/react";
 import { Alert } from "@heroui/alert";
 import { CameraIcon } from "@/components/icons/cameraicon";
+import axios from "axios";
 
 export default function ImageUploadButton() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -14,8 +15,8 @@ export default function ImageUploadButton() {
     document.getElementById("file-upload")?.click();
   };
 
-  // 📌 파일 선택 시 실행되는 함수
-  const handleImageChange = (event) => {
+  // 📌 파일 선택 시 실행되는 함수 (async 추가)
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
 
     if (file) {
@@ -24,25 +25,47 @@ export default function ImageUploadButton() {
 
       // 파일 형식 검증
       if (!allowedTypes.includes(file.type)) {
-        setErrorMessage("File type error");
+        setErrorMessage("허용되지 않는 파일 형식입니다. JPG 또는 PNG 이미지를 선택하세요.");
+
+        // ✅ 1초 후 에러 메시지 숨기기
+        setTimeout(() => setErrorMessage(""), 1000);
+
         return;
       }
 
       // 파일 크기 검증
       if (file.size > maxSize) {
         setErrorMessage("파일 크기가 5MB를 초과했습니다. 5MB 이하의 파일을 선택하세요.");
+
+        // ✅ 1초 후 에러 메시지 숨기기
+        setTimeout(() => setErrorMessage(""), 1000);
+
         return;
       }
 
       // 오류 메시지 초기화 및 업로드 완료 알림
       setErrorMessage("");
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000); // 1초 후 알림 숨김
-      setTimeout(() => setErrorMessage(false), 2000); // 1초 후 알림 숨김
+      setTimeout(() => setShowAlert(false), 1000); // 1초 후 알림 숨김
 
 
       // 콘솔에 업로드된 파일 정보 출력
       console.log("업로드된 파일:", file.name, `${(file.size / 1024).toFixed(2)} KB`);
+
+      // 📌 FormData 생성 후 업로드
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await axios.post("/api/v1/texttract", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        console.log("📌 추출된 텍스트:", response.data.text);
+      } catch (error) {
+        console.error("❌ 업로드 오류:", error);
+        setErrorMessage("파일 업로드에 실패했습니다.");
+      }
     }
   };
 
