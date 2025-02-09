@@ -37,8 +37,6 @@ public class JwtTokenProvider {
     private UserRepository userRepository;
 
     public String createToken(long userId, String username, List<String> roles) {
-        log.info("token secret key : {}", jwtProps.getSecretKey());
-
         // JWT 토큰 생성
         String jwt = Jwts.builder()
                 .signWith(getShaKey(), Jwts.SIG.HS512)      // 서명에 사용할 키와 알고리즘 설정
@@ -51,7 +49,7 @@ public class JwtTokenProvider {
                 .claim("rol", roles)                                      // 클레임 설정: 권한
                 .compact();
 
-        log.info("jwt 생성 완료 : {}", jwt);
+        log.debug("jwt 생성 완료 : {}", jwt);
 
         return jwt;
     }

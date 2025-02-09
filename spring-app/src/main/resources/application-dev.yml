@@ -14,8 +14,7 @@ spring:
 #   swagger-ui:
 #     path: /swagger-ui.html
 
-# logging:
-#   level:
-#     org:
-#       springframework: INFO
-#       hibernate: INFO
+logging:
+  level:
+    root: INFO
+    site.dlink.common: DEBUG
