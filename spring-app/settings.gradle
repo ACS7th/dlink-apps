@@ -1,2 +1,9 @@
-rootProject.name = 'common'
+rootProject.name = 'dlink'
 
+include 'api-gateway'
+include 'common'
+include 'auth'
+// include 'alcohols'
+// include 'review'
+// include 'pairing'
+// include 'recipe'

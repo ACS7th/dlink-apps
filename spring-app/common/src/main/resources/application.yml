@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: common
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+    group:
+      prod:
+        - oauth
+        - prod
+      dev:
+        - oauth
+        - dev
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URI}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+server:
+  port: ${SPRING_SERVER_PORT}

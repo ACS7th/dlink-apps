@@ -1,30 +1,43 @@
 services:
 
-  spring-app:
-    image: spring-boot-app:dev
+  api-gateway:
+    image: api-gateway:dev
     build:
-      context: ./spring-app/
-      dockerfile: Dockerfile-dev
+      context: ./spring-app
+      dockerfile: ./Dockerfile-api-gateway
     restart: always
     ports:
       - "9999:9999"
     environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SERVER_PORT: 9999
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      AUTH_SERVICE_URI: ${AUTH_SERVICE_URI}
+    volumes:
+      - ./spring-app/api-gateway/build:/app/api-gateway/build
+      - ./spring-app/api-gateway/src:/app/api-gateway/src
+    networks:
+      - dlink_net
+
+  auth-service:
+    image: auth-service:dev
+    build:
+      context: ./spring-app
+      dockerfile: ./Dockerfile-auth
+    restart: always
+    ports:
+      - "9991:9991"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATASOURCE_URI: ${SPRING_DATASOURCE_URI}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_SERVER_PORT: ${SPRING_SERVER_PORT}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      KAKAO_REST_API: ${KAKAO_REST_API}
-      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
-      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
       NEXT_URI: ${NEXT_URI}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SERVER_PORT: 9991
     volumes:
-      - ./spring-app/build/:/app/build
-      - ./spring-app/src:/app/src
+      - ./spring-app/auth/build:/app/auth/build
+      - ./spring-app/auth/src:/app/auth/src
     networks:
       - dlink_net
 
@@ -52,10 +65,6 @@ services:
       - dlink_net
     volumes:
       - ./next-app:/app
-      # - /app/node_modules # node_modules는 컨테이너에서 관리
-
-volumes:
-  mysql_data:
 
 networks:
   dlink_net:
