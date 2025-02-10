@@ -5,8 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.auth.jwt.constants.JwtConstants;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
+import site.dlink.common.constants.JwtConstants;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

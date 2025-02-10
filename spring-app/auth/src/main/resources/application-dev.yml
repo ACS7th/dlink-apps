@@ -6,9 +6,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+    # properties:
+    #   hibernate:
+    #     format_sql: true
 
 # springdoc:
 #   swagger-ui:
@@ -17,4 +17,6 @@ spring:
 logging:
   level:
     root: INFO
-    site.dlink.common: DEBUG
+    site:
+      dlink:
+        auth: DEBUG

@@ -25,6 +25,3 @@ spring:
 
 server:
   port: ${SPRING_SERVER_PORT}
-
-jwt:
-  secret-key: ${SPRING_JWT_SECRET_KEY}

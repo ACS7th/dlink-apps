@@ -23,7 +23,7 @@ import site.dlink.auth.jwt.custom.CustomUserDetailsService;
 import site.dlink.auth.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.auth.jwt.filter.JwtRequestFilter;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
-import site.dlink.auth.props.NextProps;
+import site.dlink.common.props.NextProps;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -49,9 +49,10 @@ public class SecurityConfig {
                                                                                                            // 비활성화
 
         // jwt 필터 설정
-        http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),
-                UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class);
+                // .addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         // 인증 설정
         http.userDetailsService(customUserDetailsService);
@@ -68,22 +69,21 @@ public class SecurityConfig {
 
         // 인가 설정
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/public/**").permitAll()
-                .requestMatchers("/api/test/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/social-login").permitAll()
-                .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
-                .anyRequest().authenticated());
+                // .requestMatchers("/public/**").permitAll()
+                // .requestMatchers("/api/test/**").permitAll()
+                // .requestMatchers(HttpMethod.POST, "/api/v1/auth/user", "/api/v1/auth/social-login").permitAll()
+                // .requestMatchers("/api/v1/auth/**").hasAnyRole("USER")
+                // .anyRequest().authenticated());
+                .anyRequest().permitAll());
 
-
-        // 로그아웃 설정
-        http.logout(logout -> logout.logoutUrl("/logout")
-                .logoutSuccessHandler((req, res, auth) -> {
-                    log.info("로그아웃...");
-                    res.setStatus(HttpStatus.OK.value());
-                })
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .permitAll());
+        // http.logout(logout -> logout.logoutUrl("/logout")
+        //         .logoutSuccessHandler((req, res, auth) -> {
+        //             log.info("로그아웃...");
+        //             res.setStatus(HttpStatus.OK.value());
+        //         })
+        //         .invalidateHttpSession(true)
+        //         .deleteCookies("JSESSIONID")
+        //         .permitAll());
 
         return http.build();
     }
@@ -109,7 +109,7 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 모든 엔드포인트에 CORS 설정 적용
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

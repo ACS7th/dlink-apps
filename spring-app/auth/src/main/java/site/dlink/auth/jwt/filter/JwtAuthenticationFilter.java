@@ -6,9 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.exception.OAuthUserWithoutPasswordException;
-import site.dlink.auth.jwt.constants.JwtConstants;
 import site.dlink.auth.jwt.custom.CustomUserDetails;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
+import site.dlink.common.constants.JwtConstants;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        // 🔗 필터 URL 경로 설정 : /login
+        // 필터 URL 경로 설정 : /login
         setFilterProcessesUrl(JwtConstants.AUTH_LOGIN_URL);
     }
 

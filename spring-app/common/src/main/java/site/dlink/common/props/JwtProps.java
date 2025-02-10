@@ -1,4 +1,4 @@
-package site.dlink.auth.props;
+package site.dlink.common.props;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
