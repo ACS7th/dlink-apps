@@ -1,8 +1,6 @@
 package site.dlink.auth.service;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import site.dlink.auth.dto.JoinDto;
 import site.dlink.auth.dto.SocialLoginRequest;
 import site.dlink.auth.entity.User;
+import site.dlink.auth.jwt.provider.JwtTokenProvider;
 import site.dlink.auth.repository.UserRepository;
-import site.dlink.common.security.jwt.provider.JwtTokenProvider;
 
 @Service
 @RequiredArgsConstructor
@@ -60,14 +58,11 @@ public class AuthService {
     }
 
     public String loginBySocial(SocialLoginRequest request) {
-        // 1) TODO 소셜 AccessToken 검증 로직
-        // 예) Google Tokeninfo, Kakao user info, Naver user info ...
-
-        // 2) 유저 조회 후, 없으면 바로 회원가입
+        // 유저 조회 후, 없으면 바로 회원가입
         User user = userService.findByEmail(request.getEmail())
                                 .orElseGet(() -> joinBySocial(request));
 
-        // 3) JWT 발급
+        // JWT 발급
         return jwtTokenProvider.createToken(
                 user.getUserId(),
                 user.getEmail(),

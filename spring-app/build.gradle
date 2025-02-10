@@ -33,6 +33,22 @@ subprojects {
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        //  Lombok 
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+        // Swagger
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+        //  Dev Tools 
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+        // Model Mapper
+        implementation 'org.modelmapper:modelmapper:3.1.1'
+
     }
 
     dependencyManagement {

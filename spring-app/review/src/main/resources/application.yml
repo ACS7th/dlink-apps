@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dlink-app
+    name: review
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}

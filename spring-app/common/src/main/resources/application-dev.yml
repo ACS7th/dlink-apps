@@ -10,10 +10,6 @@ spring:
       hibernate:
         format_sql: true
 
-# springdoc:
-#   swagger-ui:
-#     path: /swagger-ui.html
-
 logging:
   level:
     root: INFO

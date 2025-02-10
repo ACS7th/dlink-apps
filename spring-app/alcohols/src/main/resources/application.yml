@@ -1,15 +1,13 @@
 spring:
   application:
-    name: recipe
+    name: dlink-app
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
     group:
       prod:
-        - oauth
         - prod
       dev:
-        - oauth
         - dev
 
   servlet:
