@@ -117,7 +117,7 @@ export default function SearchResultsPage() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold text-center mb-4 text-gray-800">
-        "{query}"에 대한 {searchResults.length}건의 검색 결과 입니다.
+        "{query}"에 대한 검색 결과: {searchResults.length}건
       </h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
