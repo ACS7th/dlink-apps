@@ -28,7 +28,7 @@ export const NavbarWrapper = ({ children }: Props) => {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Navbar
                 isBordered
-                className="w-full"
+                className="bg-red-900"
                 classNames={{ wrapper: "w-full max-w-full" }}
             >
                 <NavbarContent className="md:hidden">

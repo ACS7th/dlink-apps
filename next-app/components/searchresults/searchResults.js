@@ -58,8 +58,6 @@
 //   );
 // }
 
-////////////////////////////////////////////////////
-
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -112,7 +110,6 @@ export default function SearchResultsPage() {
     };
   }, [loadMoreItems]);
 
-  // ✅ 상세 페이지로 이동하는 함수
   const handleCardClick = (id) => {
     router.push(`/details/${id}`);
   };

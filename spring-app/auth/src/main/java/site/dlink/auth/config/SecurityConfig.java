@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.jwt.custom.CustomUserDetailsService;
 import site.dlink.auth.jwt.filter.JwtAuthenticationFilter;
-import site.dlink.auth.jwt.filter.JwtRequestFilter;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
 import site.dlink.common.props.NextProps;
 
