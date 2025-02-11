@@ -7,6 +7,7 @@ import { Alert } from "@heroui/alert";
 import ImageUploadButton from "@/components/buttons/imageUploadButton";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 export default function Content() {
   // const router = useRouter();
@@ -14,14 +15,16 @@ export default function Content() {
   const [showAlert, setShowAlert] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const { data: session } = useSession();
+  const router = useRouter();
 
   // 📌 검색 버튼 클릭 (경고 알람)
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000);
+    } else {
+      router.push(`/searchresults?query=${encodeURIComponent(searchQuery)}`);
     }
-
   };
 
   return (
