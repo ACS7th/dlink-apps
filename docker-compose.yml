@@ -41,6 +41,26 @@ services:
     networks:
       - dlink_net
 
+  alcohol-service:
+    image: alcohol-service:dev
+    build:
+      context: ./spring-app/
+      dockerfile: ./Dockerfile-alcohol
+    restart: always
+    ports:
+      - "9992:9992"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URI: ${SPRING_DATASOURCE_URI}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SERVER_PORT: 9992
+    volumes:
+      - ./spring-app/alcohols/build:/app/alcohols/build
+      - ./spring-app/alcohols/src:/app/alcohols/src
+    networks:
+      - dlink_net
+
   next-app:
     image: next-app:dev
     build:
