@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: dlink-app
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+    group:
+      prod:
+        - prod
+      dev:
+        - dev
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URI}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+server:
+  port: ${SPRING_SERVER_PORT}
+
+jwt:
+  secret-key: ${SPRING_JWT_SECRET_KEY}

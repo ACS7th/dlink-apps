@@ -90,7 +90,7 @@ export const SignUp = () => {
             <Formik initialValues={initialValues} onSubmit={handleRegister}>
                 {({ values, errors, touched, handleChange, handleSubmit }) => (
                     <>
-                        <div className="flex flex-col w-2/3 gap-4 mb-4">
+                        <div className="flex flex-col w-full md:w-1/2 gap-4 mb-4">
                             <Input
                                 variant="bordered"
                                 label="이메일"

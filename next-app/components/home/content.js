@@ -32,7 +32,7 @@ export default function Content() {
       {/* 로고 */}
       <NextImage className="mb-6" src={resolvedTheme === 'dark' ? '/LOGO3.png' : '/LOGO2.png'} alt="logo" width={300} height={300} />
       {/* 검색바, 검색 버튼, 이미지 업로드 버튼을 한 줄로 배치 */}
-      <div className="flex space-x-2 w-full items-center mb-10 md:w-1/2 px-4">
+      <div className="flex space-x-2 w-full items-center mb-28 md:w-1/2 px-4">
         {/* 검색 입력창 */}
         <Input
           className="flex-1"

@@ -71,11 +71,10 @@ export default function Login() {
         } finally {
             setIsLoginLoading(false);
         }
-
     };
 
     return (
-        <div className="flex flex-col w-2/3">
+        <div className="flex flex-col w-full md:w-1/2">
             <div className="text-center text-[25px] font-bold mb-6">로그인</div>
 
             <div className="flex flex-col gap-4">
@@ -100,12 +99,16 @@ export default function Login() {
                     errorMessage={passwordError}
                     onChange={handlePasswordChange}
                 />
-                {error && (
-                    <Alert isClosable className="text-sm md:text-base" color="danger">
-                        {error}
-                    </Alert>
-                )}
             </div>
+            {error && (
+                <Alert
+                    isClosable
+                    className="mt-4 text-sm md:text-base"
+                    color="danger"
+                >
+                    {error}
+                </Alert>
+            )}
 
             <div className="flex justify-center mt-6">
                 <Button
