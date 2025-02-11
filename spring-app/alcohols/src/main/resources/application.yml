@@ -10,5 +10,6 @@ spring:
       dev:
         - dev
 
-  datasource:
-    url: mongodb://asordk.synology.me:27017/alcohol_db
+  data:
+    mongodb:
+      uri: ${SPRING_DATASOURCE_URI}
