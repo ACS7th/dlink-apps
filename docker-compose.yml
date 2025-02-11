@@ -13,6 +13,7 @@ services:
       SERVER_PORT: 9999
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       AUTH_SERVICE_URI: ${AUTH_SERVICE_URI}
+      ALCOHOL_SERVICE_URI: ${ALCOHOL_SERVICE_URI}
     volumes:
       - ./spring-app/api-gateway/build:/app/api-gateway/build
       - ./spring-app/api-gateway/src:/app/api-gateway/src
