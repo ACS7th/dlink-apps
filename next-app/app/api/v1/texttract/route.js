@@ -1,10 +1,6 @@
 import { TextractClient, AnalyzeDocumentCommand } from "@aws-sdk/client-textract";
 import { NextResponse } from "next/server";
 
-export const config = {
-  runtime: "nodejs",
-};
-
 const textract = new TextractClient({
   region: process.env.AWS_REGION,
   credentials: {
@@ -13,7 +9,7 @@ const textract = new TextractClient({
   },
 });
 
-// Next.js API Route: 이미지 업로드 & Textract 실행
+// ✅ 이미지에서 텍스트 추출 API
 export async function POST(req) {
   try {
     const formData = await req.formData();
@@ -23,10 +19,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "파일이 없습니다." }, { status: 400 });
     }
 
-    // ✅ 올바른 파일 변환 방식 (Buffer 사용)
     const imageBuffer = Buffer.from(await file.arrayBuffer());
-
-    // AWS Textract 실행
     const textractCommand = new AnalyzeDocumentCommand({
       Document: { Bytes: imageBuffer },
       FeatureTypes: ["FORMS"],
@@ -34,11 +27,10 @@ export async function POST(req) {
 
     const textractResponse = await textract.send(textractCommand);
 
-    // 추출된 텍스트 가져오기
     const extractedText = textractResponse.Blocks
       .filter((b) => b.BlockType === "LINE")
       .map((l) => l.Text)
-      .join("\n");
+      .join(" ");
 
     console.log("📌 추출된 텍스트:", extractedText);
 
