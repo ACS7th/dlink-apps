@@ -24,7 +24,7 @@ export default function ProductInfo() {
       </div>
       <div>
         <Progress
-          className="max-w-md"
+          className="max-w"
           color="warning"
           formatOptions={{ style: "currency", currency: "ARS" }}
           label="도수"

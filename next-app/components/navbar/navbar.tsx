@@ -54,7 +54,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                                 href="/login"
                                 variant="light"
                                 startContent={<LoginIcon />}
-                                className="px-0"
+                                className="px-0 text-white"
                             >
                                 Login
                             </Button>
@@ -64,7 +64,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                                 href="/signup"
                                 variant="light"
                                 startContent={<UserIcon />}
-                                className="px-0"
+                                className="px-0 text-white"
                             >
                                 Sign up
                             </Button>
