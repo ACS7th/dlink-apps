@@ -1,10 +1,10 @@
 "use client";
 
 import Content from "@/components/home/content";
-import YangjuSearchResults from "@/components/yangjus-searchresults/searchResults";
-import WineSearchResults from "@/components/wines-searchresults/searchResults";
 import { ScrollShadow } from "@heroui/react";
 import { Tabs, Tab } from "@heroui/tabs";
+import WineSearchResultsPage from "@/components/searchresults/wineSearchResults";
+import YangjuSearchResults from "@/components/searchresults/yangjuSearchResults";
 
 export default function Search() {
   const tabs = [
@@ -18,7 +18,7 @@ export default function Search() {
         <Tabs aria-label="Dynamic tabs" items={tabs} fullWidth>
           {tabs.map((tab) => (
             <Tab key={tab.id} title={tab.label}>
-              {tab.id === "Wine" ? <WineSearchResults /> : <YangjuSearchResults />}
+              {tab.id === "Wine" ? <WineSearchResultsPage/> : <YangjuSearchResults />}
             </Tab>
           ))}
         </Tabs>
