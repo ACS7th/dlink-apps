@@ -105,15 +105,15 @@ export default function SearchResultsPage() {
         {searchResults.map((result) => (
           <div
             key={result.id}
-            className="border border-gray-300 rounded-xl p-4 shadow-md hover:shadow-xl transition duration-300 flex flex-col items-center cursor-pointer"
+            className="border rounded-xl p-4 shadow-md hover:shadow-xl transition duration-300 flex flex-col items-center cursor-pointer"
             onClick={() => handleCardClick(result.id)}
           >
             <Image
-              src={result.image || "/LOGE.png"}
+              src={result.image || "/LOGO4.png"}
               alt={result.name}
               width={150}
               height={200}
-              className="rounded-md border border-gray-400"
+              className="rounded-md border "
             />
             <h2 className="text-center text-sm font-semibold mt-3">
               {result.korName}

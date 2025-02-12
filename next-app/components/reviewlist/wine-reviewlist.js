@@ -101,7 +101,7 @@ export default function ReviewList() {
       content: (
         <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
           <CardBody>
-            <div className="flex justify-between space-x-2 mb-4">
+            <div className="flex justify-evenly space-x-2 mb-4">
               {Object.keys(recommendations).map((category) => (
                 <Button
                   key={category}
