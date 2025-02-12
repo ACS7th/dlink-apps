@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class YangjusController {
 
-    private final YangjuService alcoholService;
+    private final YangjuService yangjuService;
 
     @GetMapping("/yangjus")
     public Page<Yangju> getAllAlcohols(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return alcoholService.findAllYangjus(page, size);
+        return yangjuService.findAllYangjus(page, size);
     }
 
     @GetMapping("/yangjus/search")
@@ -28,6 +28,6 @@ public class YangjusController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return alcoholService.searchYangjusByKeyword(keyword, page, size);
+        return yangjuService.searchYangjusByKeyword(keyword, page, size);
     }
 }
