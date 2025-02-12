@@ -1,7 +1,6 @@
 package site.dlink.alcohols.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.data.domain.Page;
@@ -55,8 +54,7 @@ public class YangjuService {
                 .multiMatch(m -> m
                         .query(keyword)
                         .fuzziness("AUTO")
-                        .analyzer("nori_edge_ngram_analyzer")
-                        .fields("korName")));
+                        .fields("korName", "engName")));
 
         NativeQuery query = NativeQuery.builder()
                 .withQuery(multiMatchQuery)
@@ -64,8 +62,6 @@ public class YangjuService {
                 .build();
 
         SearchHits<Yangju> searchHits = elasticsearchOperations.search(query, Yangju.class, indexCoordinates);
-
-        log.info(searchHits.toString());
 
         List<Yangju> results = searchHits.stream()
                 .map(hit -> hit.getContent())

@@ -10,6 +10,8 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
+
+import site.dlink.alcohols.constants.AlcoholConstants;
 import site.dlink.alcohols.entity.Wine;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class WineService {
     private final ElasticsearchOperations elasticsearchOperations;
 
     public Page<Wine> searchWinesByKeyword(String keyword, int page, int size) {
-        IndexCoordinates indexCoordinates = IndexCoordinates.of("wines");
+        IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
         NativeQuery query = NativeQuery.builder()
                 .withQuery(q -> q.multiMatch(m -> m
@@ -43,7 +45,7 @@ public class WineService {
     }
 
     public Page<Wine> findAllWines(int page, int size) {
-        IndexCoordinates indexCoordinates = IndexCoordinates.of("wines");
+        IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
         NativeQuery query = NativeQuery.builder()
                 .withQuery(q -> q.matchAll(m -> m))
