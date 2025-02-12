@@ -11,7 +11,7 @@ export default function SearchResultsPage() {
   const router = useRouter();
 
   const [searchResults, setSearchResults] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const size = 10;
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -36,7 +36,7 @@ export default function SearchResultsPage() {
         console.log("[API 응답 데이터]:", fetchedResults);
 
         // 첫 페이지면 새로 세팅, 그 이후 페이지면 기존 결과에 추가
-        if (pageNumber === 1) {
+        if (pageNumber === 0) {
           setSearchResults(fetchedResults);
         } else {
           setSearchResults((prev) => [...prev, ...fetchedResults]);
@@ -52,10 +52,10 @@ export default function SearchResultsPage() {
     [keyword]
   );
 
-  // 검색어 변경 시 초기 데이터 로드 (page 1)
+  // 검색어 변경 시 초기 데이터 로드 (page 0)
   useEffect(() => {
-    setPage(1);
-    fetchResults(1);
+    setPage(0);
+    fetchResults(0);
   }, [keyword, fetchResults]);
 
   // 무한 스크롤에 의해 다음 페이지를 불러오는 함수
@@ -109,7 +109,7 @@ export default function SearchResultsPage() {
             onClick={() => handleCardClick(result.id)}
           >
             <Image
-              src={result.image || "@/public/LOGE.png"}
+              src={result.image || "/LOGE.png"}
               alt={result.name}
               width={150}
               height={200}
