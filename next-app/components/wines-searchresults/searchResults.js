@@ -92,7 +92,7 @@ export default function SearchResultsPage() {
 
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);
-    router.push(`/yangju-details/${id}`);
+    router.push(`/wine-details/${id}`);
   };
 
   return (
