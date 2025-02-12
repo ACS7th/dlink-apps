@@ -9,3 +9,16 @@ spring:
           uri: ${AUTH_SERVICE_URI}
           predicates:
             - Path=/api/v1/auth/**
+        - id: alcohols-service
+          uri: ${ALCOHOL_SERVICE_URI}
+          predicates:
+            - Path=/api/v1/alcohols/**
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    urls:
+      - name: Auth Service
+        url: /api/v1/auth/v3/api-docs
+      - name: Alcohol Service
+        url: /api/v1/alcohols/v3/api-docs

@@ -36,7 +36,6 @@ export const NavbarWrapper = ({ children }: Props) => {
                 </NavbarContent>
 
                 <NavbarContent justify="end">
-                    <DarkModeSwitch />
                 </NavbarContent>
 
                 <NavbarContent

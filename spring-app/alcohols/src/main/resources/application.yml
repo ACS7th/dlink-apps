@@ -10,6 +10,7 @@ spring:
       dev:
         - dev
 
-  data:
-    mongodb:
-      uri: ${SPRING_DATASOURCE_URI}
+  elasticsearch:
+    uris: ${ES_DATASOURCE_URI}
+    # username:
+    # password:
