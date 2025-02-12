@@ -20,27 +20,27 @@ services:
     networks:
       - dlink_net
 
-  auth-service:
-    image: auth-service:dev
-    build:
-      context: ./spring-app
-      dockerfile: ./Dockerfile-auth
-    restart: always
-    ports:
-      - "9991:9991"
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URI: ${SPRING_DATASOURCE_URI}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      NEXT_URI: ${NEXT_URI}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      SERVER_PORT: 9991
-    volumes:
-      - ./spring-app/auth/build:/app/auth/build
-      - ./spring-app/auth/src:/app/auth/src
-    networks:
-      - dlink_net
+  # auth-service:
+  #   image: auth-service:dev
+  #   build:
+  #     context: ./spring-app
+  #     dockerfile: ./Dockerfile-auth
+  #   restart: always
+  #   ports:
+  #     - "9991:9991"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  #     SPRING_DATASOURCE_URI: ${SPRING_DATASOURCE_URI}
+  #     SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+  #     SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+  #     NEXT_URI: ${NEXT_URI}
+  #     JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  #     SERVER_PORT: 9991
+  #   volumes:
+  #     - ./spring-app/auth/build:/app/auth/build
+  #     - ./spring-app/auth/src:/app/auth/src
+  #   networks:
+  #     - dlink_net
 
   alcohol-service:
     image: alcohol-service:dev

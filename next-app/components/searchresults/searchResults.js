@@ -111,7 +111,7 @@ export default function SearchResultsPage() {
   }, [loadMoreItems]);
 
   const handleCardClick = (id) => {
-    router.push(`/details/${id}`);
+    router.push(`/yangju-details/${id}`);
   };
 
   return (
