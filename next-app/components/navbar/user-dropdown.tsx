@@ -14,7 +14,6 @@ import customSignOut from "@/helpers/signOut";
 import { useSession } from "next-auth/react";
 
 export const UserDropdown = () => {
-    const router = useRouter();
     const { data: session } = useSession();
 
     return (

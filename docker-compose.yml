@@ -13,6 +13,7 @@ services:
       SERVER_PORT: 9999
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       AUTH_SERVICE_URI: ${AUTH_SERVICE_URI}
+      ALCOHOL_SERVICE_URI: ${ALCOHOL_SERVICE_URI}
     volumes:
       - ./spring-app/api-gateway/build:/app/api-gateway/build
       - ./spring-app/api-gateway/src:/app/api-gateway/src
@@ -38,6 +39,27 @@ services:
     volumes:
       - ./spring-app/auth/build:/app/auth/build
       - ./spring-app/auth/src:/app/auth/src
+    networks:
+      - dlink_net
+
+  alcohol-service:
+    image: alcohol-service:dev
+    build:
+      context: ./spring-app/
+      dockerfile: ./Dockerfile-alcohol
+    restart: always
+    ports:
+      - "9992:9992"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URI: ${SPRING_DATASOURCE_URI}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      ES_DATASOURCE_URI: ${ES_DATASOURCE_URI}
+      SERVER_PORT: 9992
+    volumes:
+      - ./spring-app/alcohols/build:/app/alcohols/build
+      - ./spring-app/alcohols/src:/app/alcohols/src
     networks:
       - dlink_net
 

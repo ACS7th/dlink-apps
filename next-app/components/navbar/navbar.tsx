@@ -28,7 +28,7 @@ export const NavbarWrapper = ({ children }: Props) => {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Navbar
                 isBordered
-                className="w-full"
+                className="bg-red-900"
                 classNames={{ wrapper: "w-full max-w-full" }}
             >
                 <NavbarContent className="md:hidden">
@@ -36,7 +36,6 @@ export const NavbarWrapper = ({ children }: Props) => {
                 </NavbarContent>
 
                 <NavbarContent justify="end">
-                    <DarkModeSwitch />
                 </NavbarContent>
 
                 <NavbarContent
@@ -54,7 +53,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                                 href="/login"
                                 variant="light"
                                 startContent={<LoginIcon />}
-                                className="px-0"
+                                className="px-0 text-white"
                             >
                                 Login
                             </Button>
@@ -64,7 +63,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                                 href="/signup"
                                 variant="light"
                                 startContent={<UserIcon />}
-                                className="px-0"
+                                className="px-0 text-white"
                             >
                                 Sign up
                             </Button>

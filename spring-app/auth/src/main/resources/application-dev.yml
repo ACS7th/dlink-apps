@@ -10,9 +10,9 @@ spring:
     #   hibernate:
     #     format_sql: true
 
-# springdoc:
-#   swagger-ui:
-#     path: /swagger-ui.html
+springdoc:
+  api-docs:
+    path: /api/v1/auth/v3/api-docs
 
 logging:
   level:

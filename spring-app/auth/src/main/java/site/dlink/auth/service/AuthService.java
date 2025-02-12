@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.dto.JoinDto;
 import site.dlink.auth.dto.SocialLoginRequest;
 import site.dlink.auth.entity.User;
@@ -17,6 +18,7 @@ import site.dlink.auth.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,6 +30,7 @@ public class AuthService {
 
         joinDto.setPassword(passwordEncoder.encode(joinDto.getPassword()));
         User newUser = modelMapper.map(joinDto, User.class);
+        log.info("가입 완료");
         return userRepository.save(newUser);
     }
 
@@ -54,6 +57,7 @@ public class AuthService {
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
+        log.info("소셜 가입 완료");
         return userRepository.save(user);
     }
 
@@ -64,7 +68,7 @@ public class AuthService {
 
         // JWT 발급
         return jwtTokenProvider.createToken(
-                user.getUserId(),
+                user.getId(),
                 user.getEmail(),
                 user.getRoles());
     }

@@ -36,7 +36,7 @@ public class JwtTokenProvider {
     @Autowired
     private UserRepository userRepository;
 
-    public String createToken(long userId, String username, List<String> roles) {
+    public String createToken(String userId, String username, List<String> roles) {
         // JWT 토큰 생성
         String jwt = Jwts.builder()
                 .signWith(getShaKey(), Jwts.SIG.HS512)      // 서명에 사용할 키와 알고리즘 설정
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
                 .add("typ", JwtConstants.TOKEN_TYPE)                   // 헤더 설정 (JWT)
                 .and()
                 .expiration(new Date(System.currentTimeMillis() + 864000000))  // 토큰 만료 시간 설정 (10일)
-                .claim("uid", "" + userId)                                // 클레임 설정: 사용자 번호
+                .claim("uid", userId)                                // 클레임 설정: 사용자 번호
                 .claim("usn", username)                                     // 클레임 설정: 사용자 아이디
                 .claim("rol", roles)                                      // 클레임 설정: 권한
                 .compact();
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
                 log.warn("JWT 클레임에 사용자 식별자(uid)가 없습니다.");
                 return null;
             }
-            long userId = Long.parseLong(uidObj.toString());
+            String userId = uidObj.toString();
 
             // 사용자 이름/아이디
             String username = (String) claims.get("usn");
@@ -101,7 +101,7 @@ public class JwtTokenProvider {
             // DB에서 사용자 조회
             User user;
             try {
-                user = userRepository.findByUserId(userId).orElse(null);
+                user = userRepository.findById(userId).orElseGet(null);
                 if (user == null) {
                     log.warn("DB에서 해당 사용자(userId={})를 찾을 수 없습니다.", userId);
                     return null;
