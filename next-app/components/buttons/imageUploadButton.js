@@ -11,6 +11,7 @@ export default function ImageUploadButton() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [isImageUploading, setIsImageUploading] = useState(false);
   const router = useRouter();
 
   const triggerFileInput = () => {
@@ -36,15 +37,15 @@ export default function ImageUploadButton() {
         return;
       }
 
-      setErrorMessage("");
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 1000);
+      // setErrorMessage("");
+      // setShowAlert(true);
+      // setTimeout(() => setShowAlert(false), 1000);
+      setIsImageUploading(true);
 
       const formData = new FormData();
       formData.append("file", file);
 
       try {
-        // 1️⃣ 텍스트 추출 API 호출
         const textResponse = await axios.post("/api/v1/texttract", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -54,13 +55,15 @@ export default function ImageUploadButton() {
       } catch (error) {
         console.error("❌ 업로드 오류:", error);
         setErrorMessage("파일 업로드 또는 검색 실패");
+      } finally {
+        setIsImageUploading(false);
       }
     }
   };
 
   return (
     <div className="flex flex-col mr-2">
-      <Button isIconOnly color="primary" className="bg-red-900" onPress={triggerFileInput}>
+      <Button isLoading={isImageUploading} isIconOnly color="primary" className="bg-red-900" onPress={triggerFileInput}>
         <CameraIcon />
       </Button>
 
