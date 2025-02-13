@@ -1,4 +1,4 @@
-package site.dlink.alcohols.config;
+package site.dlink.pairing.config;
 
 import java.util.Arrays;
 
@@ -25,7 +25,6 @@ public class SwaggerConfig {
             .bearerFormat("JWT")
             .in(SecurityScheme.In.HEADER)
             .name(JwtConstants.TOKEN_HEADER);
-
     SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
         return new OpenAPI()

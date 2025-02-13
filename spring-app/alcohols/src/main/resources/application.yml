@@ -2,14 +2,6 @@ spring:
   application:
     name: alcohols
 
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
-    group:
-      prod:
-        - prod
-      dev:
-        - dev
-
   elasticsearch:
     uris: ${ES_DATASOURCE_URI}
     # username:

@@ -1,4 +1,4 @@
-package site.dlink.alcohols.config;
+package site.dlink.review.config;
 
 import java.util.Arrays;
 
@@ -15,7 +15,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import site.dlink.common.constants.JwtConstants;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "alcohols Service API", version = "v1"))
+@OpenAPIDefinition(info = @Info(title = "review Service API", version = "v1"))
 public class SwaggerConfig {
     @Bean
     public OpenAPI authOpenAPI() {
@@ -25,7 +25,6 @@ public class SwaggerConfig {
             .bearerFormat("JWT")
             .in(SecurityScheme.In.HEADER)
             .name(JwtConstants.TOKEN_HEADER);
-
     SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
         return new OpenAPI()

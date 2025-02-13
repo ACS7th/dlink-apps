@@ -5,4 +5,4 @@ spring:
 
 springdoc:
   api-docs:
-    path: /api/v1/pairing/v3/api-docs
+    path: /api/v1/highball/v3/api-docs
