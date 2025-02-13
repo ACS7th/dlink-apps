@@ -1,8 +1,5 @@
 package site.dlink.alcohols.document.es;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -14,7 +11,6 @@ import lombok.Data;
 @Document(indexName = "wines")
 public class WineEs {
     @Id
-    @Field("_id")
     private String id;
 
     @Field(type = FieldType.Text)
