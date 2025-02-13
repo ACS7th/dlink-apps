@@ -84,7 +84,7 @@ export default function ReviewList() {
 
           <div className="flex justify-center mt-4">
             <Link
-              href="/"
+              href="/reviewlists"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-xs"
