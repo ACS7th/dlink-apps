@@ -2,10 +2,9 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
-import Image from "next/image";
-import { Spinner } from "@heroui/react";
+import { Card, CardBody, CardFooter, Image, Spinner, Tooltip } from "@heroui/react";
 
-export default function SearchResultsPage() {
+export default function YangjuResultsPage() {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("query");
   const router = useRouter();
@@ -24,7 +23,7 @@ export default function SearchResultsPage() {
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/v1/alcohols/wines/search?keyword=${encodeURIComponent(
+          `/api/v1/alcohols/yangjus/search?keyword=${encodeURIComponent(
             keyword
           )}&page=${pageNumber}&size=${size}`
         );
@@ -92,33 +91,34 @@ export default function SearchResultsPage() {
 
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);
-    router.push(`/wine-details/${id}`);
+    router.push(`/yangju-details/${id}`);
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold text-center mb-4">
-        "{keyword}"에 대한 검색 결과: {searchResults.length}건
+    <div className="px-2">
+      <h1 className="text-md text-center mb-4">
+        <b>{keyword}</b>에 대한 검색 결과: {searchResults.length}건
       </h1>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {searchResults.map((result) => (
-          <div
-            key={result.id}
-            className="border rounded-xl p-4 shadow-md hover:shadow-xl transition duration-300 flex flex-col items-center cursor-pointer"
-            onClick={() => handleCardClick(result.id)}
-          >
-            <Image
-              src={result.image || "/LOGO4.png"}
-              alt={result.name}
-              width={150}
-              height={200}
-              className="rounded-md border "
-            />
-            <h2 className="text-center text-sm font-semibold mt-3">
-              {result.korName}
-            </h2>
-          </div>
+          <Card isPressable onPress={() => handleCardClick(result.id)} key={result.id} className="pt-2 flex justify-center">
+            <CardBody className="overflow-visible pb-0">
+              <Image
+                isZoomed
+                shadow="sm"
+                alt={result.name}
+                className="object-cover rounded-xl"
+                src={result.image || "/LOGO4.png"}
+                width={270}
+              />
+            </CardBody>
+            <CardFooter className="flex flex-col justify-center">
+              <Tooltip content={result.name}>
+                <p className="font-bold text-md">{result.korName}</p>
+              </Tooltip>
+              <p className="text-default-400 text-sm">{result.origin}</p>
+            </CardFooter>
+          </Card>
         ))}
       </div>
 
@@ -126,7 +126,7 @@ export default function SearchResultsPage() {
         {loading && <Spinner />}
         {!loading && hasMore && <p>더 많은 결과를 불러오는 중...</p>}
         {!loading && searchResults.length === 0 && (
-          <p className="text-center text-gray-500 text-lg">
+          <p className="text-center text-gray-500 mt-6 text-lg">
             검색 결과가 없습니다.
           </p>
         )}
