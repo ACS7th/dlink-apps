@@ -124,7 +124,6 @@ export default function YangjuResultsPage() {
 
       <div ref={loaderRef} className="h-10 flex justify-center items-center mt-4">
         {loading && <Spinner />}
-        {!loading && hasMore && <p>더 많은 결과를 불러오는 중...</p>}
         {!loading && searchResults.length === 0 && (
           <p className="text-center text-gray-500 mt-6 text-lg">
             검색 결과가 없습니다.

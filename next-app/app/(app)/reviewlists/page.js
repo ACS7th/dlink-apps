@@ -15,6 +15,7 @@ import {
 import { Card, CardBody } from "@heroui/card";
 import { User } from "@heroui/react";
 import StarRating from "@/components/starrating/starRating";
+import Like from "@/components/like-buttons/like-buttons"
 
 export default function ReviewHeader() {
   const { resolvedTheme } = useTheme();
@@ -68,7 +69,10 @@ export default function ReviewHeader() {
                   readOnly
                 />
               </div>
-              <p className="text-sm mt-4">{review.comment}</p>
+              <div className="flex justify-between items-center mt-4">
+                <p className="text-sm mt-4 flex-1">{review.comment}</p>
+                <Like className="ml-4" />
+              </div>
             </CardBody>
           </Card>
         ))}
