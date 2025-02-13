@@ -63,8 +63,8 @@ export default function ImageUploadButton() {
 
   return (
     <div className="flex flex-col mr-2">
-      <Button isLoading={isImageUploading} isIconOnly color="primary" className="bg-red-900" onPress={triggerFileInput}>
-        <CameraIcon />
+      <Button isLoading={isImageUploading} isIconOnly color="primary" className="bg-primary" onPress={triggerFileInput}>
+        <CameraIcon fill="white" />
       </Button>
 
       <input

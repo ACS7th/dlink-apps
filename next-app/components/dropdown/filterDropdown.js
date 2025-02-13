@@ -1,32 +1,8 @@
-"use client";
-import {
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownSection,
-    DropdownTrigger,
-    Image,
-} from "@heroui/react";
-import React, { useState } from "react";
-import { AcmeIcon } from "../icons/acme-icon";
-import { AcmeLogo } from "../icons/acmelogo";
-import { BottomIcon } from "../icons/sidebar/bottom-icon";
-import { DevIcon } from "../icons/sidebar/dev-icon";
-import { DarkModeSwitch } from "../navbar/darkmodeswitch";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/react";
+import FunnelIcon from "@/components/icons/funnelicon";
 
-interface Company {
-    name: string;
-    location: string;
-    logo: React.ReactNode;
-}
 
-export const CompaniesDropdown = () => {
-    const [company, setCompany] = useState<Company>({
-        name: "DLink",
-        location: "ACS7th",
-        logo: <Image src="favicon.png" alt="DLink" width={60} />,
-    });
-
+const FilterDropdown = () => {
     return (
         <>
             <Dropdown
@@ -64,7 +40,8 @@ export const CompaniesDropdown = () => {
                     </DropdownSection>
                 </DropdownMenu>
             </Dropdown>
-            <DarkModeSwitch />
         </>
-    );
-};
+    )
+}
+
+export default FilterDropdown;

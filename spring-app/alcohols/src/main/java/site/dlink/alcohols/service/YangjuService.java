@@ -13,7 +13,8 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import site.dlink.alcohols.constants.AlcoholConstants;
-import site.dlink.alcohols.entity.Yangju;
+import site.dlink.alcohols.document.YangjuEs;
+import site.dlink.alcohols.repository.es.YangjuEsRepository;
 
 import java.lang.Character.UnicodeBlock;
 import java.util.Arrays;
@@ -26,8 +27,13 @@ import java.util.stream.Collectors;
 public class YangjuService {
 
         private final ElasticsearchOperations elasticsearchOperations;
+        private final YangjuEsRepository yangjuRepository;
 
-        public Page<Yangju> findAllYangjus(int page, int size) {
+        public YangjuEs findById(String id) {
+                return yangjuRepository.findById(id).orElse(null);
+        }
+
+        public Page<YangjuEs> findAllYangjus(int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(Arrays.stream(AlcoholConstants.YANGJU_INDICES)
                                 .map(index -> AlcoholConstants.DATABASE + "." + index)
                                 .toArray(String[]::new));
@@ -37,16 +43,16 @@ public class YangjuService {
                                 .withPageable(PageRequest.of(page, size))
                                 .build();
 
-                SearchHits<Yangju> searchHits = elasticsearchOperations.search(query, Yangju.class, indexCoordinates);
+                SearchHits<YangjuEs> searchHits = elasticsearchOperations.search(query, YangjuEs.class, indexCoordinates);
 
-                List<Yangju> results = searchHits.stream()
+                List<YangjuEs> results = searchHits.stream()
                                 .map(hit -> hit.getContent())
                                 .collect(Collectors.toList());
 
                 return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
         }
 
-        public Page<Yangju> searchYangjusByKeyword(String keyword, int page, int size) {
+        public Page<YangjuEs> searchYangjusByKeyword(String keyword, int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(Arrays.stream(AlcoholConstants.YANGJU_INDICES)
                                 .map(index -> AlcoholConstants.DATABASE + "." + index)
                                 .toArray(String[]::new));
@@ -69,9 +75,9 @@ public class YangjuService {
                                 .withPageable(PageRequest.of(page, size))
                                 .build();
 
-                SearchHits<Yangju> searchHits = elasticsearchOperations.search(query, Yangju.class, indexCoordinates);
+                SearchHits<YangjuEs> searchHits = elasticsearchOperations.search(query, YangjuEs.class, indexCoordinates);
 
-                List<Yangju> results = searchHits.stream()
+                List<YangjuEs> results = searchHits.stream()
                                 .map(hit -> hit.getContent())
                                 .collect(Collectors.toList());
 

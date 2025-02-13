@@ -36,13 +36,9 @@ export default function ProductInfo() {
             {tasteProfile.map((taste, index) => (
               <div key={index} className="flex items-center space-x-4">
                 <span className="text-sm font-semibold w-16 text-right">{taste.label}</span>
+                
+                <Progress value={taste.value} />
 
-                <div className="w-full bg-gray-300 rounded-full h-4 relative overflow-hidden shadow-inner">
-                  <div
-                    className="bg-red-700 h-full rounded-full transition-all duration-700 ease-in-out"
-                    style={{ width: `${taste.value}%` }}
-                  ></div>
-                </div>
                 <span className="text-xs w-8 text-left">{taste.value}%</span>
               </div>
             ))}

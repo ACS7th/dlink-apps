@@ -14,7 +14,7 @@ export default function ProductInfo() {
 
   return (
     <>
-      <Card className="p-4">
+      <Card  className="p-4">
         <div className="flex items-center space-x-7 mb-4">
           <div className="flex-shrink-0">
             <Image
@@ -31,23 +31,6 @@ export default function ProductInfo() {
             <small className="text-default-500">12 Tracks</small>
           </div>
         </div>
-        <CardBody className="p-1">
-          <div className="space-y-3">
-            {tasteProfile.map((taste, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <span className="text-sm font-semibold w-16 text-right">{taste.label}</span>
-
-                <div className="w-full bg-gray-300 rounded-full h-4 relative overflow-hidden shadow-inner">
-                  <div
-                    className="bg-red-700 h-full rounded-full transition-all duration-700 ease-in-out"
-                    style={{ width: `${taste.value}%` }}
-                  ></div>
-                </div>
-                <span className="text-xs w-8 text-left">{taste.value}%</span>
-              </div>
-            ))}
-          </div>
-        </CardBody>
       </Card>
     </>
   );

@@ -8,8 +8,8 @@ import YangjuSearchResults from "@/components/searchresults/yangjuSearchResults"
 
 export default function Search() {
   const tabs = [
-    { id: "Wine", label: "Wine" },
-    { id: "Yangju", label: "Yangju" },
+    { id: "Wine", label: "와인" },
+    { id: "Yangju", label: "양주" },
   ];
 
   return (

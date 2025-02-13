@@ -123,7 +123,6 @@ export default function WineSearchResultsPage() {
 
       <div ref={loaderRef} className="h-10 flex justify-center items-center mt-6">
         {loading && <Spinner />}
-        {!loading && hasMore && <p>더 많은 결과를 불러오는 중...</p>}
       </div>
 
       {!loading && searchResults.length === 0 && (

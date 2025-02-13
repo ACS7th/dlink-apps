@@ -16,8 +16,14 @@ module.exports = {
   plugins: [
     heroui({
       themes: {
+        light: {
+          colors: {
+            primary: "#900020",
+          }
+        },
         dark: {
           colors: {
+            primary: "#900020",
             background: "#202020",
           },
         },

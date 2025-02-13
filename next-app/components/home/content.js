@@ -8,6 +8,7 @@ import ImageUploadButton from "@/components/buttons/imageUploadButton";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import FunnelIcon from "@/components/icons/funnelicon";
 
 export default function Content() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,6 +29,7 @@ export default function Content() {
 
   return (
     <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
+      
       <NextImage className="mb-6" src={resolvedTheme === 'dark' ? '/LOGO3.png' : '/LOGO2.png'} alt="logo" width={300} height={300} />
       <div className="flex space-x-2 w-full items-center mb-28 md:w-1/2 px-4">
         <Input
@@ -45,7 +47,7 @@ export default function Content() {
 
         <Button
           color="primary"
-          className="bg-red-900"
+          className="bg-primary"
           isIconOnly
           onPress={handleSearch}
         >

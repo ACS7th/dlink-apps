@@ -9,7 +9,3 @@ spring:
         - prod
       dev:
         - dev
-
-  data:
-    mongodb:
-      uri: ${SPRING_DATASOURCE_URI}

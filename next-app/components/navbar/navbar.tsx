@@ -28,7 +28,7 @@ export const NavbarWrapper = ({ children }: Props) => {
         <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Navbar
                 isBordered
-                className="bg-red-900"
+                className="bg-primary"
                 classNames={{ wrapper: "w-full max-w-full" }}
             >
                 <NavbarContent className="md:hidden">
@@ -43,7 +43,7 @@ export const NavbarWrapper = ({ children }: Props) => {
                     className="w-fit data-[justify=end]:flex-grow-0"
                 >
                     {status === "loading" ? (
-                        <Spinner size="sm" color="primary" />
+                        <Spinner size="sm" color="white" />
                     ) : status === "authenticated" ? (
                         <UserDropdown />
                     ) : (

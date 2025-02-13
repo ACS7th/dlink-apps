@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
                     formData.append("password", credentials.password);
 
                     const response = await fetch(
-                        `${process.env.SPRING_URI as string}/login`,
+                        `${process.env.SPRING_URI as string}/api/v1/auth/login`,
                         {
                             method: "POST",
                             headers: {

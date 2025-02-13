@@ -12,7 +12,10 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
 import site.dlink.alcohols.constants.AlcoholConstants;
-import site.dlink.alcohols.entity.Wine;
+import site.dlink.alcohols.document.WineEs;
+import site.dlink.alcohols.document.WineMongo;
+import site.dlink.alcohols.repository.es.WineEsRepository;
+import site.dlink.alcohols.repository.mongo.WineMongoRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +26,13 @@ import java.util.stream.Collectors;
 public class WineService {
 
         private final ElasticsearchOperations elasticsearchOperations;
+        private final WineMongoRepository wineMongoRepository;
 
-        public Page<Wine> searchWinesByKeyword(String keyword, int page, int size) {
+        public WineMongo findById(String id) {
+               return wineMongoRepository.findById(id).orElse(null);
+        }
+
+        public Page<WineEs> searchWinesByKeyword(String keyword, int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
                 boolean isKorean = keyword.chars().anyMatch(ch -> Character.UnicodeBlock
@@ -42,16 +50,16 @@ public class WineService {
                                 .withPageable(PageRequest.of(page, size))
                                 .build();
 
-                SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
+                SearchHits<WineEs> searchHits = elasticsearchOperations.search(query, WineEs.class, indexCoordinates);
 
-                List<Wine> results = searchHits.stream()
+                List<WineEs> results = searchHits.stream()
                                 .map(hit -> hit.getContent())
                                 .collect(Collectors.toList());
 
                 return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
         }
 
-        public Page<Wine> findAllWines(int page, int size) {
+        public Page<WineEs> findAllWines(int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
                 NativeQuery query = NativeQuery.builder()
@@ -59,10 +67,10 @@ public class WineService {
                                 .withPageable(PageRequest.of(page, size))
                                 .build();
 
-                SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
+                SearchHits<WineEs> searchHits = elasticsearchOperations.search(query, WineEs.class, indexCoordinates);
                 log.info("📜 전체 와인 목록 조회: {}", searchHits.getTotalHits());
 
-                List<Wine> results = searchHits.stream()
+                List<WineEs> results = searchHits.stream()
                                 .map(hit -> hit.getContent())
                                 .collect(Collectors.toList());
 
