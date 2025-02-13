@@ -23,34 +23,7 @@ export default function ReviewHeader() {
   const [modalPlacement, setModalPlacement] = useState("auto");
   const [selectedRating, setSelectedRating] = useState(0);
   const [newReviewText, setNewReviewText] = useState("");
-
-  // ✅ 리뷰 데이터
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      user: "동재재재",
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-      description: "와인 애호가",
-      comment: "와인과 잘 어울리는 풍미가 최고였어요!",
-      rating: 4,
-    },
-    {
-      id: 2,
-      user: "지창창",
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-      description: "술 마스터",
-      comment: "진한 맛과 향이 정말 만족스러웠습니다.",
-      rating: 4,
-    },
-    {
-      id: 3,
-      user: "승훈훈",
-      avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-      description: "초보 와인러",
-      comment: "무난한 맛이었어요. 가성비 괜찮네요!",
-      rating: 4,
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
 
   return (
     <>
@@ -91,7 +64,7 @@ export default function ReviewHeader() {
                 />
                 <StarRating
                   totalStars={5}
-                  onChange={(value) => setSelectedRating(value)}
+                  value={review.rating}
                   readOnly
                 />
               </div>
@@ -110,16 +83,25 @@ export default function ReviewHeader() {
                 <div className="flex justify-end">
                   <StarRating
                     totalStars={5}
-                    onChange={(value) => setSelectedRating(value)}
+                    value={selectedRating}
+                    onChange={(value) => {
+                      setSelectedRating(value)
+                      console.log(value)
+                    }}
+
                   />
                 </div>
                 <Textarea
                   isClearable
                   className="max-w-full"
-                  defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                  placeholder="Description"
+                  placeholder="write review"
                   variant="bordered"
-                  onClear={() => console.log("textarea cleared")}
+                  value={newReviewText}
+                  onChange={(e) => setNewReviewText(e.target.value)}
+                  onClear={() => {
+                    setNewReviewText("")
+                    console.log("textarea cleared")
+                  }}
                 />
               </ModalBody>
               <ModalFooter>
