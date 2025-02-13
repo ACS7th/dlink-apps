@@ -2,11 +2,18 @@ package site.dlink.alcohols.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import site.dlink.alcohols.document.YangjuEs;
+import site.dlink.alcohols.document.es.YangjuEs;
 import site.dlink.alcohols.service.YangjuService;
 
+import org.bson.Document;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/v1/alcohols")
@@ -30,9 +37,5 @@ public class YangjuController {
 
         return yangjuService.searchYangjusByKeyword(keyword, page, size);
     }
-
-    @GetMapping("/yangju/_{id}")
-    public YangjuEs getAlcoholById(@PathVariable String id) {
-        return yangjuService.findById(id);
-    }
+    
 }

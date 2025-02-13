@@ -2,6 +2,9 @@ package site.dlink.alcohols.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -9,11 +12,12 @@ import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import site.dlink.alcohols.constants.AlcoholConstants;
-import site.dlink.alcohols.document.WineEs;
-import site.dlink.alcohols.document.WineMongo;
+import site.dlink.alcohols.document.es.WineEs;
+import site.dlink.alcohols.document.mongodb.WineMongo;
 import site.dlink.alcohols.repository.es.WineEsRepository;
 import site.dlink.alcohols.repository.mongo.WineMongoRepository;
 
@@ -27,9 +31,18 @@ public class WineService {
 
         private final ElasticsearchOperations elasticsearchOperations;
         private final WineMongoRepository wineMongoRepository;
+        private final MongoTemplate mongoTemplate;
 
         public WineMongo findById(String id) {
-               return wineMongoRepository.findById(id).orElse(null);
+                return wineMongoRepository.findById(id).orElse(null);
+        }
+
+        public Document findDocumentById(String id) {
+                ObjectId objectId = new ObjectId(id);
+
+                Document result = mongoTemplate.getDb().getCollection("wine")
+                                .find(new Document("_id", objectId)).first();
+                return result;
         }
 
         public Page<WineEs> searchWinesByKeyword(String keyword, int page, int size) {

@@ -1,14 +1,16 @@
-package site.dlink.alcohols.document;
+package site.dlink.alcohols.document.mongodb;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Document(collection = "alcohols")
 public class YangjuMongo {
 
     @Id
+    @Field("_id")
     private String id;
 
     private String korName;

@@ -1,4 +1,4 @@
-package site.dlink.alcohols.document;
+package site.dlink.alcohols.document.es;
 
 import lombok.Data;
 
@@ -11,6 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Document(indexName = "alcohols")
 public class YangjuEs {
     @Id
+    @Field("_id")
     private String id;
 
     @Field(type = FieldType.Text)

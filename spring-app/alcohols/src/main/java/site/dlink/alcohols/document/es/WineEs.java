@@ -1,4 +1,4 @@
-package site.dlink.alcohols.document;
+package site.dlink.alcohols.document.es;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,7 @@ import lombok.Data;
 @Document(indexName = "wines")
 public class WineEs {
     @Id
+    @Field("_id")
     private String id;
 
     @Field(type = FieldType.Text)
