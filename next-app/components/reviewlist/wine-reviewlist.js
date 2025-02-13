@@ -75,7 +75,7 @@ export default function ReviewList() {
                     name={review.user}
                     description={review.description}
                   />
-                  <StarRating totalStars={5} onChange={(value) => setSelectedRating(value)} />
+                  <StarRating totalStars={5} onChange={(value) => setSelectedRating(value)} readOnly />
                 </div>
                 <p className="text-sm mt-4">{review.comment}</p>
               </CardBody>
@@ -84,7 +84,7 @@ export default function ReviewList() {
 
           <div className="flex justify-center mt-4">
             <Link
-              href="/"
+              href="/reviewlists"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-xs"
@@ -101,7 +101,7 @@ export default function ReviewList() {
       content: (
         <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
           <CardBody>
-            <div className="flex justify-between space-x-2 mb-4">
+            <div className="flex justify-evenly space-x-2 mb-4">
               {Object.keys(recommendations).map((category) => (
                 <Button
                   key={category}
@@ -128,34 +128,7 @@ export default function ReviewList() {
           </CardBody>
         </Card>
       ),
-    },
-    {
-      id: "highball",
-      label: "하이볼 레시피",
-      content: (
-        <>
-          <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
-            <CardBody>
-              <h4 className="font-semibold text-lg">🍹 기본 하이볼 레시피</h4>
-              <p>1. 잔에 얼음을 가득 채우세요.</p>
-              <p>2. 위스키 50ml를 붓습니다.</p>
-              <p>3. 탄산수 150ml를 천천히 부어줍니다.</p>
-              <p>4. 레몬 슬라이스로 장식하세요.</p>
-            </CardBody>
-          </Card>
-          <div className="flex justify-center mt-4">
-            <Link
-              href="/"
-              isBlock
-              showAnchorIcon
-              className="text-blue-500 hover:underline text-xs"
-            >
-              전체 레시피 보기
-            </Link>
-          </div>
-        </>
-      ),
-    },
+    }
   ];
 
   return (

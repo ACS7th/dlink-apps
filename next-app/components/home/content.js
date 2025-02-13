@@ -16,7 +16,7 @@ export default function Content() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  // 📌 검색 버튼 클릭 (경고 알람)
+  // 📌 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setShowAlert(true);

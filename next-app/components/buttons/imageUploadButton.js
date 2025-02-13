@@ -5,11 +5,14 @@ import { Button } from "@heroui/react";
 import { Alert } from "@heroui/alert";
 import { CameraIcon } from "@/components/icons/cameraicon";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function ImageUploadButton() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const router = useRouter();
 
   const triggerFileInput = () => {
     document.getElementById("file-upload")?.click();
@@ -34,38 +37,33 @@ export default function ImageUploadButton() {
         return;
       }
 
-      setErrorMessage("");
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 1000);
+      // setErrorMessage("");
+      // setShowAlert(true);
+      // setTimeout(() => setShowAlert(false), 1000);
+      setIsImageUploading(true);
 
       const formData = new FormData();
       formData.append("file", file);
 
       try {
-        // 1️⃣ 텍스트 추출 API 호출
         const textResponse = await axios.post("/api/v1/texttract", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        console.log("📌 추출된 텍스트:", textResponse.data.text);
+        router.push(`/searchresults?query=${textResponse.data.text}`)
 
-        // 2️⃣ Elasticsearch 검색 API 호출
-        const searchResponse = await axios.post("/api/v1/imagesearch", {
-          text: textResponse.data.text,
-        });
-
-        console.log("📌 검색 결과:", searchResponse.data.results);
-        setSearchResults(searchResponse.data.results);
       } catch (error) {
         console.error("❌ 업로드 오류:", error);
         setErrorMessage("파일 업로드 또는 검색 실패");
+      } finally {
+        setIsImageUploading(false);
       }
     }
   };
 
   return (
     <div className="flex flex-col mr-2">
-      <Button isIconOnly color="primary" className="bg-red-900" onPress={triggerFileInput}>
+      <Button isLoading={isImageUploading} isIconOnly color="primary" className="bg-red-900" onPress={triggerFileInput}>
         <CameraIcon />
       </Button>
 
