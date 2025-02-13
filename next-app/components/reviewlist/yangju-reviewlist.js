@@ -159,8 +159,8 @@ export default function ReviewList() {
   ];
 
   return (
-    <div className="flex w-full flex-col p-1 rounded-md shadow-md">
-      <Tabs aria-label="Dynamic tabs" items={tabs} fullWidth>
+    <div className="flex w-full flex-col p-1 ">
+      <Tabs aria-label="Dynamic tabs" className="mt-0" items={tabs} fullWidth>
         {(item) => (
           <Tab key={item.id} title={item.label}>
             {item.content}
