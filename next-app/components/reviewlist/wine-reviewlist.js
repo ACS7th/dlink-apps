@@ -75,7 +75,7 @@ export default function ReviewList() {
                     name={review.user}
                     description={review.description}
                   />
-                  <StarRating totalStars={5} onChange={(value) => setSelectedRating(value)} />
+                  <StarRating totalStars={5} onChange={(value) => setSelectedRating(value)} readOnly />
                 </div>
                 <p className="text-sm mt-4">{review.comment}</p>
               </CardBody>
