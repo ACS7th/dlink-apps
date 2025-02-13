@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import site.dlink.alcohols.document.WineEs;
-import site.dlink.alcohols.document.WineMongo;
+import site.dlink.alcohols.document.es.WineEs;
+import site.dlink.alcohols.document.mongodb.WineMongo;
 import site.dlink.alcohols.service.WineService;
 
 @RestController
