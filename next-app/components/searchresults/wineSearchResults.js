@@ -121,15 +121,15 @@ export default function WineSearchResultsPage() {
         ))}
       </div>
 
-      <div ref={loaderRef} className="h-10 flex justify-center items-center mt-6">
+      <div ref={loaderRef} className="h-10 flex justify-center items-center mt-4">
         {loading && <Spinner />}
+        {!loading && searchResults.length === 0 && (
+          <p className="text-center text-gray-500 text-lg">
+            검색 결과가 없습니다.
+          </p>
+        )}
       </div>
 
-      {!loading && searchResults.length === 0 && (
-        <p className="text-center text-gray-500 mt-6 text-lg">
-          검색 결과가 없습니다.
-        </p>
-      )}
     </div>
   );
 }
