@@ -5,6 +5,6 @@ public class AlcoholConstants {
             "brandy", "gin", "liqueur", "rum", "tequila", "vodka", "whiskey"
     };
 
-    public static final String DATABASE = "alcohol_db";
+    public static final String DATABASE = "dlink_db";
 
 }

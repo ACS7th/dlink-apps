@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Document(indexName = "alcohols")
 public class YangjuEs {
     @Id
-    @Field("_id")
     private String id;
 
     @Field(type = FieldType.Text)
