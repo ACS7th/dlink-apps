@@ -22,43 +22,50 @@ import java.util.stream.Collectors;
 @Log4j2
 public class WineService {
 
-    private final ElasticsearchOperations elasticsearchOperations;
+        private final ElasticsearchOperations elasticsearchOperations;
 
-    public Page<Wine> searchWinesByKeyword(String keyword, int page, int size) {
-        IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
+        public Page<Wine> searchWinesByKeyword(String keyword, int page, int size) {
+                IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
-        NativeQuery query = NativeQuery.builder()
-                .withQuery(q -> q.multiMatch(m -> m
-                        .query(keyword)
-                        .fuzziness("AUTO")
-                        .fields("korName", "engName")))
-                .withPageable(PageRequest.of(page, size))
-                .build();
+                boolean isKorean = keyword.chars().anyMatch(ch -> Character.UnicodeBlock
+                                .of(ch) == Character.UnicodeBlock.HANGUL_SYLLABLES ||
+                                Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.HANGUL_JAMO ||
+                                Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO);
 
-        SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
+                String searchField = isKorean ? "korName" : "engName";
 
-        List<Wine> results = searchHits.stream()
-                .map(hit -> hit.getContent())
-                .collect(Collectors.toList());
+                NativeQuery query = NativeQuery.builder()
+                                .withQuery(q -> q.multiMatch(m -> m
+                                                .query(keyword)
+                                                .fuzziness("AUTO")
+                                                .fields(searchField)))
+                                .withPageable(PageRequest.of(page, size))
+                                .build();
 
-        return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
-    }
+                SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
 
-    public Page<Wine> findAllWines(int page, int size) {
-        IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
+                List<Wine> results = searchHits.stream()
+                                .map(hit -> hit.getContent())
+                                .collect(Collectors.toList());
 
-        NativeQuery query = NativeQuery.builder()
-                .withQuery(q -> q.matchAll(m -> m))
-                .withPageable(PageRequest.of(page, size))
-                .build();
+                return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
+        }
 
-        SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
-        log.info("📜 전체 와인 목록 조회: {}", searchHits.getTotalHits());
+        public Page<Wine> findAllWines(int page, int size) {
+                IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
 
-        List<Wine> results = searchHits.stream()
-                .map(hit -> hit.getContent())
-                .collect(Collectors.toList());
+                NativeQuery query = NativeQuery.builder()
+                                .withQuery(q -> q.matchAll(m -> m))
+                                .withPageable(PageRequest.of(page, size))
+                                .build();
 
-        return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
-    }
+                SearchHits<Wine> searchHits = elasticsearchOperations.search(query, Wine.class, indexCoordinates);
+                log.info("📜 전체 와인 목록 조회: {}", searchHits.getTotalHits());
+
+                List<Wine> results = searchHits.stream()
+                                .map(hit -> hit.getContent())
+                                .collect(Collectors.toList());
+
+                return new PageImpl<>(results, PageRequest.of(page, size), searchHits.getTotalHits());
+        }
 }
