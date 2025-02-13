@@ -17,7 +17,7 @@ export default function Content() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  // 📌 검색 버튼 클릭 (경고 알람 및 페이지 이동)
+  // 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       setShowAlert(true);
@@ -29,7 +29,7 @@ export default function Content() {
 
   return (
     <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
-      
+
       <NextImage className="mb-6" src={resolvedTheme === 'dark' ? '/LOGO3.png' : '/LOGO2.png'} alt="logo" width={300} height={300} />
       <div className="flex space-x-2 w-full items-center mb-28 md:w-1/2 px-4">
         <Input

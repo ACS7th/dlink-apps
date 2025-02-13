@@ -14,7 +14,6 @@ export default function ReviewList() {
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("Meat");
 
-  // ✅ 추천 안주 데이터
   const recommendations = {
     Meat: {
       image: "https://heroui.com/images/hero-card-complete.jpeg",
@@ -34,7 +33,6 @@ export default function ReviewList() {
     },
   };
 
-  // ✅ 리뷰 데이터
   const reviews = [
     {
       id: 1,
@@ -59,7 +57,6 @@ export default function ReviewList() {
     },
   ];
 
-  // ✅ 탭 구성
   const tabs = [
     {
       id: "review",

@@ -16,7 +16,6 @@ export default function YangjuResultsPage() {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
-  // API를 호출하여 데이터를 불러오는 함수
   const fetchResults = useCallback(
     async (pageNumber) => {
       console.log(`[API 호출] 페이지: ${pageNumber}, 키워드: ${keyword}`);
@@ -31,17 +30,14 @@ export default function YangjuResultsPage() {
         const data = await res.json();
         const fetchedResults = data.content || [];
 
-        // 데이터 로그 출력
         console.log("[API 응답 데이터]:", fetchedResults);
 
-        // 첫 페이지면 새로 세팅, 그 이후 페이지면 기존 결과에 추가
         if (pageNumber === 0) {
           setSearchResults(fetchedResults);
         } else {
           setSearchResults((prev) => [...prev, ...fetchedResults]);
         }
 
-        // 반환된 데이터 개수가 size보다 작으면 더 이상 불러올 데이터가 없음
         setHasMore(fetchedResults.length === size);
       } catch (error) {
         console.error("[API 호출 오류]:", error);
@@ -51,13 +47,11 @@ export default function YangjuResultsPage() {
     [keyword]
   );
 
-  // 검색어 변경 시 초기 데이터 로드 (page 0)
   useEffect(() => {
     setPage(0);
     fetchResults(0);
   }, [keyword, fetchResults]);
 
-  // 무한 스크롤에 의해 다음 페이지를 불러오는 함수
   const loadMoreItems = useCallback(() => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
@@ -67,7 +61,6 @@ export default function YangjuResultsPage() {
     }
   }, [loading, hasMore, page, fetchResults]);
 
-  // Intersection Observer를 사용하여 스크롤 이벤트 감지
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
