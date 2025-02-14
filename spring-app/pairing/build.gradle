@@ -4,7 +4,8 @@ dependencies {
     // MVC
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // MongoDB 
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    // bedrock
+    implementation group: 'org.springframework.ai', name: 'spring-ai-bedrock-converse-spring-boot-starter', version: '1.0.0-M5'
+
 
 }
