@@ -22,10 +22,29 @@ import java.util.Optional;
 public class HighballService {
 
     private final HighballRepository highballRepository;
-    private final MongoTemplate mongoTemplate;
+
+
+    @Transactional
+    public void saveHighball(Highball highball) {
+        highballRepository.save(highball);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Highball> findById(String id) {
+        return highballRepository.findById(id);
+    }
+
+    @Transactional
+    public void deleteHighball(String id) {
+        highballRepository.deleteById(id);
+    }
 
     public List<Highball> findByCategory(HighballCateEnum category) {
         return highballRepository.findByCategory(category);
+    }
+
+    public Highball findHighballById(String id) {
+        return highballRepository.findById(id).orElse(null);
     }
 
     @Transactional

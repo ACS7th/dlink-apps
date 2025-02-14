@@ -73,6 +73,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       SERVER_PORT: 9993
     volumes:
       - ./spring-app/highball/build:/app/highball/build
