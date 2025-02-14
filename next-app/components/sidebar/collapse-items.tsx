@@ -17,9 +17,9 @@ export const CollapseItems = ({ icon, items, title }: Props) => {
 
   const navigateToCategory = (category: string, subcategory: string | null = null) => {
     if (subcategory) {
-      router.push(`/categorys/yangju/?subcategory=${subcategory}`);
+      router.push(`/categories/yangju/?subcategory=${subcategory}`);
     } else {
-      router.push(`/categorys/wine`);
+      router.push(`/categories/wine`);
     }
   };
 

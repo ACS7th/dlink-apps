@@ -5,7 +5,7 @@ import { Card, CardBody } from "@heroui/card";
 import { User } from "@heroui/react";
 import { useTheme } from "next-themes";
 import StarRating from "@/components/starrating/starRating"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
 import { Link } from "@heroui/react";
 

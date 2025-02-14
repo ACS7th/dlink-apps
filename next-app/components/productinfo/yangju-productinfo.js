@@ -36,7 +36,7 @@ export default function ProductDetail() {
     return <div className="py-10 text-center">상품 정보가 없습니다.</div>;
 
   return (
-    <Card className="p-4 max-w-lg mx-auto shadow-lg">
+    <Card className="p-4 shadow-lg">
       <div className="flex flex-row space-x-7 mb-4">
         <div className="flex-shrink-0">
           <Image
@@ -47,7 +47,7 @@ export default function ProductDetail() {
             height={188}
           />
         </div>
-        <div className="flex flex-col ">
+        <div className="flex flex-col justify-center">
           <h6 className="font-bold text-xl">
             {product.korName}
           </h6>

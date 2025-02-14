@@ -50,10 +50,10 @@ export const SidebarWrapper = () => {
                         />
                         <SidebarMenu title="Alcohols">
                             <SidebarItem
-                                isActive={pathname === "/categorys/wine"}
+                                isActive={pathname === "/categories/wine"}
                                 title="와인"
                                 icon={<AccountsIcon />}
-                                href="/categorys/wine"
+                                href="/categories/wine"
                             />
                             <CollapseItems
                                 icon={<BalanceIcon />}
