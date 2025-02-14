@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import site.dlink.alcohols.constants.AlcoholConstants;
 import site.dlink.alcohols.document.es.WineEs;
-import site.dlink.alcohols.document.mongo.WineMongo;
 import site.dlink.alcohols.repository.mongo.WineMongoRepository;
+import site.dlink.common.document.mongo.WineMongo;
 
 import java.util.List;
 import java.util.stream.Collectors;

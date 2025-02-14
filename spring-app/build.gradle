@@ -46,9 +46,6 @@ subprojects {
         //  Dev Tools 
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-        // Model Mapper
-        implementation 'org.modelmapper:modelmapper:3.1.1'
-
     }
 
     dependencyManagement {

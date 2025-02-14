@@ -35,6 +35,7 @@ public class JwtValidator {
      */
     public boolean validateToken(String token) {
         try {
+            // jwt 검증
             var claims = Jwts.parser()
                     .verifyWith(key)
                     .build()
