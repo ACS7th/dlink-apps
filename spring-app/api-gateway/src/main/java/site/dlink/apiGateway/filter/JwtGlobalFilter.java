@@ -21,7 +21,9 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
     private final JwtValidator jwtValidator;
 
     private static final List<String> EXCLUDED_PATHS = List.of(
-            "/api/v1/alcohols/"
+            "/api/v1/alcohols/",
+            "/api/v1/review/",
+            "/api/v1/highball/"
     );
 
     @Override

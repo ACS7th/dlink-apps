@@ -2,19 +2,7 @@ spring:
   devtools:
     restart:
       enabled: true
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
 
-# springdoc:
-#   swagger-ui:
-#     path: /swagger-ui.html
-
-logging:
-  level:
-    root: INFO
-    site.dlink.common: DEBUG
+springdoc:
+  api-docs:
+    path: /api/v1/pairing/v3/api-docs

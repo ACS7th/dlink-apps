@@ -19,7 +19,6 @@ import site.dlink.alcohols.constants.AlcoholConstants;
 import site.dlink.alcohols.document.es.YangjuEs;
 import site.dlink.alcohols.repository.es.YangjuEsRepository;
 
-import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ public class YangjuService {
                                         .find(new Document("_id", objectId)).first();
                         if (result != null) {
                                 log.info("Found in collection {}", collectionName);
+                                result.append("category", collectionName);
                                 return result;
                         }
                 }

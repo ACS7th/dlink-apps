@@ -22,7 +22,7 @@ public class AlcoholsController {
     private final WineService wineService;
 
     @GetMapping("/{id}")
-    @Operation(description = "모든 술에 대해 쿼리, id를 찾으면 바로 결과를 반환")
+    @Operation(description = "모든 술에 대해 id를 사용하여 검색(MongoDB)")
     public ResponseEntity<?> getAlcoholById(@PathVariable String id) {
         Document yangjuDoc = yangjuService.findDocumentById(id);
         if (yangjuDoc != null) {
@@ -31,6 +31,7 @@ public class AlcoholsController {
 
         Document wineDoc = wineService.findDocumentById(id);
         if (wineDoc != null) {
+            wineDoc.append("category", "wine");
             return ResponseEntity.ok(wineDoc.toJson());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("alcohol document not found");

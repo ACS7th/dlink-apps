@@ -1,9 +1,7 @@
-package site.dlink.alcohols.document.mongodb;
+package site.dlink.common.document.mongo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import lombok.Data;
 
 @Data
@@ -11,7 +9,6 @@ import lombok.Data;
 public class WineMongo {
 
     @Id
-    @Field("_id")
     private String id;
     private String korName;
     private String engName;
@@ -22,4 +19,3 @@ public class WineMongo {
     private String foodPairing;
     private String details;
 }
-
