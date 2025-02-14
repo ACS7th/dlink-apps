@@ -1,4 +1,4 @@
-package site.dlink.service;
+package site.dlink.highball.service;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import site.dlink.document.Highball;
-import site.dlink.enums.HighballCateEnum;
-import site.dlink.repository.HighballRepository;
+import site.dlink.highball.document.Highball;
+import site.dlink.highball.enums.HighballCateEnum;
+import site.dlink.highball.repository.HighballRepository;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,10 +23,29 @@ import java.util.Optional;
 public class HighballService {
 
     private final HighballRepository highballRepository;
-    private final MongoTemplate mongoTemplate;
+
+
+    @Transactional
+    public void saveHighball(Highball highball) {
+        highballRepository.save(highball);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Highball> findById(String id) {
+        return highballRepository.findById(id);
+    }
+
+    @Transactional
+    public void deleteHighball(String id) {
+        highballRepository.deleteById(id);
+    }
 
     public List<Highball> findByCategory(HighballCateEnum category) {
         return highballRepository.findByCategory(category);
+    }
+
+    public Highball findHighballById(String id) {
+        return highballRepository.findById(id).orElse(null);
     }
 
     @Transactional

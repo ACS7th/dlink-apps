@@ -15,9 +15,10 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import site.dlink.alcohols.constants.AlcoholConstants;
+import site.dlink.alcohols.constants.MongoConstants;
 import site.dlink.alcohols.document.es.YangjuEs;
 import site.dlink.alcohols.repository.es.YangjuEsRepository;
+import site.dlink.common.constants.AlcoholConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +72,7 @@ public class YangjuService {
 
         public Page<YangjuEs> findAllYangjus(int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(Arrays.stream(AlcoholConstants.YANGJU_INDICES)
-                                .map(index -> AlcoholConstants.DATABASE + "." + index)
+                                .map(index -> MongoConstants.DATABASE+ "." + index)
                                 .toArray(String[]::new));
 
                 NativeQuery query = NativeQuery.builder()
@@ -91,7 +92,7 @@ public class YangjuService {
 
         public Page<YangjuEs> searchYangjusByKeyword(String keyword, int page, int size) {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(Arrays.stream(AlcoholConstants.YANGJU_INDICES)
-                                .map(index -> AlcoholConstants.DATABASE + "." + index)
+                                .map(index -> MongoConstants.DATABASE+ "." + index)
                                 .toArray(String[]::new));
 
                 boolean isKorean = keyword.chars().anyMatch(ch -> Character.UnicodeBlock

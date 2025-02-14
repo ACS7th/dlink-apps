@@ -1,4 +1,4 @@
-package site.dlink.config;
+package site.dlink.highball.config;
 
 import java.util.Arrays;
 

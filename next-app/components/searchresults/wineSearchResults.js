@@ -18,7 +18,6 @@ export default function WineSearchResultsPage() {
 
   const fetchResults = useCallback(
     async (pageNumber) => {
-      console.log(`[API 호출] 페이지: ${pageNumber}, 키워드: ${keyword}`);
       setLoading(true);
       try {
         const res = await fetch(
@@ -30,8 +29,6 @@ export default function WineSearchResultsPage() {
         const data = await res.json();
         const fetchedResults = data.content || [];
 
-        console.log("[API 응답 데이터]:", fetchedResults);
-
         if (pageNumber === 0) {
           setSearchResults(fetchedResults);
         } else {
@@ -41,6 +38,7 @@ export default function WineSearchResultsPage() {
         setHasMore(fetchedResults.length === size);
       } catch (error) {
         console.error("[API 호출 오류]:", error);
+        setHasMore(false);
       }
       setLoading(false);
     },
@@ -55,7 +53,6 @@ export default function WineSearchResultsPage() {
   const loadMoreItems = useCallback(() => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
-      console.log(`[다음 페이지 로드] 페이지: ${nextPage}`);
       setPage(nextPage);
       fetchResults(nextPage);
     }

@@ -1,4 +1,4 @@
-package site.dlink.enums;
+package site.dlink.highball.enums;
 
 
 public enum HighballCateEnum {

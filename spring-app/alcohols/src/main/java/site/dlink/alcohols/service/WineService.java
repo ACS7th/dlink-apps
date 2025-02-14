@@ -15,7 +15,7 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import site.dlink.alcohols.constants.AlcoholConstants;
+import site.dlink.alcohols.constants.MongoConstants;
 import site.dlink.alcohols.document.es.WineEs;
 import site.dlink.alcohols.repository.mongo.WineMongoRepository;
 import site.dlink.common.document.mongo.WineMongo;
@@ -45,7 +45,7 @@ public class WineService {
         }
 
         public Page<WineEs> searchWinesByKeyword(String keyword, int page, int size) {
-                IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
+                IndexCoordinates indexCoordinates = IndexCoordinates.of(MongoConstants.DATABASE + ".wine");
 
                 boolean isKorean = keyword.chars().anyMatch(ch -> Character.UnicodeBlock
                                 .of(ch) == Character.UnicodeBlock.HANGUL_SYLLABLES ||
@@ -72,7 +72,7 @@ public class WineService {
         }
 
         public Page<WineEs> findAllWines(int page, int size) {
-                IndexCoordinates indexCoordinates = IndexCoordinates.of(AlcoholConstants.DATABASE + ".wine");
+                IndexCoordinates indexCoordinates = IndexCoordinates.of(MongoConstants.DATABASE+ ".wine");
 
                 NativeQuery query = NativeQuery.builder()
                                 .withQuery(q -> q.matchAll(m -> m))
