@@ -81,7 +81,7 @@ export default function ReviewList() {
 
           <div className="flex justify-center mt-4">
             <Link
-              href="/"
+              href="/reviewlists"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-xs"
@@ -142,7 +142,7 @@ export default function ReviewList() {
           </Card>
           <div className="flex justify-center mt-4">
             <Link
-              href="/"
+              href="/recipes"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-xs"
