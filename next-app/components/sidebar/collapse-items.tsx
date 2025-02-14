@@ -50,33 +50,33 @@ export const CollapseItems = ({ icon, items, title }: Props) => {
         title={
           <div
             className="flex items-center justify-between w-full py-5 px-7 rounded-8 transition-all duration-150 ease-in-out cursor-pointer hover:bg-accents2 active:scale-98"
-            // css={{
-            //   gap: "$6",
-            //   width: "100%",
-            //   py: "$5",
-            //   px: "$7",
-            //   borderRadius: "8px",
-            //   transition: "all 0.15s ease",
-            //   "&:active": {
-            //     transform: "scale(0.98)",
-            //   },
-            //   "&:hover": {
-            //     bg: "$accents2",
-            //   },
-            // }}
-            // justify={"between"}
-            onClick={handleToggle}
+          // css={{
+          //   gap: "$6",
+          //   width: "100%",
+          //   py: "$5",
+          //   px: "$7",
+          //   borderRadius: "8px",
+          //   transition: "all 0.15s ease",
+          //   "&:active": {
+          //     transform: "scale(0.98)",
+          //   },
+          //   "&:hover": {
+          //     bg: "$accents2",
+          //   },
+          // }}
+          // justify={"between"}
+          // onClick={handleToggle}
           >
             <div className="flex gap-4">
               {icon}
               <span
                 className="text-default-900 font-medium text-base"
-                //  span
-                //  weight={"normal"}
-                //  size={"$base"}
-                //  css={{
-                //    color: "$accents9",
-                //  }}
+              //  span
+              //  weight={"normal"}
+              //  size={"$base"}
+              //  css={{
+              //    color: "$accents9",
+              //  }}
               >
                 {title}
               </span>
@@ -87,10 +87,10 @@ export const CollapseItems = ({ icon, items, title }: Props) => {
                 open ? "rotate-180" : "rotate-0",
                 "transition-all duration-300 ease-in-out transform"
               )}
-              //   css={{
-              //     transition: "transform 0.3s ease",
-              //     transform: open ? "rotate(-180deg)" : "rotate(0deg)",
-              //   }}
+            //   css={{
+            //     transition: "transform 0.3s ease",
+            //     transform: open ? "rotate(-180deg)" : "rotate(0deg)",
+            //   }}
             />
           </div>
         }
@@ -111,23 +111,23 @@ export const CollapseItems = ({ icon, items, title }: Props) => {
           <div
             className="flex flex-col pl-8"
             key={index}
-            // direction={"column"}
-            // css={{
-            //   paddingLeft: "$16",
-            // }}
+          // direction={"column"}
+          // css={{
+          //   paddingLeft: "$16",
+          // }}
           >
             <span
               className="text-default-400 font-normal text-md"
-              //   span
-              //   weight={"normal"}
-              //   size={"$md"}
-              //   css={{
-              //     color: "$accents8",
-              //     cursor: "pointer",
-              //     "&:hover": {
-              //       color: "$accents9",
-              //     },
-              //   }}
+            //   span
+            //   weight={"normal"}
+            //   size={"$md"}
+            //   css={{
+            //     color: "$accents8",
+            //     cursor: "pointer",
+            //     "&:hover": {
+            //       color: "$accents9",
+            //     },
+            //   }}
             >
               {item}
             </span>

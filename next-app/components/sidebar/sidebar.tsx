@@ -58,8 +58,13 @@ export const SidebarWrapper = () => {
                             <CollapseItems
                                 icon={<BalanceIcon />}
                                 items={[
-                                    "진",
-                                    "데킬라",
+                                    "Gin",
+                                    "Tequila",
+                                    "Vodka",
+                                    "Brandy",
+                                    "Liqueur",
+                                    "whiskey",
+                                    "Rum",
                                 ]}
                                 title="양주"
                             />
