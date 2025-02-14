@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import WineProductInfo from "@/components/productinfo/wine-productinfo";
-import WineReviewList from "@/components/reviewlist/wine-reviewlist";
+import WineTabs from "@/components/tabs/WineTabs";
 
 export default function DetailsPage() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export default function DetailsPage() {
   return (
     <div className="p-4 space-y-4">
       <WineProductInfo />
-      <WineReviewList />
+      <WineTabs />
     </div>
   );
 }

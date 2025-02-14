@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import YangjuProductInfo from "@/components/productinfo/yangju-productinfo";
-import YangjuReviewList from "@/components/reviewlist/yangju-reviewlist";
+import YangjuTabs from "@/components/tabs/yangjuTabs";
 
 export default function DetailsPage() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export default function DetailsPage() {
   return (
     <div className="p-4 space-y-4">
       <YangjuProductInfo />
-      <YangjuReviewList />
+      <YangjuTabs />
     </div>
   );
 }

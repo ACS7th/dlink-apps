@@ -1,37 +1,77 @@
 "use client";
 
-import { Image } from "@heroui/react";
-import { Progress } from "@heroui/react";
-import { Card, CardHeader, CardBody } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Card, CardBody } from "@heroui/card";
+import { Image, Textarea } from "@heroui/react";
 
-export default function ProductInfo() {
-  const tasteProfile = [
-    { label: "단맛", value: 80 },
-    { label: "신맛", value: 30 },
-    { label: "목넘김", value: 50 },
-    { label: "떫은맛", value: 60 },
-  ];
+export default function ProductDetail() {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const res = await fetch(`/api/v1/details?id=${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        setProduct(data);
+      } catch (err) {
+        console.error("상품정보 호출 오류:", err);
+        setError("상품 정보를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (id) fetchProduct();
+  }, [id]);
+
+  if (loading)
+    return <div className="py-10 text-center">Loading...</div>;
+  if (error)
+    return <div className="py-10 text-center text-red-500">{error}</div>;
+  if (!product)
+    return <div className="py-10 text-center">상품 정보가 없습니다.</div>;
 
   return (
-    <>
-      <Card  className="p-4">
-        <div className="flex items-center space-x-7 mb-4">
-          <div className="flex-shrink-0">
-            <Image
-              alt="Card background"
-              className="object-cover rounded-xl"
-              src="https://heroui.com/images/hero-card-complete.jpeg"
-              width={150}
-              height={150}
-            />
-          </div>
-          <div className="flex flex-col justify-center">
-            <h5 className="font-bold text-xl mt-1">Frontend Radio</h5>
-            <p className="text-tiny uppercase font-bold text-gray-500">Daily Mix</p>
-            <small className="text-default-500">12 Tracks</small>
-          </div>
+    <Card className="p-4 max-w-lg mx-auto shadow-lg">
+      <div className="flex flex-row space-x-7 mb-4">
+        <div className="flex-shrink-0">
+          <Image
+            alt={product.korName || "상품 이미지"}
+            className="object-cover rounded-xl"
+            src={product.image}
+            width={150}
+            height={188}
+          />
         </div>
-      </Card>
-    </>
+        <div className="flex flex-col ">
+          <h6 className="font-bold text-xl">
+            {product.korName}
+          </h6>
+          <p className="text-tiny uppercase font-bold text-gray-500">
+            {product.engName}
+          </p>
+          <p className="text-sm mt-2">
+            <p>원산지: {product.origin}</p>
+            <p>도수: {product.percent}%</p>
+            <p>용량: {product.volume}ml</p>
+            <p>가격: {product.price.toLocaleString()}원</p>
+          </p>
+        </div>
+      </div>
+      <CardBody>
+        <Textarea
+          isReadOnly
+          className="max-w-full"
+          defaultValue={product.explanation}
+          // label="Description"
+          // labelPlacement="outside"
+          variant="bordered"
+        />
+      </CardBody>
+    </Card>
   );
 }

@@ -19,7 +19,7 @@ import { FilterIcon } from "../icons/sidebar/filter-icon";
 import { useSidebarContext } from "../layout/layout-context";
 import { ChangeLogIcon } from "../icons/sidebar/changelog-icon";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 export const SidebarWrapper = () => {
@@ -50,21 +50,25 @@ export const SidebarWrapper = () => {
                         />
                         <SidebarMenu title="Alcohols">
                             <SidebarItem
-                                isActive={pathname === "/accounts"}
+                                isActive={pathname === "/categorys/wine"}
                                 title="와인"
                                 icon={<AccountsIcon />}
-                                href="accounts"
+                                href="/categorys/wine"
                             />
                             <CollapseItems
                                 icon={<BalanceIcon />}
                                 items={[
-                                    "진",
-                                    "데킬라",
+                                    "Gin",
+                                    "Tequila",
+                                    "Vodka",
+                                    "Brandy",
+                                    "Liqueur",
+                                    "Whiskey",
+                                    "Rum",
                                 ]}
                                 title="양주"
                             />
                         </SidebarMenu>
-
                         <SidebarMenu title="Links">
                             <SidebarItem
                                 isActive={pathname === "/developers"}

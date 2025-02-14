@@ -14,7 +14,6 @@ export default function ReviewList() {
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("Meat");
 
-  // ✅ 추천 안주 데이터
   const recommendations = {
     Meat: {
       image: "https://heroui.com/images/hero-card-complete.jpeg",
@@ -34,7 +33,6 @@ export default function ReviewList() {
     },
   };
 
-  // ✅ 리뷰 데이터
   const reviews = [
     {
       id: 1,
@@ -59,7 +57,6 @@ export default function ReviewList() {
     },
   ];
 
-  // ✅ 탭 구성
   const tabs = [
     {
       id: "review",
@@ -84,7 +81,7 @@ export default function ReviewList() {
 
           <div className="flex justify-center mt-4">
             <Link
-              href="/"
+              href="/reviewlists"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-xs"
@@ -128,39 +125,12 @@ export default function ReviewList() {
           </CardBody>
         </Card>
       ),
-    },
-    {
-      id: "highball",
-      label: "하이볼 레시피",
-      content: (
-        <>
-          <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
-            <CardBody>
-              <h4 className="font-semibold text-lg">🍹 기본 하이볼 레시피</h4>
-              <p>1. 잔에 얼음을 가득 채우세요.</p>
-              <p>2. 위스키 50ml를 붓습니다.</p>
-              <p>3. 탄산수 150ml를 천천히 부어줍니다.</p>
-              <p>4. 레몬 슬라이스로 장식하세요.</p>
-            </CardBody>
-          </Card>
-          <div className="flex justify-center mt-4">
-            <Link
-              href="/"
-              isBlock
-              showAnchorIcon
-              className="text-blue-500 hover:underline text-xs"
-            >
-              전체 레시피 보기
-            </Link>
-          </div>
-        </>
-      ),
-    },
+    }
   ];
 
   return (
-    <div className="flex w-full flex-col p-1 ">
-      <Tabs aria-label="Dynamic tabs" className="mt-0" items={tabs} fullWidth>
+    <div className="flex w-full flex-col p-1 rounded-md shadow-md">
+      <Tabs aria-label="Dynamic tabs" items={tabs} fullWidth>
         {(item) => (
           <Tab key={item.id} title={item.label}>
             {item.content}
