@@ -1,4 +1,4 @@
-package site.dlink.alcohols.document.mongodb;
+package site.dlink.alcohols.document.mongo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

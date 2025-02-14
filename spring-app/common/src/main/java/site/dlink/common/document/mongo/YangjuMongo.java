@@ -1,4 +1,4 @@
-package site.dlink.alcohols.document.mongodb;
+package site.dlink.common.document.mongo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

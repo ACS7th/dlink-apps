@@ -6,7 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.common.props.JwtProps;
+import site.dlink.apiGateway.props.JwtProps;
 
 import org.springframework.stereotype.Component;
 

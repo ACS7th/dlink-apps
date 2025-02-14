@@ -1,4 +1,4 @@
-package site.dlink.common.config;
+package site.dlink.auth.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

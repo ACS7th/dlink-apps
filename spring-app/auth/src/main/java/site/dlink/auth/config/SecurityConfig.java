@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.jwt.custom.CustomUserDetailsService;
 import site.dlink.auth.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
-import site.dlink.common.props.NextProps;
+import site.dlink.auth.props.NextProps;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;

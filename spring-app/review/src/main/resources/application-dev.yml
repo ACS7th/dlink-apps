@@ -5,4 +5,4 @@ spring:
 
 springdoc:
   api-docs:
-    path: /api/v1/reivew/v3/api-docs
+    path: /api/v1/review/v3/api-docs

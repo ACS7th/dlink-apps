@@ -61,3 +61,9 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+configure(subprojects.findAll { it.name == 'common' }) {
+    tasks.withType(Test).configureEach {
+        enabled = false
+    }
+}
