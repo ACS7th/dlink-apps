@@ -28,12 +28,11 @@ public class Highball {
     private String imageFilename;
     private String imageUrl;
     private String making;
-
     private String writeUser;
-
-    @Nullable
+    @Builder.Default
     private Integer likeCount = 0;
-
+    @Builder.Default
     private Map<String, String> ingredients = new HashMap<>();
+    @Builder.Default
     private Set<String> likedUsers = new HashSet<>();
 }
