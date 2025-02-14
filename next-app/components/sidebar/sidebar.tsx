@@ -52,7 +52,7 @@ export const SidebarWrapper = () => {
                             <SidebarItem
                                 isActive={pathname === "/categorys/wine"}
                                 title="와인"
-                                icon={<AccountsIcon />}
+                                icon={<BalanceIcon/>}
                                 href="/categorys/wine"
                             />
                             <CollapseItems
