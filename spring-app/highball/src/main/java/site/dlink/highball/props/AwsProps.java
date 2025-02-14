@@ -1,4 +1,4 @@
-package site.dlink.props;
+package site.dlink.highball.props;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

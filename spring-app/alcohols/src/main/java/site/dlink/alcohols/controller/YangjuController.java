@@ -5,11 +5,7 @@ import lombok.RequiredArgsConstructor;
 import site.dlink.alcohols.document.es.YangjuEs;
 import site.dlink.alcohols.service.YangjuService;
 
-import org.bson.Document;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

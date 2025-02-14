@@ -1,13 +1,13 @@
-package site.dlink.document;
+package site.dlink.highball.document;
 
 import lombok.Builder;
 import lombok.Data;
-import site.dlink.enums.HighballCateEnum;
+import site.dlink.highball.enums.HighballCateEnum;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.mongodb.lang.Nullable;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +32,7 @@ public class Highball {
     @Builder.Default
     private Integer likeCount = 0;
     @Builder.Default
-    private Map<String, String> ingredients = new HashMap<>();
+    private Map ingredients = new HashMap<>();
     @Builder.Default
     private Set<String> likedUsers = new HashSet<>();
 }

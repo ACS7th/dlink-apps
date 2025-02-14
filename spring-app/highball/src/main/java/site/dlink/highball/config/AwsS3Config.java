@@ -1,4 +1,4 @@
-package site.dlink.config;
+package site.dlink.highball.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.props.AwsProps;
+import site.dlink.highball.props.AwsProps;
 
 @Slf4j
 @Configuration

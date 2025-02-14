@@ -1,4 +1,4 @@
-package site.dlink.service;
+package site.dlink.highball.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,15 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import site.dlink.props.AwsProps;
+import site.dlink.highball.props.AwsProps;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +50,7 @@ public class AwsS3Service {
     }
     
     public String createFileName(String fileName) {
-        return UUID.randomUUID().toString().concat("-" + fileName + "-").concat(getFileExtension(fileName));
+        return UUID.randomUUID().toString().concat("-" + fileName);
     }
 
     private String getFileExtension(String fileName) {

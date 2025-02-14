@@ -1,8 +1,11 @@
-package site.dlink.controller;
+package site.dlink.highball.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,44 +16,71 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import site.dlink.document.Highball;
-import site.dlink.enums.HighballCateEnum;
-import site.dlink.service.AwsS3Service;
-import site.dlink.service.HighballService;
+import lombok.extern.slf4j.Slf4j;
+import site.dlink.highball.document.Highball;
+import site.dlink.highball.enums.HighballCateEnum;
+import site.dlink.highball.service.AwsS3Service;
+import site.dlink.highball.service.HighballService;
 
-@RestController
+
 @RequestMapping("/api/v1/highball")
+@RestController
 @RequiredArgsConstructor
+@Slf4j
 public class HighballController {
 
     private final HighballService highballService;
     private final AwsS3Service awsS3Service;
 
-    @Operation(summary = "하이볼 레시피 업로드", description = "하이볼 레시피와 이미지를 업로드합니다.")
-    @PostMapping(value = "/recipe", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> uploadHighballRecipe(
-            @Parameter(description = "영문 이름 (Optional)", required = false) @RequestParam(required = false) String engName,
-            @Parameter(description = "한글 이름", required = true) @RequestParam(required = true) String korName,
-            @Parameter(description = "카테고리 (ENUM)", required = true) @RequestParam(required = true) HighballCateEnum category,
-            @Parameter(description = "제조법", required = true) @RequestParam(required = true) String making,
-            @Parameter(description = "이미지 파일 (Multipart)" , required = false) @RequestParam(required = false) MultipartFile imageFile) {
+@PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<String> uploadHighballRecipe(
+        @RequestParam(required = false) String engName,
+        @RequestParam String korName,
+        @RequestParam HighballCateEnum category,
+        @RequestParam @Parameter(description = "하이볼 만드는 방법") String making,
+        @RequestParam(required = false) MultipartFile imageFile,
+        @RequestParam(required = false) @Parameter(description = "하이볼 재료, 직렬화 필요!!") String ingredientsJSON
+) {
+    try {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, String> uploadResultMap = awsS3Service.uploadFile(imageFile);
+        Map<String, String> ingredients = objectMapper.readValue(
+                ingredientsJSON,
+                new TypeReference<Map<String, String>>() {}
+        );
+
+        Map<String, String> uploadResultMap = Optional.ofNullable(
+                awsS3Service.uploadFile(imageFile)
+        ).orElseGet(HashMap::new);
 
         Highball highball = Highball.builder()
-                .engName(engName)
+                .engName(Optional.ofNullable(engName).orElse("Unknown"))
                 .korName(korName)
                 .category(category)
                 .making(making)
-                .imageFilename(uploadResultMap.get("fileName"))
-                .imageUrl(uploadResultMap.get("fileUrl"))
+                .ingredients(ingredients)  // ← JSON -> Map 변환된 값 저장
+                .imageFilename(uploadResultMap.getOrDefault("fileName", ""))
+                .imageUrl(uploadResultMap.getOrDefault("fileUrl", ""))
                 .build();
+
         highballService.saveHighball(highball);
-        return ResponseEntity.ok("레시피 업로드 성공: " + highball.getId());
+
+        return ResponseEntity.ok(highball.getId());
+
+    } catch (Exception e) {
+        log.error("하이볼 레시피 업로드 실패", e);
+        return ResponseEntity.status(500).body("업로드 실패: " + e.getMessage());
     }
+}
+
+    
+    
 
     @Operation(summary = "하이볼 레시피 삭제", description = "하이볼 레시피와 이미지를 삭제합니다.")
     @DeleteMapping("/recipe/{id}")
@@ -65,7 +95,8 @@ public class HighballController {
 
     @Operation(summary = "id로 레시피 조회")
     @GetMapping("/{id}")
-    public Highball findById(@Parameter(description = "하이볼의 고유 ID", example = "67adad6a40a41a2d28e6") @PathVariable String id) {
+    public Highball findById(
+            @Parameter(description = "하이볼의 고유 ID", example = "67adad6a40a41a2d28e6") @PathVariable String id) {
         return highballService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다: " + id));
     }
