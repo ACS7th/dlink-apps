@@ -5,16 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
-import site.dlink.common.document.mongo.WineMongo;
-import site.dlink.common.document.mongo.YangjuMongo;
-import site.dlink.pairing.dto.BedrockResponse;
+import site.dlink.pairing.dto.WinePairingRequest;
+import site.dlink.pairing.dto.YangjuPairingRequest;
 
 @Service
 @Slf4j
 public class PairingService {
 
     private final ObjectMapper objectMapper;
-
     private final ChatClient chatClient;
 
     public PairingService(ChatClient.Builder builder, ObjectMapper objectMapper) {
@@ -22,89 +20,141 @@ public class PairingService {
         this.objectMapper = objectMapper;
     }
 
-    public JsonNode getPairingRecommendation(Object alcoholData) {
+    /**
+     * 와인용 안주 추천
+     */
+    public JsonNode getWinePairingRecommendation(WinePairingRequest req) {
         try {
-            // 1) 프롬프트 구성
-            String prompt = createPrompt(alcoholData);
+            // 1) 프롬프트 생성 (모든 필드 활용)
+            String prompt = createWinePrompt(req);
 
-            // 2) Bedrock 모델 호출 (ChatClient)
+            // 2) Bedrock 모델 호출
             String rawResponse = chatClient.prompt(prompt).call().content();
-            log.info("Bedrock raw response: {}", rawResponse);
+            log.info("Bedrock raw response (Wine): {}", rawResponse);
 
-            // 3) JsonNode로 변환 (유연성 확보)
-            JsonNode node = objectMapper.readTree(rawResponse);
-            return node;
-
+            // 3) JSON 변환 후 반환
+            return objectMapper.readTree(rawResponse);
         } catch (Exception e) {
-            log.error("Bedrock 모델 호출 중 오류 발생", e);
-            throw new RuntimeException("Bedrock 모델 호출 실패", e);
+            log.error("Bedrock 모델 호출 중 오류 발생 (Wine)", e);
+            throw new RuntimeException("Bedrock 모델 호출 실패 (Wine)", e);
         }
     }
-    
 
-    private String createPrompt(Object alcoholData) {
-        if (alcoholData instanceof WineMongo wine) {
-            return String.format("""
-                    ### Instruction:
-                    이 와인은 '%s'이며, 산도는 %d, 바디는 %d, 타닌은 %d입니다.
-                    이 와인에 어울리는 안주 정보를 **반드시 JSON 형식**으로만 출력하세요.
+    /**
+     * 양주용 안주 추천
+     */
+    public JsonNode getYangjuPairingRecommendation(YangjuPairingRequest req) {
+        try {
+            // 1) 프롬프트 생성 (모든 필드 활용)
+            String prompt = createYangjuPrompt(req);
 
-                    JSON 형식 규칙:
-                    1) 키는 **영어**만 사용 (예: dish_name, youtube_link, ingredients, description).
-                    2) 필수 필드: dish_name, youtube_link, ingredients, description
-                    3) ingredients 필드는 오브젝트(객체) 형태로, 여러 재료를 key:value로 표기
-                    4) 값은 한글을 허용
-                    5) 절대 JSON 형식을 깨뜨리지 말 것
-                    6) 주어진 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
+            // 2) Bedrock 모델 호출
+            String rawResponse = chatClient.prompt(prompt).call().content();
+            log.info("Bedrock raw response (Yangju): {}", rawResponse);
 
-                    예시 JSON:
-                    {
-                      "dish_name": "감바스 알 아히요",
-                      "ingredients": {
-                        "shrimp": "200g",
-                        "garlic": "5개",
-                        "olive_oil": "3큰술",
-                        "salt": "약간"
-                      },
-                      "description": "마늘과 올리브 오일에 새우를 익혀 만든 감바스 알 아히요는 와인과 잘 어울리는 대표적인 스페인 요리입니다."
-                    }
-
-                    ### Response:
-                    """,
-                    wine.getKorName(), wine.getAcidity(), wine.getBody(), wine.getTanin());
-        } else if (alcoholData instanceof YangjuMongo yangju) {
-            return String.format("""
-                    ### Instruction:
-                    이 양주는 '%s'이며, 도수는 %.1f도입니다.
-                    이 양주에 어울리는 안주 정보를 **반드시 JSON 형식**으로만 출력하세요.
-
-                    JSON 형식 규칙:
-                    1) 키는 **영어**만 사용 (예: dish_name, youtube_link, ingredients, description).
-                    2) 필수 필드: dish_name, youtube_link, ingredients, description
-                    3) ingredients 필드는 오브젝트(객체) 형태로, 여러 재료를 key:value로 표기
-                    4) 값은 한글을 허용
-                    5) 절대 JSON 형식을 깨뜨리지 말 것
-                    6) 주어진 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
-                    7) dish_name으로 유튜브 쇼츠를 검색해 가장 상위에 있는 영상 링크를 가져오기
-
-                    예시 JSON:
-                    {
-                      "dish_name": "닭강정",
-                      "ingredients": {
-                        "chicken": "500g",
-                        "gochujang": "2큰술",
-                        "garlic": "3개",
-                        "oligodang": "3큰술"
-                      },
-                      "description": "바삭한 닭강정은 매콤달콤한 소스와 함께 양주와 완벽한 조화를 이룹니다."
-                    }
-
-                    ### Response:
-                    """,
-                    yangju.getKorName(), yangju.getPercent());
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 주류 타입입니다.");
+            // 3) JSON 변환 후 반환
+            return objectMapper.readTree(rawResponse);
+        } catch (Exception e) {
+            log.error("Bedrock 모델 호출 중 오류 발생 (Yangju)", e);
+            throw new RuntimeException("Bedrock 모델 호출 실패 (Yangju)", e);
         }
+    }
+
+    /**
+     * 와인용 프롬프트
+     * - 재료(ingredients)는 제외
+     * - side_dish(곁들임 추천) 추가
+     */
+    private String createWinePrompt(WinePairingRequest req) {
+        return String.format("""
+                ### Instruction:
+                이 와인은 '%s' (영문명: %s)입니다.
+                - 당도: %s
+                - 산도: %s
+                - 바디감: %s
+                - 타닌: %s
+
+                추가 정보:
+                - foodPairing: %s
+                - details: %s
+
+                이 와인은 '%s' 카테고리에 해당하는 안주를 추천해 주세요.
+                **안주는 반드시 JSON 형식**으로 출력하세요.
+
+                JSON 형식 규칙:
+                1) 키는 **영어**만 사용 (예: dish_name, side_dish, description).
+                2) 필수 필드: dish_name, side_dish, description
+                3) side_dish는 **리스트(List) 형태**로 곁들임 메뉴를 표기
+                4) 값은 한글을 허용
+                5) 절대 JSON 형식을 깨뜨리지 말 것
+                6) 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
+
+                예시 JSON:
+                {
+                  "dish_name": "트러플 파스타",
+                  "side_dish": ["마늘 바게트", "파르미지아노 치즈", "트러플 오일"],
+                  "description": "고소한 트러플 향의 파스타는 와인의 깊은 풍미를 더욱 풍부하게 만들어 줍니다."
+                }
+
+                ### Response:
+                """,
+                req.getKorName(),
+                req.getEngName(),
+                req.getSweetness(),
+                req.getAcidity(),
+                req.getBody(),
+                req.getTanin(),
+                req.getFoodPairing(),
+                req.getDetails(),
+                req.getCategory());
+    }
+
+    /**
+     * 양주용 프롬프트
+     * - 재료(ingredients)는 제외
+     * - side_dish(곁들임 추천) 추가
+     */
+    private String createYangjuPrompt(YangjuPairingRequest req) {
+        return String.format("""
+                ### Instruction:
+                이 양주는 '%s' (영문명: %s)입니다.
+                - 원산지: %s
+                - 도수: %s도
+                - 용량: %s ml
+                - 가격: %s원
+
+                추가 정보:
+                - explanation: %s
+
+                이 양주는 '%s' 카테고리에 해당하는 안주를 추천해 주세요.
+                **안주는 반드시 JSON 형식**으로 출력하세요.
+
+                JSON 형식 규칙:
+                1) 키는 **영어**만 사용 (예: dish_name, side_dish, description).
+                2) 필수 필드: dish_name, side_dish, description
+                3) side_dish는 **리스트(List) 형태**로 곁들임 메뉴를 표기
+                4) 값은 한글을 허용
+                5) 절대 JSON 형식을 깨뜨리지 말 것
+                6) 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
+                7) description은 60자 근처로 길게 대답
+
+                예시 JSON:
+                {
+                  "dish_name": "감바스 알 아히요",
+                  "side_dish": ["버터 바게트", "레몬 웨지", "올리브"],
+                  "description": "매콤한 감바스 알 아히요는 양주의 강한 도수와 깔끔한 맛을 부드럽게 중화시켜 줍니다."
+                }
+
+                ### Response:
+                """,
+                req.getKorName(),
+                req.getEngName(),
+                req.getOrigin(),
+                req.getPercent(),
+                req.getVolume(),
+                req.getPrice(),
+                req.getExplanation(),
+                req.getCategory());
     }
 
 }

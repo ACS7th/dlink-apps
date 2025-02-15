@@ -36,7 +36,6 @@ public class YoutubeSearchService {
             String searchUrl = "https://www.youtube.com/results?search_query=" + searchQuery;
             driver.get(searchUrl);
 
-            // 명시적 대기 (10초)
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a#thumbnail")));
 
