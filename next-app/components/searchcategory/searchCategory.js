@@ -22,39 +22,34 @@ export default function SearchCategory({
   subcategory: propSubcategory,
 }) {
   const searchParams = useSearchParams();
-  // 먼저 prop으로 전달된 subcategory를 사용하고, 없으면 URL 쿼리에서 가져옵니다.
   const subcategory = propSubcategory || searchParams.get("subcategory");
   const validCategoryFilters = filters || {};
 
-  // URL 또는 prop의 서브카테고리(영어)를 한글로 변환 (없으면 null)
   const translatedSubcategory = subcategory ? subcategoryToType[subcategory] : null;
 
-  // ✅ 각 필터 카테고리별로 빈 배열을 생성하고,
-  //    translatedSubcategory가 존재하며 해당 값이 type 옵션에 있다면 type 배열에 추가합니다.
+  // ✅ 초기 필터 상태 설정 (와인은 필터 없음, 양주는 선택된 서브카테고리 적용)
   const getInitialFilters = () => {
     const initialFilters = Object.keys(validCategoryFilters).reduce(
       (acc, key) => ({ ...acc, [key]: [] }),
       {}
     );
 
-    if (translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
+    if (category === "양주" && translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
       initialFilters.type = [translatedSubcategory];
     }
 
     return initialFilters;
   };
 
-  // 초기 상태 설정
   const [selectedFilters, setSelectedFilters] = useState(getInitialFilters);
 
-  // filters나 translatedSubcategory가 변경되면 초기 상태 재설정
   useEffect(() => {
     setSelectedFilters(getInitialFilters());
-  }, [filters, translatedSubcategory]);
+  }, [filters, translatedSubcategory, category]);
 
-  // translatedSubcategory가 있을 경우 중복 없이 추가 (양주 페이지에 해당)
+  // ✅ 양주 서브카테고리 자동 적용
   useEffect(() => {
-    if (translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
+    if (category === "양주" && translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
       setSelectedFilters((prev) => {
         if (!prev.type.includes(translatedSubcategory)) {
           return { ...prev, type: [...prev.type, translatedSubcategory] };
@@ -64,7 +59,7 @@ export default function SearchCategory({
     }
   }, [translatedSubcategory, category, validCategoryFilters.type]);
 
-  // ✅ 체크박스 토글 함수
+  // ✅ 필터 토글 함수
   const toggleFilter = (filterCategory, value) => {
     setSelectedFilters((prev) => {
       const updatedCategory = prev[filterCategory]?.includes(value)

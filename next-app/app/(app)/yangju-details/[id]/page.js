@@ -10,7 +10,7 @@ export default function DetailsPage() {
   return (
     <div className="p-4 space-y-4">
       <YangjuProductInfo />
-      <YangjuTabs />
+      {/* <YangjuTabs /> */}
     </div>
   );
 }
