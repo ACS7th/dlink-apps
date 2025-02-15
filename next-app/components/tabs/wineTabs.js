@@ -42,7 +42,7 @@ export default function ReviewList() {
       content: (
         <>
           {reviews.map((review) => (
-            <Card key={review.id} className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4`}>
+            <Card key={review.id} className={`${resolvedTheme === "dark" ? "bg-primary-800" : "bg-white"} p-4 mb-4`}>
               <CardBody>
                 <div className="flex justify-between items-center">
                   <User avatarProps={{ src: review.avatar }} name={review.user} description={review.description} />

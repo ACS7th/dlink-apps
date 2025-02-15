@@ -28,7 +28,6 @@ import site.dlink.highball.enums.HighballCateEnum;
 import site.dlink.highball.service.AwsS3Service;
 import site.dlink.highball.service.HighballService;
 
-
 @RequestMapping("/api/v1/highball")
 @RestController
 @RequiredArgsConstructor
@@ -38,49 +37,44 @@ public class HighballController {
     private final HighballService highballService;
     private final AwsS3Service awsS3Service;
 
-@PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<String> uploadHighballRecipe(
-        @RequestParam(required = false) String engName,
-        @RequestParam String korName,
-        @RequestParam HighballCateEnum category,
-        @RequestParam @Parameter(description = "하이볼 만드는 방법") String making,
-        @RequestParam(required = false) MultipartFile imageFile,
-        @RequestParam(required = false) @Parameter(description = "하이볼 재료, 직렬화 필요!!") String ingredientsJSON
-) {
-    try {
-        ObjectMapper objectMapper = new ObjectMapper();
+    @PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadHighballRecipe(
+            @RequestParam(required = false) String engName,
+            @RequestParam String korName,
+            @RequestParam HighballCateEnum category,
+            @RequestParam @Parameter(description = "하이볼 만드는 방법") String making,
+            @RequestParam(required = false) MultipartFile imageFile,
+            @RequestParam(required = false) @Parameter(description = "하이볼 재료, 직렬화 필요!!") String ingredientsJSON) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, String> ingredients = objectMapper.readValue(
-                ingredientsJSON,
-                new TypeReference<Map<String, String>>() {}
-        );
+            Map<String, String> ingredients = objectMapper.readValue(
+                    ingredientsJSON,
+                    new TypeReference<Map<String, String>>() {
+                    });
 
-        Map<String, String> uploadResultMap = Optional.ofNullable(
-                awsS3Service.uploadFile(imageFile)
-        ).orElseGet(HashMap::new);
+            Map<String, String> uploadResultMap = Optional.ofNullable(
+                    awsS3Service.uploadFile(imageFile)).orElseGet(HashMap::new);
 
-        Highball highball = Highball.builder()
-                .engName(Optional.ofNullable(engName).orElse("Unknown"))
-                .korName(korName)
-                .category(category)
-                .making(making)
-                .ingredients(ingredients)  // ← JSON -> Map 변환된 값 저장
-                .imageFilename(uploadResultMap.getOrDefault("fileName", ""))
-                .imageUrl(uploadResultMap.getOrDefault("fileUrl", ""))
-                .build();
+            Highball highball = Highball.builder()
+                    .engName(Optional.ofNullable(engName).orElse("Unknown"))
+                    .korName(korName)
+                    .category(category)
+                    .making(making)
+                    .ingredients(ingredients) // ← JSON -> Map 변환된 값 저장
+                    .imageFilename(uploadResultMap.getOrDefault("fileName", ""))
+                    .imageUrl(uploadResultMap.getOrDefault("fileUrl", ""))
+                    .build();
 
-        highballService.saveHighball(highball);
+            highballService.saveHighball(highball);
 
-        return ResponseEntity.ok(highball.getId());
+            return ResponseEntity.ok(highball.getId());
 
-    } catch (Exception e) {
-        log.error("하이볼 레시피 업로드 실패", e);
-        return ResponseEntity.status(500).body("업로드 실패: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("하이볼 레시피 업로드 실패", e);
+            return ResponseEntity.status(500).body("업로드 실패: " + e.getMessage());
+        }
     }
-}
-
-    
-    
 
     @Operation(summary = "하이볼 레시피 삭제", description = "하이볼 레시피와 이미지를 삭제합니다.")
     @DeleteMapping("/recipe/{id}")

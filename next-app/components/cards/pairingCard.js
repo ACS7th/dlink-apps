@@ -30,7 +30,7 @@ const PairingCard = () => {
     }, [selectedCategory]);
 
     return (
-        <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
+        <Card className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"} p-1`}>
             <CardBody>
                 <div className="flex justify-evenly space-x-2 mb-4">
                     {categories.map((category) => (

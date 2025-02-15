@@ -46,7 +46,7 @@ export default function ReviewList() {
       content: (
         <>
           {reviews.map((review) => (
-            <Card key={review.id} className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4`}>
+            <Card key={review.id} className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"} p-4 mb-4`}>
               <CardBody>
                 <div className="flex justify-between items-center">
                   <User
@@ -86,7 +86,7 @@ export default function ReviewList() {
       label: "하이볼 레시피",
       content: (
         <>
-          <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
+          <Card className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"} p-1`}>
             <CardBody>
               <h4 className="font-semibold text-lg">🍹 기본 하이볼 레시피</h4>
               <p>1. 잔에 얼음을 가득 채우세요.</p>
