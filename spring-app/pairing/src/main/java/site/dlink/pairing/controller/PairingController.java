@@ -2,6 +2,9 @@ package site.dlink.pairing.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import site.dlink.common.document.mongo.WineMongo;
 import site.dlink.common.document.mongo.YangjuMongo;
 import site.dlink.pairing.dto.BedrockResponse;
@@ -15,12 +18,12 @@ public class PairingController {
     private final PairingService pairingService;
 
     @PostMapping("/wine")
-    public BedrockResponse getWinePairing(@RequestBody WineMongo wine) {
+    public JsonNode getWinePairing(@RequestBody WineMongo wine) {
         return pairingService.getPairingRecommendation(wine);
     }
 
     @PostMapping("/yangju")
-    public BedrockResponse getYangjuPairing(@RequestBody YangjuMongo yangju) {
+    public JsonNode getYangjuPairing(@RequestBody YangjuMongo yangju) {
         return pairingService.getPairingRecommendation(yangju);
     }
 }

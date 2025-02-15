@@ -20,7 +20,7 @@ public class ChatController {
     }
 
     @GetMapping("/chat")
-    public Map<String, String> generate(@RequestParam(defaultValue = "Hello!") String message) {
+    public Map<String, String> generate(@RequestParam String message) {
         String response = chatClient.prompt(message).call().content();
         return Map.of("prompt", message, "response", response);
     }
