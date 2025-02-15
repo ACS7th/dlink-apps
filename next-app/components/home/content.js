@@ -13,18 +13,21 @@ import FunnelIcon from "@/components/icons/funnelicon";
 export default function Content() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const { data: session } = useSession();
   const router = useRouter();
 
   // 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
+    setIsSearchLoading(true);
     if (!searchQuery.trim()) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000);
     } else {
       router.push(`/searchresults?query=${encodeURIComponent(searchQuery)}`);
     }
+    setIsSearchLoading(false);
   };
 
   return (
@@ -49,6 +52,7 @@ export default function Content() {
           color="primary"
           className="bg-primary"
           isIconOnly
+          isLoading={isSearchLoading}
           onPress={handleSearch}
         >
           <NextImage src="/search2.svg" alt="search" width={24} height={24} />

@@ -8,30 +8,12 @@ import StarRating from "@/components/starrating/starRating"
 import { useState } from "react";
 import { Button } from "@heroui/react";
 import { Link } from "@heroui/react";
+import PairingCard from "@/components/cards/pairingCard";
 
 export default function ReviewList() {
   const { resolvedTheme } = useTheme();
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("Meat");
-
-  const recommendations = {
-    Meat: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description: "육류와 잘 어울리는 스테이크는 와인의 풍미를 더욱 돋보이게 합니다.",
-    },
-    "Sea Food": {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description: "신선한 해산물과 함께하는 안주는 와인과 환상적인 조화를 이룹니다.",
-    },
-    Fried: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description: "바삭한 튀김류는 와인의 산뜻한 맛과 잘 어울립니다.",
-    },
-    Snack: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description: "간단한 스낵류는 가벼운 와인과 함께 즐기기 좋습니다.",
-    },
-  };
 
   const reviews = [
     {
@@ -96,34 +78,7 @@ export default function ReviewList() {
       id: "recommend",
       label: "추천 안주",
       content: (
-        <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}>
-          <CardBody>
-            <div className="flex justify-evenly space-x-2 mb-4">
-              {Object.keys(recommendations).map((category) => (
-                <Button
-                  key={category}
-                  size="sm"
-                  radius="sm"
-                  className={`${selectedCategory === category
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-black"
-                    } transition duration-300`}
-                  onPress={() => setSelectedCategory(category)}
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-            <div className="flex items-center space-x-4">
-              <img
-                src={recommendations[selectedCategory].image}
-                alt={selectedCategory}
-                className="w-24 h-24 rounded-md"
-              />
-              <p className="text-sm">{recommendations[selectedCategory].description}</p>
-            </div>
-          </CardBody>
-        </Card>
+        <PairingCard />
       ),
     },
     {
