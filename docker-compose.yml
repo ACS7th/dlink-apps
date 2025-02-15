@@ -82,41 +82,41 @@ services:
     networks:
       - dlink_net
 
-  # review-service:
-  #   image: review-service:dev
-  #   build:
-  #     context: ./spring-app/
-  #     dockerfile: ./Dockerfile-review
-  #   restart: always
-  #   ports:
-  #     - "9994:9994"
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-  #     SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-  #     SERVER_PORT: 9994
-  #   volumes:
-  #     - ./spring-app/review/build:/app/review/build
-  #     - ./spring-app/review/src:/app/review/src
-  #   networks:
-  #     - dlink_net
+  review-service:
+    image: review-service:dev
+    build:
+      context: ./spring-app/
+      dockerfile: ./Dockerfile-review
+    restart: always
+    ports:
+      - "9994:9994"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      SERVER_PORT: 9994
+    volumes:
+      - ./spring-app/review/build:/app/review/build
+      - ./spring-app/review/src:/app/review/src
+    networks:
+      - dlink_net
 
-  # pairing-service:
-  #   image: pairing-service:dev
-  #   build:
-  #     context: ./spring-app/
-  #     dockerfile: ./Dockerfile-pairing
-  #   restart: always
-  #   ports:
-  #     - "9995:9995"
-  #   environment:
-  #     SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-  #     SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-  #     SERVER_PORT: 9995
-  #   volumes:
-  #     - ./spring-app/pairing/build:/app/pairing/build
-  #     - ./spring-app/pairing/src:/app/pairing/src
-  #   networks:
-  #     - dlink_net
+  pairing-service:
+    image: pairing-service:dev
+    build:
+      context: ./spring-app/
+      dockerfile: ./Dockerfile-pairing
+    restart: always
+    ports:
+      - "9995:9995"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      SERVER_PORT: 9995
+    volumes:
+      - ./spring-app/pairing/build:/app/pairing/build
+      - ./spring-app/pairing/src:/app/pairing/src
+    networks:
+      - dlink_net
 
   next-app:
     image: next-app:dev
