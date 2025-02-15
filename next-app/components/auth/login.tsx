@@ -2,7 +2,7 @@
 
 import { Alert, Button, Image, Input } from "@heroui/react";
 import { useEffect, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn} from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -14,7 +14,6 @@ export default function Login() {
     const [error, setError] = useState("");
     const [isLoginLoading, setIsLoginLoading] = useState(false);
     const router = useRouter();
-    const { data: session } = useSession();
 
     const isValidEmail = (email: string) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
