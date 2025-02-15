@@ -41,7 +41,7 @@ public class HighballController {
     @Operation(summary = "하이볼 레시피 등록", description = "하이볼 레시피와 이미지를 등록합니다.")
     @PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadHighballRecipe(
-            @RequestParam @Parameter(description = "하이볼 레시피 작성자(email)") String writeUser,
+            @RequestParam @Parameter(description = "하이볼 레시피 작성자(userid)") String userId,
             @RequestParam @Parameter(description = "하이볼 레시피 이름") String korName,
             @RequestParam(required = false) String engName,
             @RequestParam @Parameter(description = "하이볼 카테고리(wine, liquor, cocktail...)") HighballCateEnum category,
@@ -77,7 +77,7 @@ public class HighballController {
                     .build();
 
             // 🟡 Highball 저장
-            highballService.saveHighball(highball, writeUser);
+            highballService.saveHighball(highball, userId);
 
             return ResponseEntity.ok(highball.getId());
 

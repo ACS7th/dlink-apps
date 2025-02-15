@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import site.dlink.auth.dto.GetUserDto;
 import site.dlink.auth.dto.JoinDto;
 import site.dlink.auth.dto.SocialLoginRequest;
 import site.dlink.auth.service.AuthService;
@@ -32,19 +33,19 @@ public class AuthController {
     }
 
     /**
-     * (1) 전체 사용자 조회
+     * (1) 사용자 기본 정보 조회
      */
     @Operation(
-            summary = "전체 사용자 조회",
-            description = "시스템에 등록된 모든 사용자의 정보를 반환합니다.",
+            summary = "사용자 조회",
+            description = "시스템에 등록된 사용자의 정보를 반환합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류", content = @Content)
             }
     )
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    @GetMapping("/user")
+    public GetUserDto getAllUsers(@RequestParam String id) {
+        return userService.getUserDtoById(id);
     }
 
     /**

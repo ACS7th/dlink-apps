@@ -45,7 +45,6 @@ public class AlcoholsController {
         // 양주 정보 조회
         Document yangjuDoc = yangjuService.findDocumentById(id);
         if (yangjuDoc != null) {
-            yangjuDoc.append("category", "yangju");
             return ResponseEntity.ok(yangjuDoc.toJson());
         }
 

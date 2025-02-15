@@ -1,38 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Tabs, Tab } from "@heroui/tabs";
 import { Card, CardBody } from "@heroui/card";
-import { User } from "@heroui/react";
+import { User, Button, Link } from "@heroui/react";
 import { useTheme } from "next-themes";
-import StarRating from "@/components/starrating/starRating";
-import { useEffect, useState } from "react";
-import { Button } from "@heroui/react";
-import { Link } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
+import StarRating from "@/components/starrating/starRating";
 import PairingCard from "@/components/cards/pairingCard";
+import { useRouter } from "next/navigation";
 
 export default function YangjuTabs({ productCategory }) {
   const { resolvedTheme } = useTheme();
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("Meat");
 
-  // 하이볼 레시피 관련 상태
+  const router = useRouter();
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [errorRecipe, setErrorRecipe] = useState(null);
 
-  // productCategory 값이 변경될 때마다 해당 카테고리의 하이볼 레시피를 호출
   useEffect(() => {
     if (!productCategory) return;
     setLoadingRecipe(true);
+
     async function fetchHighballRecipe() {
       try {
-        const res = await fetch(
-          `/api/v1/highball/category?category=${encodeURIComponent(productCategory.replace(/^./, match => match.toUpperCase()))}`
+        const categoryParam = encodeURIComponent(
+          productCategory.replace(/^./, (match) => match.toUpperCase())
         );
+        const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
+
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
+
         const data = await res.json();
         setHighballRecipe(data);
       } catch (error) {
@@ -42,32 +42,11 @@ export default function YangjuTabs({ productCategory }) {
         setLoadingRecipe(false);
       }
     }
+
     fetchHighballRecipe();
   }, [productCategory]);
 
-  const recommendations = {
-    Meat: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description:
-        "육류와 잘 어울리는 스테이크는 와인의 풍미를 더욱 돋보이게 합니다.",
-    },
-    "Sea Food": {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description:
-        "신선한 해산물과 함께하는 안주는 와인과 환상적인 조화를 이룹니다.",
-    },
-    Fried: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description:
-        "바삭한 튀김류는 와인의 산뜻한 맛과 잘 어울립니다.",
-    },
-    Snack: {
-      image: "https://heroui.com/images/hero-card-complete.jpeg",
-      description:
-        "간단한 스낵류는 가벼운 와인과 함께 즐기기 좋습니다.",
-    },
-  };
-
+  // 리뷰 데이터 (샘플)
   const reviews = [
     {
       id: 1,
@@ -92,6 +71,7 @@ export default function YangjuTabs({ productCategory }) {
     },
   ];
 
+  // 탭에 들어갈 내용 정의
   const tabs = [
     {
       id: "review",
@@ -99,7 +79,11 @@ export default function YangjuTabs({ productCategory }) {
       content: (
         <>
           {reviews.map((review) => (
-            <Card key={review.id} className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"} p-4 mb-4`}>
+            <Card
+              key={review.id}
+              className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"
+                } p-4 mb-4`}
+            >
               <CardBody>
                 <div className="flex justify-between items-center">
                   <User
@@ -107,17 +91,13 @@ export default function YangjuTabs({ productCategory }) {
                     name={review.user}
                     description={review.description}
                   />
-                  <StarRating
-                    totalStars={5}
-                    onChange={(value) => setSelectedRating(value)}
-                    readOnly
-                  />
+                  {/* 읽기 전용 별점 표시 */}
+                  <StarRating totalStars={5} readOnly />
                 </div>
                 <p className="text-sm mt-4">{review.comment}</p>
               </CardBody>
             </Card>
           ))}
-
           <div className="flex justify-center mt-4">
             <Link
               href="/reviewlists"
@@ -134,9 +114,7 @@ export default function YangjuTabs({ productCategory }) {
     {
       id: "recommend",
       label: "추천 안주",
-      content: (
-        <PairingCard />
-      ),
+      content: <PairingCard />,
     },
     {
       id: "highball",
@@ -148,52 +126,50 @@ export default function YangjuTabs({ productCategory }) {
               <Spinner />
             </div>
           ) : errorRecipe ? (
-            <div className="py-4 text-center text-red-500">{errorRecipe}</div>
+            <div className="py-4 text-center text-red-500">
+              {errorRecipe}
+            </div>
           ) : highballRecipe &&
             Array.isArray(highballRecipe) &&
             highballRecipe.length > 0 ? (
-            <div className="space-y-4">load           {highballRecipe.slice(0, 3).map((recipe) => (
-              <Card
-                key={recipe.id}
-                className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}
-              >
-                <CardBody>
-                  <h4 className="font-semibold text-lg">
-                    🍹 {recipe.engName} ({recipe.korName})
-                  </h4>
-                  {/* 만드는 법 */}
-                  <p className="mb-2">{recipe.making}</p>
-                  {/* 재료 목록 */}
-                  {recipe.ingredients && (
-                    <div>
-                      <h5 className="font-medium mb-1">재료</h5>
-                      <ul className="list-disc pl-5">
-                        {Object.entries(recipe.ingredients).map(([key, value]) => (
-                          <li key={key}>{value}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </CardBody>
-              </Card>
-            ))}
+            <div className="space-y-4">
+              {highballRecipe.slice(0, 3).map((recipe) => (
+                <Card
+                  key={recipe.id}
+                  className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
+                    } p-1`}
+                >
+                  <CardBody>
+                    <h4 className="font-semibold text-lg">
+                      🍹 {recipe.engName} ({recipe.korName})
+                    </h4>
+                    <p className="mb-2">{recipe.making}</p>
+                    {recipe.ingredients && (
+                      <div>
+                        <h5 className="font-medium mb-1">재료</h5>
+                        <ul className="list-disc pl-5">
+                          {Object.entries(recipe.ingredients).map(([key, value]) => (
+                            <li key={key}>{value}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </CardBody>
+                </Card>
+              ))}
             </div>
           ) : (
             <div className="py-4 text-center">
-              <Card>
-                <CardBody
-                  className="flex items-center justify-center">
-                  레시피가 없습니다.
-                </CardBody>
-              </Card>
+              레시피가 없습니다.
             </div>
           )}
           <div className="flex justify-center mt-4">
             <Link
-              href="/recipes"
-              isBlock
               showAnchorIcon
-              className="text-blue-500 hover:underline text-xs"
+              className="text-blue-500 hover:underline text-sm"
+              onPress={() => {
+                router.push(`/highballs?category=${productCategory}`);
+              }}
             >
               전체 레시피 보기
             </Link>
@@ -204,13 +180,13 @@ export default function YangjuTabs({ productCategory }) {
   ];
 
   return (
-    <div className="flex w-full flex-col p-1 ">
-      <Tabs aria-label="Dynamic tabs" className="mt-0" items={tabs} fullWidth>
-        {(item) => (
+    <div className="flex w-full flex-col p-1">
+      <Tabs aria-label="Dynamic tabs" className="mt-0" fullWidth>
+        {tabs.map((item) => (
           <Tab key={item.id} title={item.label}>
             {item.content}
           </Tab>
-        )}
+        ))}
       </Tabs>
     </div>
   );
