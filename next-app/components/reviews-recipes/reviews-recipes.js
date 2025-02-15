@@ -29,6 +29,7 @@ export default function RecipeSection({ title, buttonName, subtitle }) {
   const [making, setMaking] = useState("");
   const [ingredientsJSON, setIngredientsJSON] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [writeUser, setWriteUser] = useState();
 
   // === 리뷰 입력 필드 state (평가 & 리뷰 모드) ===
   const [selectedRating, setSelectedRating] = useState(0);
@@ -45,6 +46,10 @@ export default function RecipeSection({ title, buttonName, subtitle }) {
   const loggedInUser = {
     id: session?.user?.email,
   };
+
+  useEffect(() => {
+    setWriteUser(session?.user?.email);
+  }, [session]);
 
   // 목록 가져오기 (타이틀에 따라 다른 API 호출)
   const fetchItems = async () => {
@@ -87,6 +92,7 @@ export default function RecipeSection({ title, buttonName, subtitle }) {
         return;
       }
       const queryParams = new URLSearchParams({
+        writeUser,
         engName,
         korName,
         category,

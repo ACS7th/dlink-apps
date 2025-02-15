@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,36 +38,46 @@ public class HighballController {
     private final HighballService highballService;
     private final AwsS3Service awsS3Service;
 
+    @Operation(summary = "하이볼 레시피 등록", description = "하이볼 레시피와 이미지를 등록합니다.")
     @PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadHighballRecipe(
+            @RequestParam @Parameter(description = "하이볼 레시피 작성자(email)") String writeUser,
+            @RequestParam @Parameter(description = "하이볼 레시피 이름") String korName,
             @RequestParam(required = false) String engName,
-            @RequestParam String korName,
-            @RequestParam HighballCateEnum category,
+            @RequestParam @Parameter(description = "하이볼 카테고리(wine, liquor, cocktail...)") HighballCateEnum category,
             @RequestParam @Parameter(description = "하이볼 만드는 방법") String making,
-            @RequestParam(required = false) MultipartFile imageFile,
-            @RequestParam(required = false) @Parameter(description = "하이볼 재료, 직렬화 필요!!") String ingredientsJSON) {
+            @RequestPart(required = false) MultipartFile imageFile,
+            @RequestPart(required = false) @Parameter(description = "하이볼 재료 (JSON String)") String ingredients) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-
-            Map<String, String> ingredients = objectMapper.readValue(
-                    ingredientsJSON,
-                    new TypeReference<Map<String, String>>() {
+            Map<String, String> ingredientsMap = new HashMap<>();
+            if (ingredients != null && !ingredients.isBlank()) {
+                try {
+                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {
                     });
+                } catch (Exception e) {
+                    log.error("재료 JSON 파싱 실패", e);
+                    return ResponseEntity.status(400).body("재료 형식이 잘못되었습니다.");
+                }
+            }
 
+            // 🟡 이미지 업로드
             Map<String, String> uploadResultMap = Optional.ofNullable(
                     awsS3Service.uploadFile(imageFile)).orElseGet(HashMap::new);
 
+            // 🟡 Highball 객체 생성
             Highball highball = Highball.builder()
                     .engName(Optional.ofNullable(engName).orElse("Unknown"))
                     .korName(korName)
                     .category(category)
                     .making(making)
-                    .ingredients(ingredients) // ← JSON -> Map 변환된 값 저장
+                    .ingredients(ingredientsMap) // JSON으로 받은 재료 저장
                     .imageFilename(uploadResultMap.getOrDefault("fileName", ""))
                     .imageUrl(uploadResultMap.getOrDefault("fileUrl", ""))
                     .build();
 
-            highballService.saveHighball(highball);
+            // 🟡 Highball 저장
+            highballService.saveHighball(highball, writeUser);
 
             return ResponseEntity.ok(highball.getId());
 

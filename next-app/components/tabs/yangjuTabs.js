@@ -28,7 +28,7 @@ export default function YangjuTabs({ productCategory }) {
     async function fetchHighballRecipe() {
       try {
         const res = await fetch(
-          `/api/v1/highball/category?category=${encodeURIComponent(productCategory)}`
+          `/api/v1/highball/category?category=${encodeURIComponent(productCategory.replace(/^./, match => match.toUpperCase()))}`
         );
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -153,30 +153,30 @@ export default function YangjuTabs({ productCategory }) {
             Array.isArray(highballRecipe) &&
             highballRecipe.length > 0 ? (
             <div className="space-y-4">load           {highballRecipe.slice(0, 3).map((recipe) => (
-                <Card
-                  key={recipe.id}
-                  className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}
-                >
-                  <CardBody>
-                    <h4 className="font-semibold text-lg">
-                      🍹 {recipe.engName} ({recipe.korName})
-                    </h4>
-                    {/* 만드는 법 */}
-                    <p className="mb-2">{recipe.making}</p>
-                    {/* 재료 목록 */}
-                    {recipe.ingredients && (
-                      <div>
-                        <h5 className="font-medium mb-1">재료</h5>
-                        <ul className="list-disc pl-5">
-                          {Object.entries(recipe.ingredients).map(([key, value]) => (
-                            <li key={key}>{value}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </CardBody>
-                </Card>
-              ))}
+              <Card
+                key={recipe.id}
+                className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1`}
+              >
+                <CardBody>
+                  <h4 className="font-semibold text-lg">
+                    🍹 {recipe.engName} ({recipe.korName})
+                  </h4>
+                  {/* 만드는 법 */}
+                  <p className="mb-2">{recipe.making}</p>
+                  {/* 재료 목록 */}
+                  {recipe.ingredients && (
+                    <div>
+                      <h5 className="font-medium mb-1">재료</h5>
+                      <ul className="list-disc pl-5">
+                        {Object.entries(recipe.ingredients).map(([key, value]) => (
+                          <li key={key}>{value}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
+            ))}
             </div>
           ) : (
             <div className="py-4 text-center">

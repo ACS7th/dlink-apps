@@ -1,13 +1,13 @@
 package site.dlink.highball.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import site.dlink.highball.document.Highball;
 import site.dlink.highball.enums.HighballCateEnum;
 import site.dlink.highball.repository.HighballRepository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +17,14 @@ public class HighballService {
 
     private final HighballRepository highballRepository;
 
-
     @Transactional
-    public void saveHighball(Highball highball) {
+    public void saveHighball(Highball highball, String writeUserId) {
+        Instant now = Instant.now();
+
+        highball.setCreatedAt(now);
+        highball.setUpdatedAt(now);
+        highball.setWriteUser(writeUserId);
+
         highballRepository.save(highball);
     }
 
@@ -60,7 +65,6 @@ public class HighballService {
         return Optional.ofNullable(
                 highballRepository.findLikedUsersById(highballId)
         ).map(highball -> highball.getLikedUsers().size())
-                .orElse((int) 0L);
+                .orElse(0);
     }
-
 }

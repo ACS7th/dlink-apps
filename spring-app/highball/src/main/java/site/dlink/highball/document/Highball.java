@@ -2,13 +2,13 @@ package site.dlink.highball.document;
 
 import lombok.Builder;
 import lombok.Data;
-import site.dlink.highball.enums.HighballCateEnum;
-
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import site.dlink.highball.enums.HighballCateEnum;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +21,7 @@ public class Highball {
 
     @Id
     private String id;
+
     private HighballCateEnum category;
     private String engName;
     private String korName;
@@ -29,10 +30,15 @@ public class Highball {
     private String imageUrl;
     private String making;
     private String writeUser;
+
     @Builder.Default
     private Integer likeCount = 0;
     @Builder.Default
-    private Map ingredients = new HashMap<>();
+    private Map<String, String> ingredients = new HashMap<>();
     @Builder.Default
     private Set<String> likedUsers = new HashSet<>();
+    @CreatedDate
+    private Instant createdAt;
+    @LastModifiedDate
+    private Instant updatedAt;
 }
