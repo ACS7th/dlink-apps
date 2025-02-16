@@ -1,3 +1,4 @@
+// /app/api/v1/highball/like/route.js (예시)
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
@@ -14,12 +15,11 @@ export async function POST(request) {
       );
     }
 
+    // id를 경로에 포함시키도록 URL 수정
     const res = await axios.post(
-      `http://api-gateway:9999/api/v1/highball/like?id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`,
-      null, // POST body가 필요 없다고 가정
-      {
-        timeout: 5000,
-      }
+      `http://api-gateway:9999/api/v1/highball/${encodeURIComponent(id)}/like?email=${encodeURIComponent(email)}`,
+      null,
+      { timeout: 5000 }
     );
 
     return NextResponse.json(res.data);

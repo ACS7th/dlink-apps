@@ -3,17 +3,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import {
-  Button,
-  useDisclosure,
-  Textarea,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Image,
-} from "@heroui/react";
+import { User, Button, useDisclosure, Textarea, Image } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import { Card, CardBody } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
 import Like from "@/components/buttons/likeButtons";
@@ -26,7 +17,7 @@ export default function HighballSection() {
   const category = searchParams.get("category");
 
   // === 레시피 입력 필드 state ===
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState("");
   const [engName, setEngName] = useState("");
   const [korName, setKorName] = useState("");
   const [making, setMaking] = useState("");
@@ -56,12 +47,17 @@ export default function HighballSection() {
   };
 
   useEffect(() => {
-    setUserId(session?.user?.id);
+    // 세션에서 사용자 ID를 설정 (DB 고유 ID 사용)
+    if (session?.user?.id) {
+      setUserId(session.user.id);
+    }
   }, [session]);
 
-  // 컴포넌트 마운트 시 호출
+  // 컴포넌트 마운트 시 또는 category 변경 시 레시피 목록 불러오기
   useEffect(() => {
-    fetchRecipes();
+    if (category) {
+      fetchRecipes();
+    }
   }, [category]);
 
   // 레시피 작성
@@ -76,19 +72,17 @@ export default function HighballSection() {
         ingredientsJSON,
       });
 
-      console.log(queryParams.toString());
+      console.log("QueryParams:", queryParams.toString());
       const formData = new FormData();
       if (selectedImage) {
         formData.append("imageFile", selectedImage, selectedImage.name);
       }
 
-      const res = await fetch(
-        `/api/v1/highball/recipes-post?${queryParams.toString()}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      // API 요청: /api/v1/highball/recipes-post?{queryParams}
+      const res = await fetch(`/api/v1/highball/recipes-post?${queryParams.toString()}`, {
+        method: "POST",
+        body: formData,
+      });
       if (!res.ok) throw new Error("레시피 생성에 실패했습니다.");
 
       // 폼 초기화
@@ -99,20 +93,31 @@ export default function HighballSection() {
       setSelectedImage(null);
 
       onClose();
-      fetchRecipes(); // 리스트 새로고침
+      fetchRecipes(); // 등록 후 리스트 새로고침
     } catch (error) {
       console.error("레시피 생성 에러:", error);
     }
   };
 
-  // 레시피 삭제 (실제 프로젝트에서는 API 호출 필요)
-  const handleDeleteRecipe = (id) => {
-    setRecipes((prev) => prev.filter((item) => item.id !== id));
+  // 레시피 삭제 (로그인한 사용자가 등록한 레시피에만 DELETE API 호출)
+  const handleDeleteRecipe = async (id, recipeWriteUser) => {
+    // 비교: DB에 저장된 writeUser와 세션의 user.id
+    if (recipeWriteUser === session?.user?.id) {
+      try {
+        // DELETE 요청: /api/v1/highball/recipe/{id}
+        const res = await fetch(`/api/v1/highball/recipe/${id}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("삭제 실패");
+        setRecipes((prev) => prev.filter((item) => item.id !== id));
+      } catch (error) {
+        console.error("레시피 삭제 오류:", error);
+      }
+    }
   };
 
-  // 모달 열기
+  // 모달 열기 (폼 초기화)
   const handleOpenModal = () => {
-    // 열 때마다 폼 초기화
     setEngName("");
     setKorName("");
     setMaking("");
@@ -139,7 +144,6 @@ export default function HighballSection() {
         >
           <span>{filter}</span>
         </button>
-
         <Button
           onPress={handleOpenModal}
           className="inline-flex items-center space-x-1 text-sm text-white bg-[#6F0029] px-3 py-1.5 rounded hover:bg-[#8F0033]"
@@ -152,41 +156,61 @@ export default function HighballSection() {
       {recipes.map((item) => (
         <Card
           key={item.id}
-          className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
-            } p-4 mb-4`}
+          className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4`}
         >
           <CardBody>
+            {/* 카드 상단: 등록한 사용자 프로필 정보 표시 */}
             <div className="flex items-center mb-2">
-              <Image
-                className="w-8 h-8 rounded-full mr-2"
-                src={item.imageUrl}
-                alt="User Profile"
+              <User
+                avatarProps={{
+                  src:
+                    item.writeUser === session?.user?.id
+                      ? session?.user?.profileImageUri || "" : "",
+                }}
+                name={
+                  item.writeUser === session?.user?.id
+                    ? session.user.name
+                    : item.writeUser
+                }
+                description={
+                  item.writeUser === session?.user?.id ? session.user.email : ""
+                }
               />
-              <p className="text-xs text-gray-500">{item.userId}</p>
             </div>
-            <p className="text-sm font-bold">{item.korName}</p>
-            <p className="text-sm">{item.engName}</p>
-            <p className="text-sm">Category: {item.category}</p>
-            <p className="text-sm">Making: {item.making}</p>
-            <p className="text-sm">Ingredients: {item.ingredientsJSON}</p>
-            <div className="flex justify-end mt-2">
-              <Like className="flex flex-row" />
-              {item.userId === session?.user?.email && (
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => handleDeleteRecipe(item.id)}
-                  className="w-10 h-5 ml-2"
-                >
-                  삭제
-                </Button>
-              )}
+            <div className="mb-2">
+              <h4 className="font-semibold text-lg">
+                🍹 {item.engName} ({item.korName})
+              </h4>
+              <p className="mb-1">Category: {item.category}</p>
+              <p className="mb-1">Making: {item.making}</p>
+              <p className="text-sm">Ingredients: {item.ingredientsJSON}</p>
+            </div>
+            {/* 하단: 삭제 버튼은 왼쪽, 좋아요 버튼은 오른쪽 */}
+            <div className="flex justify-between items-center mt-2">
+              <div>
+                {item.writeUser === session?.user?.id && (
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => handleDeleteRecipe(item.id, item.writeUser)}
+                    className="w-10 h-5"
+                  >
+                    삭제
+                  </Button>
+                )}
+              </div>
+              <div>
+                <Like
+                  className="flex flex-row"
+                  itemId={item.id}
+                  userEmail={session.user.email}
+                />
+              </div>
             </div>
           </CardBody>
         </Card>
       ))}
 
-      {/* HeroUI Modal을 이용한 레시피 작성 모달 */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto" className="mx-4">
         <ModalContent>
           {(onClose) => (
@@ -195,9 +219,7 @@ export default function HighballSection() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      engName
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">engName</label>
                     <input
                       type="text"
                       className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -207,9 +229,7 @@ export default function HighballSection() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      korName
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">korName</label>
                     <input
                       type="text"
                       className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -219,9 +239,7 @@ export default function HighballSection() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      making
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">making</label>
                     <Textarea
                       isClearable
                       className="mt-1 block w-full"
@@ -232,22 +250,18 @@ export default function HighballSection() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      ingredientsJSON
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">ingredientsJSON</label>
                     <Textarea
                       isClearable
                       className="mt-1 block w-full"
-                      placeholder='{"진": "50ml", "토닉워터": "100ml"}'
+                      placeholder='예: {"진": "50ml", "토닉워터": "100ml"}'
                       variant="bordered"
                       value={ingredientsJSON}
                       onChange={(e) => setIngredientsJSON(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Image File (선택)
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700">Image File (선택)</label>
                     <input
                       type="file"
                       className="mt-1 block w-full"
@@ -260,10 +274,7 @@ export default function HighballSection() {
                 <Button color="danger" variant="light" onPress={onClose}>
                   취소
                 </Button>
-                <Button
-                  color="bg-primary"
-                  onPress={() => handleSubmitRecipe(onClose)}
-                >
+                <Button color="bg-primary" onPress={() => handleSubmitRecipe(onClose)}>
                   등록
                 </Button>
               </ModalFooter>

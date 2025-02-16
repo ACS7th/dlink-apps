@@ -100,25 +100,25 @@ services:
     networks:
       - dlink_net
 
-  pairing-service:
-    image: pairing-service:dev
-    build:
-      context: ./spring-app/
-      dockerfile: ./Dockerfile-pairing
-    restart: always
-    ports:
-      - "9995:9995"
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-      SERVER_PORT: 9995
-    volumes:
-      - ./spring-app/pairing/build:/app/pairing/build
-      - ./spring-app/pairing/src:/app/pairing/src
-    networks:
-      - dlink_net
+  # pairing-service:
+  #   image: pairing-service:dev
+  #   build:
+  #     context: ./spring-app/
+  #     dockerfile: ./Dockerfile-pairing
+  #   restart: always
+  #   ports:
+  #     - "9995:9995"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  #     SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+  #     AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+  #     AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+  #     SERVER_PORT: 9995
+  #   volumes:
+  #     - ./spring-app/pairing/build:/app/pairing/build
+  #     - ./spring-app/pairing/src:/app/pairing/src
+  #   networks:
+  #     - dlink_net
 
   next-app:
     image: next-app:dev

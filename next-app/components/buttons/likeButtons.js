@@ -2,11 +2,17 @@
 
 import { useState, useEffect } from "react";
 
-export default function LikeButton({ itemId, userEmail, initialLikes = 0, initialLiked = false, className = "" }) {
+export default function LikeButton({
+  itemId,
+  userEmail,
+  initialLikes = 0,
+  initialLiked = false,
+  className = ""
+}) {
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(initialLiked);
 
-  // 컴포넌트 마운트 시, 서버에서 좋아요 수 조회
+  // (1) 페이지 최초 렌더링 시 서버에서 현재 좋아요 수 조회
   useEffect(() => {
     async function fetchLikeCounts() {
       try {
@@ -17,10 +23,10 @@ export default function LikeButton({ itemId, userEmail, initialLikes = 0, initia
           throw new Error("좋아요 수 조회 실패");
         }
         const data = await res.json();
-        // 백엔드가 { likeCount: number } 형태로 반환하면 data.likeCount, 아니라면 data 자체가 숫자일 수 있음
-        setLikes(data.likeCount !== undefined ? data.likeCount : data);
+        const newCount = data.likeCount !== undefined ? data.likeCount : data;
+        setLikes(newCount);
       } catch (error) {
-        console.error("좋아요 수 조회 에러:", error);
+        console.error("[LikeButton] 좋아요 수 조회 에러:", error);
       }
     }
     if (itemId) {
@@ -28,22 +34,25 @@ export default function LikeButton({ itemId, userEmail, initialLikes = 0, initia
     }
   }, [itemId]);
 
-  // 좋아요 버튼 클릭 시 처리 함수
+  // (2) 좋아요 버튼 클릭 (낙관적 업데이트 적용)
   async function handleLike() {
-    try {
-      // 로컬 liked 토글
-      const newLiked = !liked;
-      setLiked(newLiked);
+    const newLiked = !liked;
 
-      // POST 요청으로 좋아요 토글: /api/v1/highball/like?id=xxx&email=yyy
-      const res = await fetch(`/api/v1/highball/like?id=${itemId}&email=${encodeURIComponent(userEmail)}`, {
-        method: "POST",
-      });
+    // 낙관적 업데이트: 즉시 상태 변경
+    setLiked(newLiked);
+    setLikes((prevLikes) => (newLiked ? prevLikes + 1 : prevLikes - 1));
+
+    try {
+      // 서버에 좋아요 토글 요청
+      const res = await fetch(
+        `/api/v1/highball/like?id=${itemId}&email=${encodeURIComponent(userEmail)}`,
+        { method: "POST" }
+      );
       if (!res.ok) {
         throw new Error("좋아요 API 호출 실패");
       }
 
-      // API 호출 후 최신 좋아요 수를 다시 조회
+      // (3) 서버에서 최종 좋아요 수를 다시 조회하여 반영
       const countRes = await fetch(`/api/v1/highball/like-counts?id=${itemId}`, {
         method: "GET",
       });
@@ -51,9 +60,13 @@ export default function LikeButton({ itemId, userEmail, initialLikes = 0, initia
         throw new Error("좋아요 수 재조회 실패");
       }
       const countData = await countRes.json();
-      setLikes(countData.likeCount !== undefined ? countData.likeCount : countData);
+      const finalCount = countData.likeCount !== undefined ? countData.likeCount : countData;
+      setLikes(finalCount);
     } catch (error) {
-      console.error("좋아요 처리 에러:", error);
+      console.error("[LikeButton] 좋아요 처리 에러:", error);
+      // 요청 실패 시, 낙관적 업데이트를 되돌림
+      setLiked((prev) => !prev);
+      setLikes((prevLikes) => (newLiked ? prevLikes - 1 : prevLikes + 1));
     }
   }
 
@@ -63,6 +76,7 @@ export default function LikeButton({ itemId, userEmail, initialLikes = 0, initia
       className={`flex flex-col items-center ${className} text-gray-600 hover:text-red-500 transition-colors`}
     >
       {liked ? (
+        // 좋아요 누른 상태 아이콘 (빨간 하트)
         <svg
           width="24"
           height="24"
@@ -77,6 +91,7 @@ export default function LikeButton({ itemId, userEmail, initialLikes = 0, initia
                    0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
       ) : (
+        // 좋아요 안 누른 상태 아이콘 (빈 하트)
         <svg
           width="24"
           height="24"
