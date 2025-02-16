@@ -5,16 +5,12 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    console.log(id);
 
     if (!id) {
       return NextResponse.json({ error: "상품 id가 필요합니다." }, { status: 400 });
     }
 
-    const res = await axios.get(`http://api-gateway:9999/api/v1/alcohols/${id}`, {
-      params: { id },
-      timeout: 5000,
-    });
+    const res = await axios.get(`http://api-gateway:9999/api/v1/alcohols/${id}`)
 
     return NextResponse.json(res.data);
   } catch (error) {

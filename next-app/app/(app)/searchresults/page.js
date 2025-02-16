@@ -14,7 +14,7 @@ export default function Search() {
 
   return (
     <ScrollShadow className="w-full h-[90vh]">
-      <div className="flex w-full flex-col p-1 rounded-md shadow-md">
+      <div className="flex w-full flex-col p-1 rounded-md shadow-md h-full">
         <Tabs aria-label="Dynamic tabs" items={tabs} fullWidth>
           {tabs.map((tab) => (
             <Tab key={tab.id} title={tab.label}>

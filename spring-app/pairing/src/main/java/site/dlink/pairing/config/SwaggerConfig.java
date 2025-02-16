@@ -15,7 +15,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import site.dlink.common.constants.JwtConstants;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "alcohols Service API", version = "v1"))
+@OpenAPIDefinition(info = @Info(title = "pairing Service API", version = "v1"))
 public class SwaggerConfig {
     @Bean
     public OpenAPI authOpenAPI() {

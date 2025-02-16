@@ -6,35 +6,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Image, Textarea } from "@heroui/react";
 import YangjuTabs from "@/components/tabs/yangjuTabs";
 
-export default function ProductDetail() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        const res = await fetch(`/api/v1/details?id=${encodeURIComponent(id)}`);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        setProduct(data);
-      } catch (err) {
-        console.error("상품정보 호출 오류:", err);
-        setError("상품 정보를 불러오지 못했습니다.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    if (id) fetchProduct();
-  }, [id]);
-
-  if (loading)
-    return <div className="py-10 text-center">Loading...</div>;
-  if (error)
-    return <div className="py-10 text-center text-red-500">{error}</div>;
-  if (!product)
-    return <div className="py-10 text-center">상품 정보가 없습니다.</div>;
+export default function ProductDetail({product}) {
 
   return (
     <>
@@ -71,14 +43,13 @@ export default function ProductDetail() {
               isReadOnly
               className="max-w-full"
               defaultValue={product.explanation}
-              // label="Description"
-              // labelPlacement="outside"
+              label="Description"
+              labelPlacement="outside"
               variant="bordered"
             />
           </CardBody>
         </Card>
       </div>
-      <YangjuTabs productCategory={product.category} />
     </>
   );
 }

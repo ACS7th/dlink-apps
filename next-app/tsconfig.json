@@ -35,6 +35,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/(auth)/layout.js",
+    "components/**/*.js",
     "components/home/content.js",
     "components/icons/funnelicon.js",
     "app/api/auth/[...nextauth]/route.ts",
