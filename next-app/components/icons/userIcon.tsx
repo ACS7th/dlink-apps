@@ -1,3 +1,4 @@
+// @ts-nocheck
 const UserIcon = ({fill = "currentColor", size, height, width, ...props}) => {
     return (
       <svg

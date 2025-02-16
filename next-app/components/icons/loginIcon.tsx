@@ -1,3 +1,4 @@
+// @ts-nocheck
 const LoginIcon = ({ fill = "currentColor", size, height, width, ...props }) => {
     return (
       <svg

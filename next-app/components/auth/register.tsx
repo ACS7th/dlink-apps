@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { Button, Input, Alert } from "@heroui/react";

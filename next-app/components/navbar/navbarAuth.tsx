@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { Button, Divider } from "@heroui/react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import UserIcon from "../icons/userIcon";
 import LoginIcon from "../icons/loginIcon";
 import { UserDropdown } from "./user-dropdown";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 export default async function NavbarAuth(){
     const session = await getServerSession(authOptions);

@@ -1,6 +1,5 @@
 "use client";
 
-import Content from "@/components/home/content";
 import { ScrollShadow } from "@heroui/react";
 import { Tabs, Tab } from "@heroui/tabs";
 import WineSearchResultsPage from "@/components/searchresults/wineSearchResults";

@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardBody } from "@heroui/card";
-import { Button, Skeleton } from "@heroui/react";
+import { Button, Image, Skeleton } from "@heroui/react";
 import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const PairingCard = ({ alcohol }) => {
@@ -25,12 +25,23 @@ const PairingCard = ({ alcohol }) => {
     }
   }, [alcohol]);
 
-  // 선택된 카테고리나 alcoholCate가 변경될 때 pairing API 호출
-  useEffect(() => {
-    fetchPairing(selectedCategory);
-  }, [selectedCategory, alcoholCate]);
+  // fetchYoutubeLink도 useCallback으로 감싸서 안정적인 참조를 유지
+  const fetchYoutubeLink = useCallback(async (dishName) => {
+    setIsThumbnailLoading(true);
+    try {
+      const ytResponse = await axios.get("/api/v1/pairing/shorts/search", {
+        params: { dish: dishName + " 레시피" },
+      });
+      setYoutubeLink(ytResponse.data.result);
+    } catch (error) {
+      console.error("Failed to fetch YouTube link:", error);
+    } finally {
+      setIsThumbnailLoading(false);
+    }
+  }, []);
 
-  const fetchPairing = async (selectedCategory) => {
+  // fetchPairing 함수를 useCallback으로 감싸서 의존성 문제 해결
+  const fetchPairing = useCallback(async (selectedCategory) => {
     const pairingDataRequest = { ...alcohol, category: selectedCategory };
     setIsPairingLoading(true);
     setIsThumbnailLoading(true);
@@ -51,21 +62,12 @@ const PairingCard = ({ alcohol }) => {
     } finally {
       setIsPairingLoading(false);
     }
-  };
+  }, [alcohol, alcoholCate, fetchYoutubeLink]);
 
-  const fetchYoutubeLink = async (dishName) => {
-    setIsThumbnailLoading(true);
-    try {
-      const ytResponse = await axios.get("/api/v1/pairing/shorts/search", {
-        params: { dish: dishName + " 레시피" },
-      });
-      setYoutubeLink(ytResponse.data.result);
-    } catch (error) {
-      console.error("Failed to fetch YouTube link:", error);
-    } finally {
-      setIsThumbnailLoading(false);
-    }
-  };
+  // 선택된 카테고리나 alcoholCate가 변경될 때 pairing API 호출
+  useEffect(() => {
+    fetchPairing(selectedCategory);
+  }, [selectedCategory, alcoholCate, fetchPairing]);
 
   const getYoutubeThumbnailFromLink = (link) => {
     if (!link) return "";
@@ -76,7 +78,7 @@ const PairingCard = ({ alcohol }) => {
 
   const thumbnailUrl = getYoutubeThumbnailFromLink(youtubeLink);
 
-  // 페이지 나갈 때(컴포넌트 언마운트 시) 상태 초기화
+  // 컴포넌트 언마운트 시 상태 초기화
   useEffect(() => {
     return () => {
       setPairingData(null);
@@ -95,11 +97,10 @@ const PairingCard = ({ alcohol }) => {
               key={category}
               size="sm"
               radius="sm"
-              className={`${
-                selectedCategory === category
+              className={`${selectedCategory === category
                   ? "bg-primary text-white"
                   : "bg-gray-200 text-black"
-              } transition duration-300`}
+                } transition duration-300`}
               onPress={() => setSelectedCategory(category)}
             >
               {category}
@@ -111,8 +112,13 @@ const PairingCard = ({ alcohol }) => {
             {isThumbnailLoading ? (
               <Skeleton className="w-24 h-40 rounded-xl" />
             ) : youtubeLink ? (
-              <a href={youtubeLink} target="_blank" rel="noopener noreferrer" className="relative block">
-                <img
+              <a
+                href={youtubeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block"
+              >
+                <Image
                   src={thumbnailUrl}
                   alt="YouTube Thumbnail"
                   className="w-24 h-40 rounded-md object-cover"

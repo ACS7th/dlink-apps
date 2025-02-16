@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    console.log(id);
 
-    const res = await axios.get(`http://api-gateway:9999/api/v1/reviews`, {
+    const res = await axios.get(`${process.env.SPRING_URI}/api/v1/reviews`, {
       params: { id },
       timeout: 5000,
     });

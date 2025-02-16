@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
@@ -14,7 +16,7 @@ export async function GET(request) {
     }
 
     const res = await axios.get(
-      `http://api-gateway:9999/api/v1/highball/${encodeURIComponent(id)}/like-count`,
+      `${process.env.SPRING_URI}/api/v1/highball/${encodeURIComponent(id)}/like-count`,
       { timeout: 5000, headers: { Accept: 'application/json' } }
     );
 
