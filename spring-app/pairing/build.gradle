@@ -1,13 +1,13 @@
 dependencies {
     implementation project(':common') 
+
+    // MVC
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	// swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    // bedrock
+    implementation group: 'org.springframework.ai', name: 'spring-ai-bedrock-converse-spring-boot-starter', version: '1.0.0-M5'
 
-	// Model Mapper
-	implementation 'org.modelmapper:modelmapper:3.1.1'
+    // selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.19.1'
 
-    runtimeOnly 'com.mysql:mysql-connector-j'
 }

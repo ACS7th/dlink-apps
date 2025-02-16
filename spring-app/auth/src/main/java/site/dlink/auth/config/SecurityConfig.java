@@ -5,8 +5,6 @@ import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.jwt.custom.CustomUserDetailsService;
 import site.dlink.auth.jwt.filter.JwtAuthenticationFilter;
 import site.dlink.auth.jwt.provider.JwtTokenProvider;
-import site.dlink.common.props.NextProps;
+import site.dlink.auth.props.NextProps;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;

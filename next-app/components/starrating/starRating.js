@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function StarRating({
   totalStars = 5,
-  value,         // 부모로부터 전달받은 별점 값
+  value,
   onChange,
   readOnly = false,
   className = "",

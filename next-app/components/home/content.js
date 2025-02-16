@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input, Button } from "@heroui/react";
 import NextImage from "next/image";
 import { Alert } from "@heroui/alert";
@@ -13,23 +13,30 @@ import FunnelIcon from "@/components/icons/funnelicon";
 export default function Content() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const { data: session } = useSession();
   const router = useRouter();
 
-  // 📌 검색 버튼 클릭 (경고 알람 및 페이지 이동)
+  useEffect(() => {
+    console.log("session:", session);
+  }, [session, setTheme]);
+
+  // 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
+    setIsSearchLoading(true);
     if (!searchQuery.trim()) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 2000);
     } else {
       router.push(`/searchresults?query=${encodeURIComponent(searchQuery)}`);
     }
+    setIsSearchLoading(false);
   };
 
   return (
     <div className="flex flex-col justify-center items-center h-[calc(100vh-4rem)]">
-      
+
       <NextImage className="mb-6" src={resolvedTheme === 'dark' ? '/LOGO3.png' : '/LOGO2.png'} alt="logo" width={300} height={300} />
       <div className="flex space-x-2 w-full items-center mb-28 md:w-1/2 px-4">
         <Input
@@ -49,6 +56,7 @@ export default function Content() {
           color="primary"
           className="bg-primary"
           isIconOnly
+          isLoading={isSearchLoading}
           onPress={handleSearch}
         >
           <NextImage src="/search2.svg" alt="search" width={24} height={24} />

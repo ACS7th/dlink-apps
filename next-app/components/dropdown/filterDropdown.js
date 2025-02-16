@@ -1,5 +1,7 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/react";
 import FunnelIcon from "@/components/icons/funnelicon";
+import { BottomIcon } from "../icons/sidebar/bottom-icon";
+import { AcmeIcon } from "../icons/acme-icon";
 
 
 const FilterDropdown = () => {

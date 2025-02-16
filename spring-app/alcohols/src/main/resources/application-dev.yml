@@ -2,13 +2,6 @@ spring:
   devtools:
     restart:
       enabled: true
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
 
 springdoc:
   api-docs:
@@ -18,3 +11,6 @@ logging:
   level:
     root: INFO
     site.dlink.common: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.mongodb.driver: DEBUG
+    org.springframework.data.mongodb.core.query: DEBUG

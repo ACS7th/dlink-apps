@@ -65,11 +65,11 @@ public class AuthService {
         // 유저 조회 후, 없으면 바로 회원가입
         User user = userService.findByEmail(request.getEmail())
                                 .orElseGet(() -> joinBySocial(request));
-
         // JWT 발급
         return jwtTokenProvider.createToken(
                 user.getId(),
                 user.getEmail(),
+                user.getName(),
                 user.getRoles());
     }
 

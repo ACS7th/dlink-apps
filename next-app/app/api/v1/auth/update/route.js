@@ -1,4 +1,4 @@
-import apiSpring from '@/utils/apiSpring';
+import apiSpring from '@/helpers/apiSpring';
 import { NextResponse } from 'next/server';
 
 export async function PUT(request) {

@@ -1,50 +1,64 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Card, CardBody } from "@heroui/card";
 import { Image } from "@heroui/react";
+import { Textarea } from "@heroui/react";
 import { Progress } from "@heroui/react";
-import { Card, CardHeader, CardBody } from "@heroui/react";
 
-export default function ProductInfo() {
-  const tasteProfile = [
-    { label: "단맛", value: 80 },
-    { label: "신맛", value: 30 },
-    { label: "목넘김", value: 50 },
-    { label: "떫은맛", value: 60 },
-  ];
-
+export default function wineDetail({ wine }) {
   return (
-    <>
-      <Card className="p-4">
-        <div className="flex items-center space-x-7 mb-4">
-          <div className="flex-shrink-0">
-            <Image
-              alt="Card background"
-              className="object-cover rounded-xl"
-              src="https://heroui.com/images/hero-card-complete.jpeg"
-              width={150}
-              height={150}
-            />
+    <Card className="p-4">
+      <div className="flex items-center space-x-7 mb-4">
+        <div className="flex-shrink-0">
+          <Image
+            alt={wine.korName}
+            className="object-cover rounded-xl"
+            src={wine.image || "/LOGO4.png"}
+            width={150}
+            height={188}
+          />
+        </div>
+        <div className="flex flex-col justify-center">
+          <h6 className="font-bold text-xl mt-1">
+            {wine.korName}
+          </h6>
+          <h7 className="text-tiny uppercase font-bold text-gray-500">
+            {wine.engName}
+          </h7>
+        </div>
+      </div>
+      <CardBody>
+        <Textarea
+          isReadOnly
+          className="max-w-full"
+          value={wine.details}
+          label="Description"
+          labelPlacement="outside"
+          variant="bordered"
+        />
+        <div className="space-y-3 mt-5">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-semibold w-16">단맛</span>
+            <Progress value={wine.sweetness * 20} />
           </div>
-          <div className="flex flex-col justify-center">
-            <h5 className="font-bold text-xl mt-1">Frontend Radio</h5>
-            <p className="text-tiny uppercase font-bold text-gray-500">Daily Mix</p>
-            <small className="text-default-500">12 Tracks</small>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-semibold w-16">신맛</span>
+            <Progress value={wine.acidity * 20} />
+          </div>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-semibold w-16">목넘김</span>
+            <Progress value={wine.body * 20} />
+          </div>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-semibold w-16">떫은맛</span>
+            <Progress value={wine.tanin * 20} />
+            {/* <span className="text-xs w-8 text-left">%</span> */}
           </div>
         </div>
-        <CardBody className="p-1">
-          <div className="space-y-3">
-            {tasteProfile.map((taste, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <span className="text-sm font-semibold w-16 text-right">{taste.label}</span>
-                
-                <Progress value={taste.value} />
 
-                <span className="text-xs w-8 text-left">{taste.value}%</span>
-              </div>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
-    </>
+      </CardBody>
+    </Card>
   );
 }

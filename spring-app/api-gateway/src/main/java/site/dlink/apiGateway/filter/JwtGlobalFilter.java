@@ -9,9 +9,9 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import site.dlink.apiGateway.constants.gatewayConstants;
 import site.dlink.apiGateway.validator.JwtValidator;
 
-import java.util.List;
 
 @Slf4j
 @Component
@@ -20,16 +20,13 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
 
     private final JwtValidator jwtValidator;
 
-    private static final List<String> EXCLUDED_PATHS = List.of(
-            "/api/v1/alcohols/"
-    );
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        if (EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
+        if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
             log.info("🔓 JWT 검증 제외 경로: {}", path);
             return chain.filter(exchange);
         }

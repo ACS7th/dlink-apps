@@ -82,16 +82,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             FilterChain chain,
             Authentication authentication) throws IOException, ServletException {
 
-        log.info("인증 성공...");
+        log.info("인증 성공!");
 
         CustomUserDetails customMember = (CustomUserDetails) authentication.getPrincipal();
         String id = customMember.getUser().getId();
-        String username = customMember.getUser().getEmail();
-
+        String email = customMember.getUser().getEmail();
+        String name = customMember.getUser().getName();
         List<String> roles = customMember.getUser().getRoles();
 
         // 💍 JWT 토큰 생성 요청
-        String jwt = jwtTokenProvider.createToken(id, username, roles);
+        String jwt = jwtTokenProvider.createToken(id, email, name, roles);
 
         // 💍 { Authorization : Bearer + {jwt} }
         response.addHeader(JwtConstants.TOKEN_HEADER, JwtConstants.TOKEN_PREFIX + jwt);

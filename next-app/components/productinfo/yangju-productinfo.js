@@ -1,37 +1,55 @@
 "use client";
 
-import { Image } from "@heroui/react";
-import { Progress } from "@heroui/react";
-import { Card, CardHeader, CardBody } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Card, CardBody } from "@heroui/card";
+import { Image, Textarea } from "@heroui/react";
+import YangjuTabs from "@/components/tabs/yangjuTabs";
 
-export default function ProductInfo() {
-  const tasteProfile = [
-    { label: "단맛", value: 80 },
-    { label: "신맛", value: 30 },
-    { label: "목넘김", value: 50 },
-    { label: "떫은맛", value: 60 },
-  ];
+export default function ProductDetail({product}) {
 
   return (
     <>
-      <Card  className="p-4">
-        <div className="flex items-center space-x-7 mb-4">
-          <div className="flex-shrink-0">
-            <Image
-              alt="Card background"
-              className="object-cover rounded-xl"
-              src="https://heroui.com/images/hero-card-complete.jpeg"
-              width={150}
-              height={150}
+      <div>
+        <Card className="p-4 shadow-lg">
+          <div className="flex flex-row space-x-7 mb-4">
+            <div className="flex-shrink-0">
+              <Image
+                alt={product.korName || "상품 이미지"}
+                className="object-cover rounded-xl"
+                src={product.image}
+                width={150}
+                height={188}
+              />
+            </div>
+            <div className="flex flex-col justify-center">
+              <h6 className="font-bold text-xl">
+                {product.korName}
+              </h6>
+              <p className="text-tiny uppercase font-bold text-gray-500">
+                {product.engName}
+              </p>
+              <p className="text-sm mt-2">
+                <p>원산지: {product.origin}</p>
+                <p>도수: {product.percent}%</p>
+                <p>용량: {product.volume}ml</p>
+                <p>가격: {product?.price?.toLocaleString()}원</p>
+                <p>카테고리: {product.category}</p>
+              </p>
+            </div>
+          </div>
+          <CardBody>
+            <Textarea
+              isReadOnly
+              className="max-w-full"
+              defaultValue={product.explanation}
+              label="Description"
+              labelPlacement="outside"
+              variant="bordered"
             />
-          </div>
-          <div className="flex flex-col justify-center">
-            <h5 className="font-bold text-xl mt-1">Frontend Radio</h5>
-            <p className="text-tiny uppercase font-bold text-gray-500">Daily Mix</p>
-            <small className="text-default-500">12 Tracks</small>
-          </div>
-        </div>
-      </Card>
+          </CardBody>
+        </Card>
+      </div>
     </>
   );
 }

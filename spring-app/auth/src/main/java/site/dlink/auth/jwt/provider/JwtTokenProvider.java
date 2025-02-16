@@ -3,9 +3,9 @@ package site.dlink.auth.jwt.provider;
 import lombok.extern.slf4j.Slf4j;
 import site.dlink.auth.repository.UserRepository;
 import site.dlink.common.constants.JwtConstants;
-import site.dlink.common.props.JwtProps;
 import site.dlink.auth.entity.User;
 import site.dlink.auth.jwt.custom.CustomUserDetails;
+import site.dlink.auth.props.JwtProps;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +36,7 @@ public class JwtTokenProvider {
     @Autowired
     private UserRepository userRepository;
 
-    public String createToken(String userId, String username, List<String> roles) {
+    public String createToken(String userId, String email, String name, List<String> roles) {
         // JWT 토큰 생성
         String jwt = Jwts.builder()
                 .signWith(getShaKey(), Jwts.SIG.HS512)      // 서명에 사용할 키와 알고리즘 설정
@@ -45,7 +45,8 @@ public class JwtTokenProvider {
                 .and()
                 .expiration(new Date(System.currentTimeMillis() + 864000000))  // 토큰 만료 시간 설정 (10일)
                 .claim("uid", userId)                                // 클레임 설정: 사용자 번호
-                .claim("usn", username)                                     // 클레임 설정: 사용자 아이디
+                .claim("eml", email)                                // 클레임 설정: 이메일
+                .claim("nam", name)                                     // 클레임 설정: 사용자 별명
                 .claim("rol", roles)                                      // 클레임 설정: 권한
                 .compact();
 

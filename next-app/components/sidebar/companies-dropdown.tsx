@@ -45,7 +45,6 @@ export const CompaniesDropdown = () => {
                                 {company.location}
                             </span>
                         </div>
-                        <BottomIcon />
                     </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Avatar Actions">
