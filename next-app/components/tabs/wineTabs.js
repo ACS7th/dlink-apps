@@ -6,28 +6,12 @@ import { User } from "@heroui/react";
 import { useTheme } from "next-themes";
 import StarRating from "@/components/starrating/starRating";
 import { useState, useEffect } from "react";
-import { Button } from "@heroui/react";
 import { Link } from "@heroui/react";
-import axios from "axios";
 import PairingCard from "../cards/pairingCard";
 
-export default function ReviewList() {
+export default function WineTabs({ alcohol }) {
   const { resolvedTheme } = useTheme();
   const [selectedRating, setSelectedRating] = useState(0);
-  const [recommendation, setRecommendation] = useState(null);
-
-  const fetchRecommendation = async () => {
-    try {
-      const response = await axios.get('/api/recommendations');
-      setRecommendation(response.data);
-    } catch (error) {
-      console.error("Failed to fetch recommendations", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRecommendation();
-  }, []);
 
   const reviews = [
     { id: 1, user: "동재재재", avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d", description: "와인 애호가", comment: "와인과 잘 어울리는 풍미가 최고였어요!" },
@@ -64,7 +48,9 @@ export default function ReviewList() {
       id: "recommend",
       label: "추천 안주",
       content: (
-        <PairingCard/>
+        <PairingCard 
+          alcohol={alcohol}
+        />
       ),
     }
   ];

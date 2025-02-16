@@ -41,19 +41,19 @@ export default function wineDetail({ wine }) {
         <div className="space-y-3 mt-5">
           <div className="flex items-center space-x-4">
             <span className="text-sm font-semibold w-16">단맛</span>
-            <Progress value={wine.sweetness*20} />
+            <Progress value={wine.sweetness * 20} />
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm font-semibold w-16">신맛</span>
-            <Progress value={wine.acidity*20} />
+            <Progress value={wine.acidity * 20} />
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm font-semibold w-16">목넘김</span>
-            <Progress value={wine.body*20} />
+            <Progress value={wine.body * 20} />
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm font-semibold w-16">떫은맛</span>
-            <Progress value={wine.tanin*20} />
+            <Progress value={wine.tanin * 20} />
             {/* <span className="text-xs w-8 text-left">%</span> */}
           </div>
         </div>

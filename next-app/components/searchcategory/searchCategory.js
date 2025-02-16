@@ -1,10 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@heroui/react";
 
-// ✅ 서브카테고리(영어) -> 타입(한글) 변환 매핑
 const subcategoryToType = {
   Gin: "진",
   Rum: "럼",
@@ -27,29 +24,37 @@ export default function SearchCategory({
 
   const translatedSubcategory = subcategory ? subcategoryToType[subcategory] : null;
 
-  // ✅ 초기 필터 상태 설정 (와인은 필터 없음, 양주는 선택된 서브카테고리 적용)
-  const getInitialFilters = () => {
+  // useCallback으로 getInitialFilters를 정의
+  const getInitialFilters = useCallback(() => {
     const initialFilters = Object.keys(validCategoryFilters).reduce(
       (acc, key) => ({ ...acc, [key]: [] }),
       {}
     );
 
-    if (category === "양주" && translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
+    if (
+      category === "양주" &&
+      translatedSubcategory &&
+      validCategoryFilters.type?.includes(translatedSubcategory)
+    ) {
       initialFilters.type = [translatedSubcategory];
     }
 
     return initialFilters;
-  };
+  }, [validCategoryFilters, category, translatedSubcategory]);
 
   const [selectedFilters, setSelectedFilters] = useState(getInitialFilters);
 
   useEffect(() => {
     setSelectedFilters(getInitialFilters());
-  }, [filters, translatedSubcategory, category]);
+  }, [getInitialFilters]); // 의존성에 getInitialFilters 추가
 
-  // ✅ 양주 서브카테고리 자동 적용
+  // 양주 서브카테고리 자동 적용
   useEffect(() => {
-    if (category === "양주" && translatedSubcategory && validCategoryFilters.type?.includes(translatedSubcategory)) {
+    if (
+      category === "양주" &&
+      translatedSubcategory &&
+      validCategoryFilters.type?.includes(translatedSubcategory)
+    ) {
       setSelectedFilters((prev) => {
         if (!prev.type.includes(translatedSubcategory)) {
           return { ...prev, type: [...prev.type, translatedSubcategory] };
@@ -59,7 +64,7 @@ export default function SearchCategory({
     }
   }, [translatedSubcategory, category, validCategoryFilters.type]);
 
-  // ✅ 필터 토글 함수
+  // 필터 토글 함수
   const toggleFilter = (filterCategory, value) => {
     setSelectedFilters((prev) => {
       const updatedCategory = prev[filterCategory]?.includes(value)

@@ -1,7 +1,7 @@
 "use client";
 
 import WineProductInfo from "@/components/productinfo/wine-productinfo";
-import WineTabs from "@/components/tabs/WineTabs";
+import WineTabs from "@/components/tabs/wineTabs";
 import { Card, Skeleton, Spinner } from "@heroui/react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -66,7 +66,9 @@ export default function DetailsPage() {
       ) : (
         <WineProductInfo wine={wine} />
       )}
-      <WineTabs />
+      <WineTabs 
+        alcohol={wine}
+      />
     </div>
   );
 }

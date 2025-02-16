@@ -1,33 +1,79 @@
 "use client";
 
 import { Card, CardBody } from "@heroui/card";
-import { Button } from "@heroui/react";
+import { Button, Skeleton } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const PairingCard = () => {
+const PairingCard = ({ alcohol }) => {
     const { resolvedTheme } = useTheme();
     const [selectedCategory, setSelectedCategory] = useState("Meat");
-    const [recommendation, setRecommendation] = useState({
-        image: "",
-        description: "",
-    });
-
+    const [alcoholCate, setAlcoholCate] = useState("wine");
+    const [isPairingLoading, setIsPairingLoading] = useState(true);
+    const [isThumbnailLoading, setIsThumbnailLoading] = useState(true);
+    const [pairingData, setPairingData] = useState(null);
+    const [youtubeLink, setYoutubeLink] = useState("");
     const categories = ["Meat", "Sea Food", "Fried", "Snack"];
 
-    const fetchRecommendation = async (category) => {
+    useEffect(() => {
+        if (alcohol && Object.prototype.hasOwnProperty.call(alcohol, "tanin")) {
+            setAlcoholCate("yangju");
+        } else {
+            setAlcoholCate("wine");
+        }
+    }, [alcohol]);
+
+    useEffect(() => {
+        fetchPairing(selectedCategory);
+    }, [selectedCategory, alcoholCate]);
+
+    const fetchPairing = async (selectedCategory) => {
+        const pairingDataRequest = { ...alcohol, category: selectedCategory };
+        setIsPairingLoading(true);
+        setIsThumbnailLoading(true);
+        setPairingData(null);
+
         try {
-            const response = await axios.get(`/api/recommendations?category=${category}`);
-            setRecommendation(response.data);
+            const endpoint =
+                alcoholCate === "yangju" ? "/api/v1/pairing/yangju" : "/api/v1/pairing/wine";
+            const response = await axios.post(endpoint, pairingDataRequest);
+            setPairingData(response.data.data);
+            // pairing 데이터가 있으면 YouTube 링크 요청 (비동기 호출)
+            if (response.data.data && response.data.data.dish_name) {
+                fetchYoutubeLink(response.data.data.dish_name);
+            } else {
+                setIsThumbnailLoading(false);
+            }
         } catch (error) {
             console.error("Failed to fetch recommendation:", error);
+        } finally {
+            setIsPairingLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchRecommendation(selectedCategory);
-    }, [selectedCategory]);
+    const fetchYoutubeLink = async (dishName) => {
+        setIsThumbnailLoading(true);
+        try {
+            const ytResponse = await axios.get("/api/v1/pairing/shorts/search", {
+                params: { dish: dishName + " 레시피" },
+            });
+            setYoutubeLink(ytResponse.data.result);
+        } catch (error) {
+            console.error("Failed to fetch YouTube link:", error);
+        } finally {
+            setIsThumbnailLoading(false);
+        }
+    };
+
+    const getYoutubeThumbnailFromLink = (link) => {
+        if (!link) return "";
+        const parts = link.split("/");
+        const videoId = parts[parts.length - 1];
+        return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    };
+
+    const thumbnailUrl = getYoutubeThumbnailFromLink(youtubeLink);
 
     return (
         <Card className={`${resolvedTheme === "dark" ? "bg-content1" : "bg-white"} p-1`}>
@@ -39,8 +85,8 @@ const PairingCard = () => {
                             size="sm"
                             radius="sm"
                             className={`${selectedCategory === category
-                                    ? "bg-primary text-white"
-                                    : "bg-gray-200 text-black"
+                                ? "bg-primary text-white"
+                                : "bg-gray-200 text-black"
                                 } transition duration-300`}
                             onPress={() => setSelectedCategory(category)}
                         >
@@ -49,8 +95,64 @@ const PairingCard = () => {
                     ))}
                 </div>
                 <div className="flex items-center space-x-4">
-                    <div className="w-24 h-24 bg-gray-300 rounded-md animate-pulse" />
-                    <p className="text-sm">{recommendation.description || "내용을 불러오는 중입니다."}</p>
+                    <div className="flex-shrink-0">
+                        {isThumbnailLoading ? (
+                            <Skeleton className="w-24 h-40 rounded-xl" />
+                        ) : (
+                            <a href={youtubeLink} target="_blank" rel="noopener noreferrer" className="relative block">
+                                <img
+                                    src={thumbnailUrl}
+                                    alt="YouTube Thumbnail"
+                                    className="w-24 h-40 rounded-md object-cover"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-10 h-10 text-white opacity-80"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </div>
+                            </a>
+                        )}
+                    </div>
+
+                    <div className="w-full">
+                        {isPairingLoading ? (
+                            <>
+                                <Skeleton className="rounded-xl w-24 h-4" />
+                                <Skeleton className="rounded-xl w-36 h-4 mt-2" />
+                                <Skeleton className="rounded-xl w-36 h-4 mt-2" />
+                                <Skeleton className="rounded-xl w-24 h-4 mt-4" />
+                                <ul className="mt-2 list-disc pl-2">
+                                    <Skeleton className="rounded-xl w-26 h-4 mt-1" />
+                                    <Skeleton className="rounded-xl w-26 h-4 mt-1" />
+                                </ul>
+                            </>
+                        ) : pairingData ? (
+                            <>
+                                <p className="text-sm font-bold">{pairingData.dish_name}</p>
+                                <p className="text-sm">{pairingData.description}</p>
+                                {pairingData.side_dish && pairingData.side_dish.length > 0 && (
+                                    <>
+                                        <p className="mt-2 text-sm font-bold">곁들임 요리</p>
+                                        <ul className="mt-2 list-disc pl-4">
+                                            {pairingData.side_dish.map((item, index) => (
+                                                <li key={index} className="text-sm">
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <p className="text-sm">추천 결과가 없습니다.</p>
+                        )}
+                    </div>
+
                 </div>
             </CardBody>
         </Card>
