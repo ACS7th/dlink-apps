@@ -56,7 +56,7 @@ export default function WineTabs({ alcohol }) {
   ];
 
   return (
-    <div className="flex w-full flex-col p-1 rounded-md shadow-md">
+    <div className="flex w-full flex-col rounded-md shadow-md">
       <Tabs aria-label="Dynamic tabs" items={tabs} fullWidth>
         {(item) => (
           <Tab key={item.id} title={item.label}>

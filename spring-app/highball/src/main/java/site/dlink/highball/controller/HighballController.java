@@ -93,7 +93,12 @@ public class HighballController {
             @Parameter(description = "삭제할 하이볼 레시피의 ID", required = true) @PathVariable String id) {
         Highball highball = highballService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다: " + id));
-        awsS3Service.deleteFile(highball.getImageFilename());
+        
+        String imageFilename = highball.getImageFilename();
+        if (imageFilename != null && !imageFilename.isEmpty()) {
+            awsS3Service.deleteFile(imageFilename);
+        }
+        
         highballService.deleteHighball(id);
         return ResponseEntity.ok("레시피 삭제 성공: " + id);
     }
