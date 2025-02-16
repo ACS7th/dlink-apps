@@ -46,36 +46,7 @@ export default function YangjuTabs({ productCategory }) {
     fetchHighballRecipe();
   }, [productCategory]);
 
-  // 하이볼 레시피 불러오기(첫글자 대문자)
-  // useEffect(() => {
-  //   if (!productCategory) return;
-  //   setLoadingRecipe(true);
-
-  //   async function fetchHighballRecipe() {
-  //     try {
-  //       const categoryParam = encodeURIComponent(
-  //         productCategory.replace(/^./, (match) => match.toUpperCase())
-  //       );
-  //       const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
-
-  //       if (!res.ok) {
-  //         throw new Error(`HTTP error! status: ${res.status}`);
-  //       }
-
-  //       const data = await res.json();
-  //       setHighballRecipe(data);
-  //     } catch (error) {
-  //       console.error("하이볼 레시피 호출 오류:", error);
-  //       setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
-  //     } finally {
-  //       setLoadingRecipe(false);
-  //     }
-  //   }
-
-  //   fetchHighballRecipe();
-  // }, [productCategory]);
-
-  // 리뷰 데이터 (샘플)
+  // 리뷰 데이터
   const reviews = [
     {
       id: 1,
@@ -186,7 +157,12 @@ export default function YangjuTabs({ productCategory }) {
                       </div>
                     )}
                     <div className="flex justify-end mt-2">
-                      <LikeButton className="flex flex-row" readOnly />
+                      <LikeButton
+                        className="flex flex-row"
+                        itemId={item.id}
+                        userEmail={session.user.email}
+                        readOnly
+                      />
                     </div>
                   </CardBody>
                 </Card>
