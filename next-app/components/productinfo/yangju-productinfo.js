@@ -33,7 +33,7 @@ export default function ProductDetail({product}) {
                 <p>원산지: {product.origin}</p>
                 <p>도수: {product.percent}%</p>
                 <p>용량: {product.volume}ml</p>
-                <p>가격: {product.price.toLocaleString()}원</p>
+                <p>가격: {product?.price?.toLocaleString()}원</p>
                 <p>카테고리: {product.category}</p>
               </p>
             </div>

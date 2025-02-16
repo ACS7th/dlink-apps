@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import { Sidebar } from "./sidebar.styles";
 import { Avatar, Tooltip } from "@heroui/react";

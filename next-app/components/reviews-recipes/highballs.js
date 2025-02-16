@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { User, Button, useDisclosure, Textarea, Image } from "@heroui/react";
@@ -33,7 +33,7 @@ export default function HighballSection() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // 하이볼 레시피 목록 불러오기
-  const fetchRecipes = async () => {
+  const fetchRecipes = useCallback(async () => {
     try {
       const res = await fetch("/api/v1/highball/category?category=" + category);
       if (!res.ok) {
@@ -44,7 +44,7 @@ export default function HighballSection() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [category]);
 
   useEffect(() => {
     // 세션에서 사용자 ID를 설정 (DB 고유 ID 사용)
@@ -58,7 +58,7 @@ export default function HighballSection() {
     if (category) {
       fetchRecipes();
     }
-  }, [category]);
+  }, [category, fetchRecipes]);
 
   // 레시피 작성
   const handleSubmitRecipe = async (onClose) => {
@@ -165,7 +165,8 @@ export default function HighballSection() {
                 avatarProps={{
                   src:
                     item.writeUser === session?.user?.id
-                      ? session?.user?.profileImageUri || "" : "",
+                      ? session?.user?.profileImageUri || ""
+                      : "",
                 }}
                 name={
                   item.writeUser === session?.user?.id

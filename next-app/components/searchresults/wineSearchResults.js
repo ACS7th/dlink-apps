@@ -59,6 +59,7 @@ export default function WineSearchResultsPage() {
   }, [loading, hasMore, page, fetchResults]);
 
   useEffect(() => {
+    const currentLoader = loaderRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading && hasMore) {
@@ -67,17 +68,18 @@ export default function WineSearchResultsPage() {
       },
       { threshold: 1.0 }
     );
-
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
+  
+    if (currentLoader) {
+      observer.observe(currentLoader);
     }
-
+  
     return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
       }
     };
   }, [loadMoreItems, loading, hasMore]);
+  
 
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);

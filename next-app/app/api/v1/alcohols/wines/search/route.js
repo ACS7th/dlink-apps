@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
@@ -8,7 +9,7 @@ export async function GET(request) {
     const page = searchParams.get('page') || 0;
     const size = searchParams.get('size') || 10;
 
-    const res = await axios.get(`http://api-gateway:9999/api/v1/alcohols/wines/search`, {
+    const res = await axios.get(`${process.env.SPRING_URI}/api/v1/alcohols/wines/search`, {
       params: { keyword, page, size },
       timeout: 5000,
     });

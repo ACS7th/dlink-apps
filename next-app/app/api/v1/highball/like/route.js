@@ -1,6 +1,7 @@
 // /app/api/v1/highball/like/route.js (예시)
 import axios from 'axios';
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
@@ -17,7 +18,7 @@ export async function POST(request) {
 
     // id를 경로에 포함시키도록 URL 수정
     const res = await axios.post(
-      `http://api-gateway:9999/api/v1/highball/${encodeURIComponent(id)}/like?email=${encodeURIComponent(email)}`,
+      `${process.env.SPRING_URI}/api/v1/highball/${encodeURIComponent(id)}/like?email=${encodeURIComponent(email)}`,
       null,
       { timeout: 5000 }
     );

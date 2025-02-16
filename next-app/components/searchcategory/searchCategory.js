@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@heroui/react";
 
@@ -20,7 +20,9 @@ export default function SearchCategory({
 }) {
   const searchParams = useSearchParams();
   const subcategory = propSubcategory || searchParams.get("subcategory");
-  const validCategoryFilters = filters || {};
+  
+  // filters를 useMemo로 감싸서 참조가 변경되지 않도록 함
+  const validCategoryFilters = useMemo(() => filters || {}, [filters]);
 
   const translatedSubcategory = subcategory ? subcategoryToType[subcategory] : null;
 
@@ -46,7 +48,7 @@ export default function SearchCategory({
 
   useEffect(() => {
     setSelectedFilters(getInitialFilters());
-  }, [getInitialFilters]); // 의존성에 getInitialFilters 추가
+  }, [getInitialFilters]);
 
   // 양주 서브카테고리 자동 적용
   useEffect(() => {

@@ -15,6 +15,7 @@ export default function DetailsPage() {
     async function fetchProduct() {
       try {
         const res = await fetch(`/api/v1/details?id=${encodeURIComponent(id)}`);
+        console.log(res)
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         setProduct(data);
