@@ -119,31 +119,31 @@ services:
       - ./spring-app/pairing/src:/app/pairing/src
     networks:
       - dlink_net
-  #
-  # next-app:
-  #   image: next-app:dev
-  #   build:
-  #     context: ./next-app/
-  #     dockerfile: Dockerfile-dev
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     NODE_ENV: ${NODE_ENV}
-  #     GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-  #     GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-  #     KAKAO_REST_API: ${KAKAO_REST_API}
-  #     KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-  #     NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
-  #     NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
-  #     NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
-  #     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-  #     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-  #     AWS_REGION: ${AWS_REGION}
-  #     SPRING_URI: ${SPRING_URI}
-  #   networks:
-  #     - dlink_net
-  #   volumes:
-  #     - ./next-app:/app
+
+  next-app:
+    image: next-app:dev
+    build:
+      context: ./next-app/
+      dockerfile: Dockerfile-dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      KAKAO_REST_API: ${KAKAO_REST_API}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
+      NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      SPRING_URI: ${SPRING_URI}
+    networks:
+      - dlink_net
+    volumes:
+      - ./next-app:/app
 
 networks:
   dlink_net:
