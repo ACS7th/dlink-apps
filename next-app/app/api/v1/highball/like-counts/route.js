@@ -5,6 +5,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+
     if (!id) {
       return NextResponse.json(
         { error: 'id가 필요합니다.' },
@@ -13,12 +14,10 @@ export async function GET(request) {
     }
 
     const res = await axios.get(
-      `http://api-gateway:9999/api/v1/highball/like-counts?id=${encodeURIComponent(id)}`,
-      {
-        timeout: 5000,
-        headers: { Accept: 'application/json' },
-      }
+      `http://api-gateway:9999/api/v1/highball/${encodeURIComponent(id)}/like-count`,
+      { timeout: 5000, headers: { Accept: 'application/json' } }
     );
+
 
     return NextResponse.json(res.data);
   } catch (error) {

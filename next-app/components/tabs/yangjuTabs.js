@@ -9,6 +9,7 @@ import { Spinner } from "@heroui/spinner";
 import StarRating from "@/components/starrating/starRating";
 import PairingCard from "@/components/cards/pairingCard";
 import { useRouter } from "next/navigation";
+import LikeButton from "../buttons/likeButtons";
 
 export default function YangjuTabs({ productCategory }) {
   const { resolvedTheme } = useTheme();
@@ -18,15 +19,14 @@ export default function YangjuTabs({ productCategory }) {
   const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [errorRecipe, setErrorRecipe] = useState(null);
 
+  // 하이볼 레시피 불러오기
   useEffect(() => {
     if (!productCategory) return;
     setLoadingRecipe(true);
 
     async function fetchHighballRecipe() {
       try {
-        const categoryParam = encodeURIComponent(
-          productCategory.replace(/^./, (match) => match.toUpperCase())
-        );
+        const categoryParam = encodeURIComponent(productCategory);
         const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
 
         if (!res.ok) {
@@ -45,6 +45,35 @@ export default function YangjuTabs({ productCategory }) {
 
     fetchHighballRecipe();
   }, [productCategory]);
+
+  // 하이볼 레시피 불러오기(첫글자 대문자)
+  // useEffect(() => {
+  //   if (!productCategory) return;
+  //   setLoadingRecipe(true);
+
+  //   async function fetchHighballRecipe() {
+  //     try {
+  //       const categoryParam = encodeURIComponent(
+  //         productCategory.replace(/^./, (match) => match.toUpperCase())
+  //       );
+  //       const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
+
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! status: ${res.status}`);
+  //       }
+
+  //       const data = await res.json();
+  //       setHighballRecipe(data);
+  //     } catch (error) {
+  //       console.error("하이볼 레시피 호출 오류:", error);
+  //       setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
+  //     } finally {
+  //       setLoadingRecipe(false);
+  //     }
+  //   }
+
+  //   fetchHighballRecipe();
+  // }, [productCategory]);
 
   // 리뷰 데이터 (샘플)
   const reviews = [
@@ -143,6 +172,8 @@ export default function YangjuTabs({ productCategory }) {
                     <h4 className="font-semibold text-lg">
                       🍹 {recipe.engName} ({recipe.korName})
                     </h4>
+                    <p className="mb-2">카테고리: {recipe.category}</p>
+                    <h5 className="font-medium mb-1">만드는 방법</h5>
                     <p className="mb-2">{recipe.making}</p>
                     {recipe.ingredients && (
                       <div>
@@ -154,6 +185,9 @@ export default function YangjuTabs({ productCategory }) {
                         </ul>
                       </div>
                     )}
+                    <div className="flex justify-end mt-2">
+                      <LikeButton className="flex flex-row" readOnly />
+                    </div>
                   </CardBody>
                 </Card>
               ))}
@@ -169,6 +203,7 @@ export default function YangjuTabs({ productCategory }) {
               className="text-blue-500 hover:underline text-sm"
               onPress={() => {
                 router.push(`/highballs?category=${productCategory}`);
+                // router.push(`/highballs`);
               }}
             >
               전체 레시피 보기
