@@ -13,7 +13,7 @@ export async function DELETE(request, { params }) {
     }
 
     // 백엔드 API URL 구성
-    const backendURL = `http://192.168.56.100:9999/api/v1/highball/recipe/${encodeURIComponent(id)}`;
+    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/recipe/${encodeURIComponent(id)}`;
 
     const res = await axios.delete(backendURL, {
       timeout: 5000,
