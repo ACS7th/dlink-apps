@@ -17,6 +17,7 @@ export default function DetailsPage() {
         const res = await fetch(`/api/v1/details?id=${encodeURIComponent(id)}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
+        console.log(data)
         setWine(data);
       } catch (err) {
         console.error("상품정보 호출 오류:", err);
