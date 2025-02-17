@@ -61,10 +61,10 @@ public class HighballService {
         return highball.getLikedUsers().size();
     }
 
-    public long getLikeCount(String highballId) {
-        return Optional.ofNullable(
-                highballRepository.findLikedUsersById(highballId)
-        ).map(highball -> highball.getLikedUsers().size())
-                .orElse(0);
+    public int countLikedUsers(String highballId) {
+        Optional<Highball> highballOpt = highballRepository.findById(highballId);
+        return highballOpt.map(h -> h.getLikedUsers().size())
+                          .orElse(0);
     }
+
 }
