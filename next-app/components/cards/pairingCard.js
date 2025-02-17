@@ -123,7 +123,7 @@ const PairingCard = ({ alcohol }) => {
                   alt="YouTube Thumbnail"
                   className="w-24 h-40 rounded-md object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center z-10">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="w-10 h-10 text-white opacity-80"
@@ -135,7 +135,7 @@ const PairingCard = ({ alcohol }) => {
                 </div>
               </a>
             ) : (
-              <div className="w-24 h-40 bg-gray-300 rounded-md" />
+              <div className="w-24 h-24 bg-gray-300 rounded-md" />
             )}
           </div>
           <div className="w-full">
