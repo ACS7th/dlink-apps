@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import RecipeCard from "@/components/highball/recipeCard";
 
-export default function YangjuTabs({ productCategory }) {
+export default function YangjuTabs({ productCategory, productId }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession({ required: true });
   const router = useRouter();
@@ -101,10 +101,12 @@ export default function YangjuTabs({ productCategory }) {
           ))}
           <div className="flex justify-center mt-4">
             <Link
-              href="/reviewlists"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm"
+              onPress={() => {
+                router.push(`/reviews?category=${productCategory}&drinkId=${productId}`);
+              }}
             >
               다른 리뷰 더보기
             </Link>
@@ -140,7 +142,6 @@ export default function YangjuTabs({ productCategory }) {
                   item={recipe}
                   session={session}
                   resolvedTheme={resolvedTheme}
-                // onDelete={handleDeleteRecipe}
                 />
               ))}
             </div>
@@ -151,7 +152,6 @@ export default function YangjuTabs({ productCategory }) {
           )}
           <div className="flex justify-center mt-4">
             <Link
-              // href="/highballs?category=${productCategory}"
               isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm"

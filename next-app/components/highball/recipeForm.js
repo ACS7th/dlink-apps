@@ -1,18 +1,30 @@
 import { useState } from "react";
 import { Button, Textarea } from "@heroui/react";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
+import IngredientInput from "@/components/highball/ingredients";
 
 export default function RecipeForm({ onClose, onSubmit }) {
-  const [Name, setEngName] = useState("");
+  const [name, setName] = useState("");
   const [making, setMaking] = useState("");
-  const [ingredientsJSON, setIngredientsJSON] = useState("");
+  // ingredients는 key/value 객체 배열로 관리
+  const [ingredients, setIngredients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleSubmit = () => {
     const formData = new FormData();
-    formData.append("Name", Name);
+    formData.append("name", name);
     formData.append("making", making);
-    formData.append("ingredientsJSON", ingredientsJSON);
+
+    // ingredients 배열을 { key: value, ... } 객체로 변환
+    const ingredientsObj = ingredients.reduce((acc, curr) => {
+      // key와 value가 모두 비어있지 않은 경우에만 추가
+      if (curr.key.trim() && curr.value.trim()) {
+        acc[curr.key] = curr.value;
+      }
+      return acc;
+    }, {});
+    // 변환된 객체를 JSON 문자열로 만들어 "ingredients" 키로 전송
+    formData.append("ingredients", JSON.stringify(ingredientsObj));
     if (selectedImage) {
       formData.append("imageFile", selectedImage, selectedImage.name);
     }
@@ -25,13 +37,13 @@ export default function RecipeForm({ onClose, onSubmit }) {
       <ModalBody>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">korName</label>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
             <input
               type="text"
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               placeholder="예: 하이볼"
-              value={Name}
-              onChange={(e) => setKorName(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
@@ -46,14 +58,10 @@ export default function RecipeForm({ onClose, onSubmit }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">ingredientsJSON</label>
-            <Textarea
-              isClearable
-              className="mt-1 block w-full"
-              placeholder='예: {"진": "50ml", "토닉워터": "100ml"}'
-              variant="bordered"
-              value={ingredientsJSON}
-              onChange={(e) => setIngredientsJSON(e.target.value)}
+            <label className="block text-sm font-medium text-gray-700">Ingredients</label>
+            <IngredientInput
+              ingredients={ingredients}
+              onChange={setIngredients}
             />
           </div>
           <div>

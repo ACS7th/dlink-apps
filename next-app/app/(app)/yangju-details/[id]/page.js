@@ -51,7 +51,7 @@ export default function DetailsPage() {
         <YangjuProductInfo product={product} />
       )}
 
-      <YangjuTabs productCategory={product?.category} />
+      <YangjuTabs productCategory={product?.category} productId={id} />
     </div>
   );
 }

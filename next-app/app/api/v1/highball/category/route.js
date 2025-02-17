@@ -5,19 +5,20 @@ export const dynamic = 'force-dynamic';
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    let category = searchParams.get("category");
-    console.log("category", category);
+    const category = searchParams.get("category");
+    console.log("category:", category);
 
     if (!category) {
       return NextResponse.json({ error: "카테고리 값이 필요합니다." }, { status: 400 });
     }
 
-    const res = await axios.get(`${process.env.SPRING_URI}/api/v1/highball/category?category=${encodeURIComponent(category)}`, {
+    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/category`;
+    const res = await axios.get(backendURL, {
       params: { category },
       timeout: 5000,
-    }
-    );
+    });
 
+    console.log("레시피 목록 API 응답 데이터:", res.data);
     return NextResponse.json(res.data);
   } catch (error) {
     console.error("하이볼 레시피 API 요청 오류:", error);

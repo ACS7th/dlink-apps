@@ -4,41 +4,40 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
-    // URL 쿼리 파라미터 추출
+    // URL에서 query parameters 추출 (테스트 요청 시 이미 URL에 포함되어 있음)
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const Name = searchParams.get('Name');
     const category = searchParams.get('category');
-    const making = searchParams.get('making');
-    const ingredientsJSON = searchParams.get('ingredientsJSON');
 
-    // 클라이언트 요청의 multipart/form-data 파싱 (이미지 파일 전송을 위해)
+    // formData 파싱 (name, making, ingredients, imageFile)
     const formData = await request.formData();
-    const imageFile = formData.get('imageFile'); // 선택적 파일
+    const name = formData.get("name");
+    const making = formData.get("making");
+    const ingredients = formData.get("ingredients"); // JSON 문자열, 예: {" ㅇ ":" ㅇ "}
+    const imageFile = formData.get("imageFile"); // 선택적 파일
 
-    // 백엔드 전송용 FormData (이미지 파일만 전송)
-    const backendFormData = new FormData();
-    if (imageFile && imageFile.size > 0) {
-      backendFormData.append('imageFile', imageFile, imageFile.name);
-    }
-
-    // 쿼리 파라미터를 포함한 백엔드 URL 구성
+    // 백엔드에 전달할 query parameters 구성: userId, name, category, making
     const queryParams = new URLSearchParams({
       userId,
-      Name,
+      name,
       category,
       making,
-      ingredientsJSON,
     });
-    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/recipe?${queryParams.toString()}`;
 
-    console.log(backendURL)
-    console.log(backendURL)
-    console.log(backendURL)
-    console.log(backendURL)
-    console.log(backendURL)
-    console.log(backendURL)
-    // 백엔드 API에 POST 요청 (axios가 multipart/form-data 전송)
+    // 백엔드 API URL 구성 (예: http://localhost:9999/api/v1/highball/recipe?userId=...&name=...&category=...&making=...)
+    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/recipe?${queryParams.toString()}`;
+    console.log("Backend URL:", backendURL);
+
+    // 백엔드 전송용 FormData 구성 (imageFile와 ingredients)
+    const backendFormData = new FormData();
+    if (imageFile && imageFile.size > 0) {
+      backendFormData.append("imageFile", imageFile, imageFile.name);
+    }
+    if (ingredients) {
+      backendFormData.append("ingredients", ingredients);
+    }
+
+    // 백엔드 API에 POST 요청 (axios 사용, multipart/form-data 전송)
     const res = await axios.post(backendURL, backendFormData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 5000,

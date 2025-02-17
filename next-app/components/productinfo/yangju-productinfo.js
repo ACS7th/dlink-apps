@@ -6,7 +6,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Image, Textarea } from "@heroui/react";
 import YangjuTabs from "@/components/tabs/yangjuTabs";
 
-export default function ProductDetail({product}) {
+export default function ProductDetail({ product }) {
 
   return (
     <>
@@ -30,6 +30,7 @@ export default function ProductDetail({product}) {
                 {product.engName}
               </p>
               <p className="text-sm mt-2">
+                <p>id: {product.id}</p>
                 <p>원산지: {product.origin}</p>
                 <p>도수: {product.percent}%</p>
                 <p>용량: {product.volume}ml</p>

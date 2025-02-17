@@ -1,34 +1,40 @@
 import { Card, CardBody } from "@heroui/card";
-import { User, Button, Textarea, Image } from "@heroui/react";
+import { User, Textarea, Image } from "@heroui/react";
 import Like from "@/components/buttons/likeButtons";
+import CardMenu from "@/components/highball/cardmenu";
+import { useTheme } from "next-themes";
+import { useSession } from "next-auth/react";
 
-export default function RecipeCard({ item, session, resolvedTheme, onDelete, readOnly = false }) {
+export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, readOnly = false }) {
+  const isOwner = item.writeUser === session?.user?.id;
+
   return (
-    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4`}>
+    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4 relative`}>
       <CardBody>
+        {/* 상단 우측에 메뉴 버튼 (작성자일 경우) */}
+        {isOwner && (
+          <div className="absolute top-2 right-2">
+            <CardMenu
+              onEdit={() => { if (onEdit) onEdit(item); }}
+              onDelete={() => { if (onDelete) onDelete(item.id, item.writeUser); }}
+            />
+          </div>
+        )}
         {/* 등록한 사용자 프로필 정보 */}
         <div className="flex items-center">
           <User
             avatarProps={{
-              src: item.writeUser === session?.user?.id
+              src: isOwner
                 ? session?.user?.profileImageUri || "/favicon.ico"
                 : "/favicon.ico",
             }}
-            name={
-              item.writeUser === session?.user?.id
-                ? session.user.name || "익명"
-                : "익명"
-            }
-            description={
-              item.writeUser === session?.user?.id
-                ? session.user.email || "익명"
-                : "일반회원"
-            }
+            name={isOwner ? session.user.name || "익명" : "익명"}
+            description={isOwner ? session.user.email || "익명" : "일반회원"}
           />
         </div>
         <div className="mb-2">
           <h2 className="font-semibold text-lg">
-            🍹 {item.Name}
+            🍹 {item.name ? item.name : "레시피"}
           </h2>
           <div className="flex justify-between items-center mt-2">
             <Image
@@ -36,44 +42,44 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, rea
               alt="Recipe Image"
             />
           </div>
-          {/* <p className="mb-1">Category: {item.category}</p> */}
-          <div
-            className="mb-1 mt-2"
-          > [Making]
-          </div>
+          <div className="mb-1 mt-2">[Making]</div>
           <Textarea
             isReadOnly
             className="max-w-full"
             defaultValue={item.making}
             variant="bordered"
           />
-          <div
-            className="text-base mt-2"
-          > [Ingredients] {item.ingredientsJSON}
+          <div className="text-base mt-2">
+            [Ingredients]
+            <ul className="list-disc ml-4">
+              {item.ingredients &&
+                Object.entries(item.ingredients).map(([key, value]) => (
+                  <li key={key}>
+                    {key}: {value}
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
 
-        {/* 하단: 삭제 버튼과 좋아요 버튼 */}
-        <div className="flex justify-between items-center mt-2">
-          <div>
-            {item.writeUser === session?.user?.id && (
-              <Button
-                color="danger"
-                variant="light"
-                onPress={() => onDelete(item.id, item.writeUser)}
-                className="w-10 h-5"
-              >
-                삭제
-              </Button>
+        {/* 하단: 좋아요 버튼 */}
+        <div className="flex flex-row items-center mt-2">
+          <div className="flex flex-row items-center">
+            {item.createdAt && (
+              <span className="text-xs text-gray-500">
+                {new Date(item.createdAt).toLocaleString()}
+              </span>
             )}
           </div>
-          <div>
-            <Like
-              itemId={item.id}
-              userEmail={session.user.email}
-              className="flex flex-row"
-            />
-          </div>
+          <Like
+            itemId={item.id}
+            userEmail={session.user.email}
+            initialLikes={item.likeCount}
+            // 현재 사용자의 이메일이 likedUsers 배열에 있다면 true, 아니면 false
+            initialLiked={item.likedUsers && item.likedUsers.includes(session.user.email)}
+            className="flex flex-row items-end ml-auto"
+            readOnly={readOnly}
+          />
         </div>
       </CardBody>
     </Card>

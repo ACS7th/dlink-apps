@@ -1,5 +1,5 @@
-import ReviewSection from "../../../components/reviews-recipes/reivews";
+import ReviewSection from "@/components/review/reviewsection";
 
 export default function RecipePage() {
-  return <ReviewSection/>;
+  return <ReviewSection />;
 }
