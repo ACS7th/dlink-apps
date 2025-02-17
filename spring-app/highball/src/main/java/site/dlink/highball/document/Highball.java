@@ -23,8 +23,7 @@ public class Highball {
     private String id;
 
     private HighballCateEnum category;
-    private String engName;
-    private String korName;
+    private String name;
     private String glass;
     private String imageFilename;
     private String imageUrl;

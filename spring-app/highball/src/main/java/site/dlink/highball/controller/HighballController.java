@@ -1,9 +1,11 @@
 package site.dlink.highball.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.time.Instant;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,39 +43,48 @@ public class HighballController {
     @Operation(summary = "하이볼 레시피 등록", description = "하이볼 레시피와 이미지를 등록합니다.")
     @PostMapping(value = "/recipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadHighballRecipe(
-            @RequestParam @Parameter(description = "하이볼 레시피 작성자(userid)") String userId,
-            @RequestParam @Parameter(description = "하이볼 레시피 이름") String korName,
-            @RequestParam(required = false) String engName,
-            @RequestParam @Parameter(description = "하이볼 카테고리(wine, liquor, cocktail...)") HighballCateEnum category,
-            @RequestParam @Parameter(description = "하이볼 만드는 방법") String making,
-            @RequestPart(required = false) MultipartFile imageFile,
-            @RequestPart(required = false) @Parameter(description = "하이볼 재료 (JSON String)") String ingredients) {
+            @RequestParam String userId, // 작성자
+            @RequestParam String name, // 하이볼 이름
+            @RequestParam HighballCateEnum category, // 카테고리
+            @RequestParam String making, // 만드는 방법
+            @RequestPart(required = false) MultipartFile imageFile, // 이미지 파일
+            @RequestPart(required = false) String ingredients // JSON 형식 재료
+    ) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> ingredientsMap = new HashMap<>();
+            
+            // 🟡 재료 파싱
             if (ingredients != null && !ingredients.isBlank()) {
                 try {
-                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {
-                    });
+                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {});
                 } catch (Exception e) {
                     log.error("재료 JSON 파싱 실패", e);
                     return ResponseEntity.status(400).body("재료 형식이 잘못되었습니다.");
                 }
             }
 
-            // 🟡 이미지 업로드
+            // 🟡 이미지 업로드 처리
             Map<String, String> uploadResultMap = Optional.ofNullable(
                     awsS3Service.uploadFile(imageFile)).orElseGet(HashMap::new);
 
+            String imageFilename = uploadResultMap.getOrDefault("fileName", "default.jpg");
+            String imageUrl = uploadResultMap.getOrDefault("fileUrl", "https://default-url.com/default.jpg");
+
             // 🟡 Highball 객체 생성
             Highball highball = Highball.builder()
-                    .engName(Optional.ofNullable(engName).orElse("Unknown"))
-                    .korName(korName)
+                    .name(name)
                     .category(category)
+                    .glass("Highball Glass")
                     .making(making)
-                    .ingredients(ingredientsMap) // JSON으로 받은 재료 저장
-                    .imageFilename(uploadResultMap.getOrDefault("fileName", ""))
-                    .imageUrl(uploadResultMap.getOrDefault("fileUrl", ""))
+                    .ingredients(ingredientsMap)
+                    .imageFilename(imageFilename)
+                    .imageUrl(imageUrl)
+                    .writeUser(userId) 
+                    .likeCount(0)
+                    .likedUsers(new HashSet<>())
+                    .createdAt(Instant.now())
+                    .updatedAt(Instant.now())
                     .build();
 
             // 🟡 Highball 저장
@@ -86,6 +97,7 @@ public class HighballController {
             return ResponseEntity.status(500).body("업로드 실패: " + e.getMessage());
         }
     }
+
 
     @Operation(summary = "하이볼 레시피 삭제", description = "하이볼 레시피와 이미지를 삭제합니다.")
     @DeleteMapping("/recipe/{id}")
@@ -118,20 +130,19 @@ public class HighballController {
     }
 
     @Operation(summary = "좋아요 토글", description = "사용자가 좋아요를 누르면 추가, 다시 누르면 취소합니다.")
-    @PostMapping("/{id}/like")
+    @PostMapping("/{highballId}/like")
     public ResponseEntity<String> toggleLike(
-            @Parameter(description = "하이볼의 고유 ID", example = "67adad6a40a41a2d28e6") @PathVariable String id,
-
-            @Parameter(description = "사용자의 고유 Email", example = "asordk@naver.com") @RequestParam String email) {
-        long likeCount = highballService.toggleLike(id, email);
+            @Parameter(description = "하이볼의 고유 ID", example = "67adad6a40a41a2d28e6") @PathVariable String highballId,
+            @Parameter(description = "사용자의 고유 ID", example = "67asdkjdjaslkdjdskda") @RequestParam String userId) {
+        long likeCount = highballService.toggleLike(highballId, userId);
         return ResponseEntity.ok("" + likeCount);
     }
 
     @Operation(summary = "좋아요 수 조회", description = "특정 하이볼의 현재 좋아요 수를 반환합니다.")
     @GetMapping("/{id}/like-count")
-    public ResponseEntity<Long> getLikeCount(
+    public ResponseEntity<?> getLikeCount(
             @Parameter(description = "하이볼의 고유 ID", example = "67adad6a40a41a2d28e6") @PathVariable String id) {
-        long likeCount = highballService.getLikeCount(id);
+        int likeCount = highballService.countLikedUsers(id);
         return ResponseEntity.ok(likeCount);
     }
 }
