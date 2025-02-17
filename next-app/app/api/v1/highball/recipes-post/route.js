@@ -7,8 +7,7 @@ export async function POST(request) {
     // URL 쿼리 파라미터 추출
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const engName = searchParams.get('engName');
-    const korName = searchParams.get('korName');
+    const Name = searchParams.get('Name');
     const category = searchParams.get('category');
     const making = searchParams.get('making');
     const ingredientsJSON = searchParams.get('ingredientsJSON');
@@ -26,8 +25,7 @@ export async function POST(request) {
     // 쿼리 파라미터를 포함한 백엔드 URL 구성
     const queryParams = new URLSearchParams({
       userId,
-      engName,
-      korName,
+      Name,
       category,
       making,
       ingredientsJSON,

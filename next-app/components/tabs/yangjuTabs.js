@@ -9,11 +9,12 @@ import { Spinner } from "@heroui/spinner";
 import StarRating from "@/components/starrating/starRating";
 import PairingCard from "@/components/cards/pairingCard";
 import { useRouter } from "next/navigation";
-import LikeButton from "../buttons/likeButtons";
+import { useSession } from "next-auth/react";
+import RecipeCard from "@/components/highball/recipeCard";
 
 export default function YangjuTabs({ productCategory }) {
   const { resolvedTheme } = useTheme();
-
+  const { data: session, status } = useSession({ required: true });
   const router = useRouter();
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
@@ -103,7 +104,7 @@ export default function YangjuTabs({ productCategory }) {
               href="/reviewlists"
               isBlock
               showAnchorIcon
-              className="text-blue-500 hover:underline text-xs"
+              className="text-blue-500 hover:underline text-sm"
             >
               다른 리뷰 더보기
             </Link>
@@ -134,38 +135,13 @@ export default function YangjuTabs({ productCategory }) {
             highballRecipe.length > 0 ? (
             <div className="space-y-4">
               {highballRecipe.slice(0, 3).map((recipe) => (
-                <Card
+                <RecipeCard
                   key={recipe.id}
-                  className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"
-                    } p-1`}
-                >
-                  <CardBody>
-                    <h4 className="font-semibold text-lg">
-                      🍹 {recipe.engName} ({recipe.korName})
-                    </h4>
-                    <p className="mb-2">카테고리: {recipe.category}</p>
-                    <h5 className="font-medium mb-1">만드는 방법</h5>
-                    <p className="mb-2">{recipe.making}</p>
-                    {recipe.ingredients && (
-                      <div>
-                        <h5 className="font-medium mb-1">재료</h5>
-                        <ul className="list-disc pl-5">
-                          {Object.entries(recipe.ingredients).map(([key, value]) => (
-                            <li key={key}>{value}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    <div className="flex justify-end mt-2">
-                      <LikeButton
-                        className="flex flex-row"
-                        itemId={item.id}
-                        userEmail={session.user.email}
-                        readOnly
-                      />
-                    </div>
-                  </CardBody>
-                </Card>
+                  item={recipe}
+                  session={session}
+                  resolvedTheme={resolvedTheme}
+                // onDelete={handleDeleteRecipe}
+                />
               ))}
             </div>
           ) : (
@@ -175,11 +151,12 @@ export default function YangjuTabs({ productCategory }) {
           )}
           <div className="flex justify-center mt-4">
             <Link
+              // href="/highballs?category=${productCategory}"
+              isBlock
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm"
               onPress={() => {
                 router.push(`/highballs?category=${productCategory}`);
-                // router.push(`/highballs`);
               }}
             >
               전체 레시피 보기

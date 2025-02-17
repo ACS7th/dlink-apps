@@ -12,9 +12,6 @@ export async function GET(request) {
       return NextResponse.json({ error: "카테고리 값이 필요합니다." }, { status: 400 });
     }
 
-    // // 첫 글자를 대문자로, 나머지는 소문자로 변환 (예: whiskey -> Whiskey)
-    // category = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-
     const res = await axios.get(`${process.env.SPRING_URI}/api/v1/highball/category?category=${encodeURIComponent(category)}`, {
       params: { category },
       timeout: 5000,
