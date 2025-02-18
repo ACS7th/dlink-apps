@@ -1,10 +1,12 @@
 services:
 
   api-gateway:
-    image: api-gateway
+    image: api-gateway:dev
     build:
-      context: ./spring-app/api-gateway/
-      dockerfile: ./Dockerfile
+      # context: ./spring-app/api-gateway/
+      # dockerfile: ./Dockerfile
+      context: ./spring-app
+      dockerfile: ./Dockerfile-api-gateway
     restart: always
     ports:
       - "9999:9999"
