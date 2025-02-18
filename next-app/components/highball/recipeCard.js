@@ -6,14 +6,14 @@ import { useTheme } from "next-themes";
 import { useSession } from "next-auth/react";
 
 export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, readOnly = false }) {
-  const isOwner = item.writeUser === session?.user?.id;
+  const isOwner = item.writeUser === session?.user?.email;
 
   return (
-    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4 relative`}>
+    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1 mb-4 relative`}>
       <CardBody>
         {/* 상단 우측에 메뉴 버튼 (작성자일 경우) */}
         {isOwner && (
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-1">
             <CardMenu
               onEdit={() => { if (onEdit) onEdit(item); }}
               onDelete={() => { if (onDelete) onDelete(item.id, item.writeUser); }}
@@ -38,7 +38,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           </h2>
           <div className="flex justify-between items-center mt-2">
             <Image
-              src={item.imageUri ? item.imageUri : "/LOGO.png"}
+              src={item.imageUrl ? item.imageUrl : "/LOGO.png"}
               alt="Recipe Image"
             />
           </div>

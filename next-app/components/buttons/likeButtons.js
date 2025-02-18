@@ -53,7 +53,6 @@ export default function Like({
     setLikes((prev) => (newLiked ? prev + 1 : prev - 1));
 
     try {
-      // API 요청 URL: 백엔드는 쿼리 파라미터 이름으로 email을 기대하는 경우가 있으므로 주의
       const url = `/api/v1/highball/like?id=${itemId}&userId=${userEmail}`;
       console.log("좋아요 요청 URL:", url);
       const res = await fetch(url, { method: "POST" });

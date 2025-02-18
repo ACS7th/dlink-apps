@@ -13,7 +13,7 @@ export async function POST(req) {
       });
     }
 
-    const backendUrl = `http://localhost:9999/api/v1/review/${category}/${drinkId}/${userId}`;
+    const backendUrl = `${process.env.SPRING_URI}/api/v1/review/${category}/${drinkId}/${userId}`;
 
     const response = await fetch(backendUrl, {
       method: "POST",

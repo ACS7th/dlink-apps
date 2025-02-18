@@ -82,12 +82,11 @@ export default function HighballSection() {
   const handleDeleteRecipe = async (id, recipeWriteUser) => {
     if (recipeWriteUser === session?.user?.id) {
       try {
-        const url = `/api/v1/highball/recipe/${id}`;
+        const url = `/api/v1/highball/recipes-delete?id=${id}`;
         console.log("레시피 삭제 API 요청 URL:", url);
         const res = await fetch(url, { method: "DELETE" });
         console.log("레시피 삭제 API 응답:", res);
         if (!res.ok) throw new Error("삭제 실패");
-        // DB 스키마에서는 id 대신 _id일 수도 있음. 필요한 경우 item._id 사용.
         setRecipes((prev) => prev.filter((item) => item.id !== id));
       } catch (error) {
         console.error("레시피 삭제 오류:", error);
@@ -117,11 +116,11 @@ export default function HighballSection() {
   ];
 
   if (status === "loading") {
-    return <Spinner className="flex mt-4" />;
+    return <Spinner className="flex mt-5" />;
   }
 
   return (
-    <div className="w-full max-w-full mx-auto p-4 md:p-6">
+    <div className="w-full max-w-full mx-auto p-3 md:p-6">
       {/* 헤더 */}
       <h1 className="text-2xl font-bold text-[#6F0029] mb-1">하이볼 레시피</h1>
       <div className="h-[3px] bg-[#6F0029] mb-4" />
@@ -146,6 +145,7 @@ export default function HighballSection() {
       {/* 레시피 목록 */}
       {sortedRecipes.map((item) => (
         <RecipeCard
+          className="mb-4 p-2"
           key={item.id}
           item={item}
           session={session}

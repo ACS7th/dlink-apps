@@ -17,12 +17,11 @@ export async function GET(req) {
       });
     }
 
-    const backendUrl = `http://api-gateway:9999/api/v1/review/${category}/${drinkId}`;
+    const backendUrl = `${process.env.SPRING_URI}/api/v1/review/${category}/${drinkId}`;
     console.log("Backend API URL:", backendUrl); // 디버깅용
 
     const response = await fetch(backendUrl, {
       method: "GET",
-      headers: { Accept: "*/*" },
     });
 
     if (!response.ok) {
@@ -33,8 +32,8 @@ export async function GET(req) {
         headers: { "Content-Type": "application/json" },
       });
     }
-
     const responseData = await response.json();
+    console.log("Response Data:", responseData); // 디버깅용
     return new Response(JSON.stringify(responseData), {
       status: 200,
       headers: { "Content-Type": "application/json" },

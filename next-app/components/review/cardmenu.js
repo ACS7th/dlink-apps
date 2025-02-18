@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@heroui/react";
 
@@ -26,19 +24,25 @@ export default function CardMenu({ onEdit, onDelete }) {
 
   return (
     <div className="relative" ref={menuRef}>
-      <Button onPress={toggleMenu} className="p-1 bg-transparent">
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+      {/* 패딩 제거, min-width 제거, border 제거 */}
+      <Button
+        onPress={toggleMenu}
+        className="w-7 h-7 flex items-center justify-center rounded-full bg-transparent hover:bg-gray-200 p-0 min-w-0 border-none appearance-none select-none"
+      >
+        {/* 점 3개 아이콘 크기 조정 */}
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
           <path d="M6 10a2 2 0 114 0 2 2 0 01-4 0zm5 0a2 2 0 114 0 2 2 0 01-4 0zm-10 0a2 2 0 114 0 2 2 0 01-4 0z" />
         </svg>
       </Button>
+
       {open && (
-        <div className="absolute right-0 mt-2 w-24 border rounded shadow-lg z-50">
+        <div className="absolute right-0 mt-1 w-20 bg-white border rounded shadow-lg z-50">
           <Button
             onPress={() => {
               onEdit();
               setOpen(false);
             }}
-            className="block w-full text-left px-2 py-1 bg-transparent hover:bg-gray-100 text-sm"
+            className="flex w-full items-center justify-center p-0 px-2 py-1 bg-transparent hover:bg-gray-100 text-sm"
           >
             수정
           </Button>
@@ -47,7 +51,7 @@ export default function CardMenu({ onEdit, onDelete }) {
               onDelete();
               setOpen(false);
             }}
-            className="block w-full text-left px-2 py-1 bg-transparent hover:bg-gray-100 text-sm"
+            className="flex w-full items-center justify-center p-0 px-2 py-1 bg-transparent hover:bg-gray-100 text-sm"
           >
             삭제
           </Button>
