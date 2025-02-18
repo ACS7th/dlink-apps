@@ -2,7 +2,7 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# 환경 변수 설정
+# 환경 변수 설정 (빌드 시 필요한 경우)
 ARG NEXT_PUBLIC_REDIRECT_URI
 ENV NEXT_PUBLIC_REDIRECT_URI=$NEXT_PUBLIC_REDIRECT_URI
 ENV NODE_ENV=production
@@ -20,13 +20,15 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# standalone 모드로 빌드된 실행 파일과 의존성만 복사
+# standalone 모드로 빌드된 실행 파일과 정적 파일 복사
 COPY --from=builder /app/.next/standalone/ ./
 COPY --from=builder /app/.next/static/ ./.next/static/
 
-# 필요한 경우 public 폴더와 package.json 복사
+# 필요시 public 폴더와 package.json도 복사
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 
 EXPOSE 3000
+#CMD ["npm", "run", "start"]
 CMD ["node", "server.js"]
+
