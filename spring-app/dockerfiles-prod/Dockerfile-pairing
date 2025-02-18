@@ -1,0 +1,28 @@
+# Builder Stage
+FROM gradle:8.12.0-jdk21-alpine AS builder
+WORKDIR /app
+
+# Gradle 캐싱을 활용한 최적화
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+COPY pairing pairing
+RUN gradle :pairing:dependencies --no-daemon
+COPY . .
+RUN gradle :pairing:bootJar --no-daemon
+
+# Production Stage
+FROM openjdk:21-jdk-slim AS production
+WORKDIR /app
+
+# 보안: 실행 사용자 추가 (루트 회피)
+RUN groupadd --system appgroup && useradd --system --create-home --gid appgroup appuser
+COPY --from=builder /app/pairing/build/libs/*.jar app.jar
+
+# 보안: 소유자 변경 및 권한 최소화
+RUN chown -R appuser:appgroup /app && chmod 750 /app/app.jar
+
+USER appuser
+
+EXPOSE 9995
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

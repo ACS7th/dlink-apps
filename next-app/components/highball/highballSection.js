@@ -10,7 +10,6 @@ import { useSearchParams } from "next/navigation";
 import RecipeCard from "@/components/highball/recipeCard";
 import RecipeForm from "@/components/highball/recipeForm";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
-import LoginUser from "../auth/loginUser";
 
 export default function HighballSection() {
   const { data: session, status } = useSession();

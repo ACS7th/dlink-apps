@@ -1,6 +1,5 @@
 FROM gradle:8.12.0-jdk21-alpine AS dev
 
-# --- [1) 필수 패키지 설치] ---
 RUN apk update && apk add --no-cache \
     chromium \
     chromium-chromedriver \
@@ -17,7 +16,7 @@ RUN apk update && apk add --no-cache \
     glib \
     xvfb
 
-# --- [2) 환경 변수 경로 확인 및 설정] ---
+
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_DRIVER=/usr/bin/chromedriver
 
