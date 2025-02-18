@@ -11,7 +11,7 @@ import ReviewForm from "@/components/review/reivewform";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
 
 export default function ReviewSection() {
-  const { data: session, status } = useSession({ required: true });
+  const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
@@ -115,7 +115,6 @@ export default function ReviewSection() {
   // 정렬 옵션 배열
   const sortOptions = [
     { value: "최신순", label: "최신순" },
-    { value: "추천순", label: "추천순" },
   ];
 
   if (status === "loading") {
@@ -140,6 +139,7 @@ export default function ReviewSection() {
         <Button
           onPress={() => setIsModalOpen(true)}
           className="inline-flex items-center space-x-1 text-sm text-white bg-[#6F0029] px-3 py-1.5 rounded hover:bg-[#8F0033]"
+          isDisabled={status==="authenticated" ? false : true}
         >
           리뷰 작성
         </Button>

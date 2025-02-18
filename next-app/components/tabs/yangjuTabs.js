@@ -14,7 +14,7 @@ import RecipeCard from "@/components/highball/recipeCard";
 
 export default function YangjuTabs({ productCategory, productId }) {
   const { resolvedTheme } = useTheme();
-  const { data: session, status } = useSession({ required: true });
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);

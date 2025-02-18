@@ -1,5 +1,5 @@
 // @ts-nocheck
-const UserIcon = ({fill = "currentColor", size, height, width, ...props}) => {
+const UserIcon = ({fill = "currentColor", size=30, height=30, width=30, ...props}) => {
     return (
       <svg
         data-name="Iconly/Curved/Profile"

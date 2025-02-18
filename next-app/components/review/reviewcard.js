@@ -8,14 +8,13 @@ import { useSession } from "next-auth/react";
 import StarRating from "@/components/starrating/starRating";
 
 export default function ReviewCard({ session, review, resolvedTheme, onDelete, onEdit, readOnly = false }) {
-  console.log("🔍 ReviewCard 데이터 확인:", review); // ✅ 리뷰 데이터 확인
 
   if (!review) {
     return <div className="text-center text-gray-500">리뷰 정보를 불러올 수 없습니다.</div>;
   }
 
   return (
-    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-4 mb-4 relative`}>
+    <Card className={"bg-content1 p-4 mb-4 relative"}>
       <CardBody>
         {/* 상단 우측에 메뉴 버튼 (작성자일 경우) */}
         {session?.user?.id === review.id && (

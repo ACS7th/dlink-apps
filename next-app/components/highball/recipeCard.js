@@ -28,8 +28,8 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
                 ? session?.user?.profileImageUri || "/favicon.ico"
                 : "/favicon.ico",
             }}
-            name={isOwner ? session.user.name || "익명" : "익명"}
-            description={isOwner ? session.user.email || "익명" : "일반회원"}
+            name={isOwner ? session?.user?.name || "익명" : "익명"}
+            description={isOwner ? session?.user?.email || "익명" : "일반회원"}
           />
         </div>
         <div className="mb-2">
@@ -73,10 +73,10 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           </div>
           <Like
             itemId={item.id}
-            userEmail={session.user.email}
+            userEmail={session?.user?.email}
             initialLikes={item.likeCount}
             // 현재 사용자의 이메일이 likedUsers 배열에 있다면 true, 아니면 false
-            initialLiked={item.likedUsers && item.likedUsers.includes(session.user.email)}
+            initialLiked={item.likedUsers && item.likedUsers.includes(session?.user?.email)}
             className="flex flex-row items-end ml-auto"
             readOnly={readOnly}
           />

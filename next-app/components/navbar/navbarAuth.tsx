@@ -1,14 +1,14 @@
-// @ts-nocheck
+"use client";
+
 import { Button, Divider } from "@heroui/react";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 import UserIcon from "../icons/userIcon";
 import LoginIcon from "../icons/loginIcon";
 import { UserDropdown } from "./user-dropdown";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
-export default async function NavbarAuth(){
-    const session = await getServerSession(authOptions);
+export default function NavbarAuth() {
+    const { data: session } = useSession();
 
     return (
         <div className="w-fit flex items-center gap-2">

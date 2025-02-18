@@ -18,10 +18,6 @@ export default function Content() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("session:", session);
-  }, [session, setTheme]);
-
   // 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
     setIsSearchLoading(true);

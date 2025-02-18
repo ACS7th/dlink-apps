@@ -12,7 +12,7 @@ import RecipeForm from "@/components/highball/recipeForm";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
 
 export default function HighballSection() {
-  const { data: session, status } = useSession({ required: true });
+  const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
