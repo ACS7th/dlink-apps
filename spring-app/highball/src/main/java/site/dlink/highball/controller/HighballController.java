@@ -196,7 +196,6 @@ public class HighballController {
             existingHighball.setMaking(making);
             existingHighball.setIngredients(ingredientsMap);
             existingHighball.setUpdatedAt(Instant.now());
-            // (필요 시 userId와 기존 작성자 비교하여 수정 권한을 확인할 수 있습니다.)
 
             // 업데이트 저장 (서비스의 updateHighball 메서드 호출)
             highballService.updateHighball(existingHighball, userId);

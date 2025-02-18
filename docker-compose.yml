@@ -3,10 +3,8 @@ services:
   api-gateway:
     image: api-gateway:dev
     build:
-      # context: ./spring-app/api-gateway/
-      # dockerfile: ./Dockerfile
       context: ./spring-app
-      dockerfile: ./Dockerfile-api-gateway
+      dockerfile: ./dockerfiles-dev/Dockerfile-api-gateway
     restart: always
     ports:
       - "9999:9999"
@@ -29,7 +27,7 @@ services:
     image: auth-service:dev
     build:
       context: ./spring-app
-      dockerfile: ./Dockerfile-auth
+      dockerfile: ./dockerfiles-dev/Dockerfile-auth
     restart: always
     ports:
       - "9991:9991"
@@ -48,8 +46,8 @@ services:
   alcohol-service:
     image: alcohol-service:dev
     build:
-      context: ./spring-app/
-      dockerfile: ./Dockerfile-alcohol
+      context: ./spring-app
+      dockerfile: ./dockerfiles-dev/Dockerfile-alcohol
     restart: always
     ports:
       - "9992:9992"
@@ -67,8 +65,8 @@ services:
   highball-service:
     image: highball-service:dev
     build:
-      context: ./spring-app/
-      dockerfile: ./Dockerfile-highball
+      context: ./spring-app
+      dockerfile: ./dockerfiles-dev/Dockerfile-highball
     restart: always
     ports:
       - "9993:9993"
@@ -87,8 +85,8 @@ services:
   review-service:
     image: review-service:dev
     build:
-      context: ./spring-app/
-      dockerfile: ./Dockerfile-review
+      context: ./spring-app
+      dockerfile: ./dockerfiles-dev/Dockerfile-review
     restart: always
     ports:
       - "9994:9994"
@@ -105,8 +103,8 @@ services:
   pairing-service:
     image: pairing-service:dev
     build:
-      context: ./spring-app/
-      dockerfile: ./Dockerfile-pairing
+      context: ./spring-app
+      dockerfile: ./dockerfiles-dev/Dockerfile-pairing
     restart: always
     ports:
       - "9995:9995"
@@ -126,7 +124,7 @@ services:
     image: next-app:dev
     build:
       context: ./next-app/
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
