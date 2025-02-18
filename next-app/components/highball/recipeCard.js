@@ -42,7 +42,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
               alt="Recipe Image"
             />
           </div>
-          <div className="mb-1 mt-2">[Making]</div>
+          <div className="mb-1 mt-2 font-bold">제조법</div>
           <Textarea
             isReadOnly
             className="max-w-full"
@@ -50,7 +50,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             variant="bordered"
           />
           <div className="text-base mt-2">
-            [Ingredients]
+            <p className="font-bold">재료</p>
             <ul className="list-disc ml-4">
               {item.ingredients &&
                 Object.entries(item.ingredients).map(([key, value]) => (

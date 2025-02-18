@@ -61,10 +61,16 @@ public class HighballService {
         return highball.getLikedUsers().size();
     }
 
+    @Transactional
+    public void updateHighball(Highball highball, String userId) {
+        highball.setUpdatedAt(Instant.now());
+        highballRepository.save(highball);
+    }
+
     public int countLikedUsers(String highballId) {
         Optional<Highball> highballOpt = highballRepository.findById(highballId);
         return highballOpt.map(h -> h.getLikedUsers().size())
-                          .orElse(0);
+                .orElse(0);
     }
 
 }
