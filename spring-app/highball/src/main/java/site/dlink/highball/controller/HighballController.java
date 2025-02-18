@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -53,11 +54,12 @@ public class HighballController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> ingredientsMap = new HashMap<>();
-            
+
             // 🟡 재료 파싱
             if (ingredients != null && !ingredients.isBlank()) {
                 try {
-                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {});
+                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {
+                    });
                 } catch (Exception e) {
                     log.error("재료 JSON 파싱 실패", e);
                     return ResponseEntity.status(400).body("재료 형식이 잘못되었습니다.");
@@ -68,8 +70,8 @@ public class HighballController {
             Map<String, String> uploadResultMap = Optional.ofNullable(
                     awsS3Service.uploadFile(imageFile)).orElseGet(HashMap::new);
 
-            String imageFilename = uploadResultMap.getOrDefault("fileName", "default.jpg");
-            String imageUrl = uploadResultMap.getOrDefault("fileUrl", "https://default-url.com/default.jpg");
+            String imageFilename = uploadResultMap.getOrDefault("fileName", "");
+            String imageUrl = uploadResultMap.getOrDefault("fileUrl", "");
 
             // 🟡 Highball 객체 생성
             Highball highball = Highball.builder()
@@ -80,7 +82,7 @@ public class HighballController {
                     .ingredients(ingredientsMap)
                     .imageFilename(imageFilename)
                     .imageUrl(imageUrl)
-                    .writeUser(userId) 
+                    .writeUser(userId)
                     .likeCount(0)
                     .likedUsers(new HashSet<>())
                     .createdAt(Instant.now())
@@ -98,19 +100,18 @@ public class HighballController {
         }
     }
 
-
     @Operation(summary = "하이볼 레시피 삭제", description = "하이볼 레시피와 이미지를 삭제합니다.")
     @DeleteMapping("/recipe/{id}")
     public ResponseEntity<String> deleteHighballRecipe(
             @Parameter(description = "삭제할 하이볼 레시피의 ID", required = true) @PathVariable String id) {
         Highball highball = highballService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다: " + id));
-        
+
         String imageFilename = highball.getImageFilename();
         if (imageFilename != null && !imageFilename.isEmpty()) {
             awsS3Service.deleteFile(imageFilename);
         }
-        
+
         highballService.deleteHighball(id);
         return ResponseEntity.ok("레시피 삭제 성공: " + id);
     }
@@ -145,4 +146,66 @@ public class HighballController {
         int likeCount = highballService.countLikedUsers(id);
         return ResponseEntity.ok(likeCount);
     }
+
+    @Operation(summary = "하이볼 레시피 수정", description = "하이볼 레시피와 이미지를 수정합니다.")
+    @PutMapping(value = "/recipe/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateHighballRecipe(
+            @PathVariable String id,
+            @RequestParam String userId, // 수정 요청한 사용자 ID (소유자 확인 로직 추가 가능)
+            @RequestParam String name, // 수정할 하이볼 이름
+            @RequestParam HighballCateEnum category, // 수정할 카테고리
+            @RequestParam String making, // 수정할 만드는 방법
+            @RequestPart(required = false) MultipartFile imageFile, // 새 이미지 파일 (선택)
+            @RequestPart(required = false) String ingredients // 수정할 재료(JSON 문자열)
+    ) {
+        try {
+            // 기존 레시피 조회
+            Highball existingHighball = highballService.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("레시피를 찾을 수 없습니다: " + id));
+
+            // 재료 파싱 (제공된 경우)
+            Map<String, String> ingredientsMap = existingHighball.getIngredients();
+            if (ingredients != null && !ingredients.isBlank()) {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    ingredientsMap = objectMapper.readValue(ingredients, new TypeReference<Map<String, String>>() {
+                    });
+                } catch (Exception e) {
+                    log.error("재료 JSON 파싱 실패", e);
+                    return ResponseEntity.status(400).body("재료 형식이 잘못되었습니다.");
+                }
+            }
+
+            // 새 이미지 파일이 제공되면 기존 이미지를 삭제하고 새 파일 업로드
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String oldImageFilename = existingHighball.getImageFilename();
+                if (oldImageFilename != null && !oldImageFilename.equals("default.jpg")) {
+                    awsS3Service.deleteFile(oldImageFilename);
+                }
+                Map<String, String> uploadResultMap = Optional.ofNullable(awsS3Service.uploadFile(imageFile))
+                        .orElseGet(HashMap::new);
+                String newImageFilename = uploadResultMap.getOrDefault("fileName", "");
+                String newImageUrl = uploadResultMap.getOrDefault("fileUrl", "");
+                existingHighball.setImageFilename(newImageFilename);
+                existingHighball.setImageUrl(newImageUrl);
+            }
+
+            // 필드 업데이트
+            existingHighball.setName(name);
+            existingHighball.setCategory(category);
+            existingHighball.setMaking(making);
+            existingHighball.setIngredients(ingredientsMap);
+            existingHighball.setUpdatedAt(Instant.now());
+            // (필요 시 userId와 기존 작성자 비교하여 수정 권한을 확인할 수 있습니다.)
+
+            // 업데이트 저장 (서비스의 updateHighball 메서드 호출)
+            highballService.updateHighball(existingHighball, userId);
+
+            return ResponseEntity.ok(existingHighball.getId());
+        } catch (Exception e) {
+            log.error("하이볼 레시피 수정 실패", e);
+            return ResponseEntity.status(500).body("수정 실패: " + e.getMessage());
+        }
+    }
+
 }

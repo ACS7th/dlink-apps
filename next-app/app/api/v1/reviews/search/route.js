@@ -8,41 +8,44 @@ export async function GET(req) {
     const category = searchParams.get("category");
     const drinkId = searchParams.get("drinkId");
 
-    console.log("Request Params:", category, drinkId); // 디버깅용
-
     if (!category || !drinkId) {
-      return new Response(JSON.stringify({ message: "category and drinkId are required." }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ message: "category and drinkId are required." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     const backendUrl = `${process.env.SPRING_URI}/api/v1/review/${category}/${drinkId}`;
-    console.log("Backend API URL:", backendUrl); // 디버깅용
+    console.log("Backend API URL:", backendUrl); // 디버깅
 
-    const response = await fetch(backendUrl, {
-      method: "GET",
+    // axios는 .ok가 아닌 status 코드로 판별
+    const response = await axios.get(backendUrl, {
+      headers: { Accept: "application/json" },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Backend Error Response:", errorData); // 디버깅
-      return new Response(JSON.stringify({ message: "Failed to fetch reviews", error: errorData }), {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    const responseData = await response.json();
-    console.log("Response Data:", responseData); // 디버깅용
-    return new Response(JSON.stringify(responseData), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.log("Axios Response:", response.data); // 응답 로그
+
+    return new Response(
+      JSON.stringify(response.data),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+
   } catch (error) {
-    console.error("Internal Server Error:", error); // 디버깅
-    return new Response(JSON.stringify({ message: "Internal Server Error", error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Backend Error:", error.response.data); // 백엔드 응답 에러
+      return new Response(
+        JSON.stringify({
+          message: "Failed to fetch reviews",
+          error: error.response.data,
+        }),
+        { status: error.response.status, headers: { "Content-Type": "application/json" } }
+      );
+    } else {
+      console.error("Internal Server Error:", error); // 내부 서버 에러
+      return new Response(
+        JSON.stringify({ message: "Internal Server Error", error: error.message }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
   }
 }

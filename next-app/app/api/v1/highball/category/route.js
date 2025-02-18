@@ -18,7 +18,6 @@ export async function GET(request) {
       timeout: 5000,
     });
 
-    console.log("레시피 목록 API 응답 데이터:", res.data);
     return NextResponse.json(res.data);
   } catch (error) {
     console.error("하이볼 레시피 API 요청 오류:", error);

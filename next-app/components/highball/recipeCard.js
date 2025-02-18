@@ -4,6 +4,7 @@ import Like from "@/components/buttons/likeButtons";
 import CardMenu from "@/components/highball/cardmenu";
 import { useTheme } from "next-themes";
 import { useSession } from "next-auth/react";
+import LoginUser from "../auth/loginUser";
 
 export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, readOnly = false }) {
   const isOwner = item.writeUser === session?.user?.email;
@@ -22,15 +23,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
         )}
         {/* 등록한 사용자 프로필 정보 */}
         <div className="flex items-center">
-          <User
-            avatarProps={{
-              src: isOwner
-                ? session?.user?.profileImageUri || "/favicon.ico"
-                : "/favicon.ico",
-            }}
-            name={isOwner ? session.user.name || "익명" : "익명"}
-            description={isOwner ? session.user.email || "익명" : "일반회원"}
-          />
+          <LoginUser userId={session?.user?.id}></LoginUser>
         </div>
         <div className="mb-2">
           <h2 className="font-semibold text-lg">
@@ -42,7 +35,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
               alt="Recipe Image"
             />
           </div>
-          <div className="mb-1 mt-2">[Making]</div>
+          <div className="mb-1 mt-2 font-bold">제조법</div>
           <Textarea
             isReadOnly
             className="max-w-full"
@@ -50,7 +43,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             variant="bordered"
           />
           <div className="text-base mt-2">
-            [Ingredients]
+            <p className="font-bold">재료</p>
             <ul className="list-disc ml-4">
               {item.ingredients &&
                 Object.entries(item.ingredients).map(([key, value]) => (
@@ -73,10 +66,10 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           </div>
           <Like
             itemId={item.id}
-            userEmail={session.user.email}
+            userEmail={session?.user?.email}
             initialLikes={item.likeCount}
             // 현재 사용자의 이메일이 likedUsers 배열에 있다면 true, 아니면 false
-            initialLiked={item.likedUsers && item.likedUsers.includes(session.user.email)}
+            initialLiked={item.likedUsers && item.likedUsers.includes(session?.user?.email)}
             className="flex flex-row items-end ml-auto"
             readOnly={readOnly}
           />

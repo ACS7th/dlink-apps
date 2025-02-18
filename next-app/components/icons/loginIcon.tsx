@@ -1,5 +1,5 @@
 // @ts-nocheck
-const LoginIcon = ({ fill = "currentColor", size, height, width, ...props }) => {
+const LoginIcon = ({ fill = "currentColor", size=30, height=30, width=30, ...props }) => {
     return (
       <svg
         viewBox="0 -0.5 25 25"

@@ -3,7 +3,6 @@ package site.dlink.highball.repository;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import site.dlink.highball.document.Highball;
 import site.dlink.highball.enums.HighballCateEnum;
