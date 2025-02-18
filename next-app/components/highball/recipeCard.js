@@ -4,6 +4,7 @@ import Like from "@/components/buttons/likeButtons";
 import CardMenu from "@/components/highball/cardmenu";
 import { useTheme } from "next-themes";
 import { useSession } from "next-auth/react";
+import LoginUser from "../auth/loginUser";
 
 export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, readOnly = false }) {
   const isOwner = item.writeUser === session?.user?.email;
@@ -22,15 +23,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
         )}
         {/* 등록한 사용자 프로필 정보 */}
         <div className="flex items-center">
-          <User
-            avatarProps={{
-              src: isOwner
-                ? session?.user?.profileImageUri || "/favicon.ico"
-                : "/favicon.ico",
-            }}
-            name={isOwner ? session?.user?.name || "익명" : "익명"}
-            description={isOwner ? session?.user?.email || "익명" : "일반회원"}
-          />
+          <LoginUser userId={session?.user?.id}></LoginUser>
         </div>
         <div className="mb-2">
           <h2 className="font-semibold text-lg">

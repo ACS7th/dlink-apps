@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import RecipeCard from "@/components/highball/recipeCard";
 import RecipeForm from "@/components/highball/recipeForm";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
+import LoginUser from "../auth/loginUser";
 
 export default function HighballSection() {
   const { data: session, status } = useSession();
@@ -122,7 +123,7 @@ export default function HighballSection() {
   return (
     <div className="w-full max-w-full mx-auto p-3 md:p-6">
       {/* 헤더 */}
-      <h1 className="text-2xl font-bold text-[#6F0029] mb-1">하이볼 레시피</h1>
+      <h1 className="text-2xl font-bold text-primary mb-1">하이볼 레시피</h1>
       <div className="h-[3px] bg-[#6F0029] mb-4" />
 
       {/* 정렬 옵션 및 등록 버튼 */}
