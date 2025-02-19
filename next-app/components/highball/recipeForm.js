@@ -1,29 +1,49 @@
-import { useState } from "react";
-import { Button, Textarea } from "@heroui/react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button, Textarea, Image } from "@heroui/react";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import IngredientInput from "@/components/highball/ingredients";
 
-export default function RecipeForm({ onClose, onSubmit }) {
-  const [name, setName] = useState("");
-  const [making, setMaking] = useState("");
-  // ingredients는 key/value 객체 배열로 관리
+export default function RecipeForm({
+  onClose,
+  onSubmit,
+  initialName = "",
+  initialMaking = "",
+  initialIngredientsJSON = "",
+  initialImageUrl = "",
+}) {
+  const [name, setName] = useState(initialName);
+  const [making, setMaking] = useState(initialMaking);
   const [ingredients, setIngredients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // 초기 재료 JSON을 배열로 변환 (있으면)
+  useEffect(() => {
+    if (initialIngredientsJSON) {
+      try {
+        const parsed = JSON.parse(initialIngredientsJSON);
+        const arr = Object.entries(parsed).map(([key, value]) => ({ key, value }));
+        setIngredients(arr);
+      } catch (error) {
+        console.error("재료 파싱 오류:", error);
+      }
+    } else {
+      setIngredients([{ key: "", value: "" }]);
+    }
+  }, [initialIngredientsJSON]);
 
   const handleSubmit = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("making", making);
-
-    // ingredients 배열을 { key: value, ... } 객체로 변환
+    // 재료 배열 → 객체 → JSON (백엔드에서 key는 "ingredients"로 처리)
     const ingredientsObj = ingredients.reduce((acc, curr) => {
-      // key와 value가 모두 비어있지 않은 경우에만 추가
       if (curr.key.trim() && curr.value.trim()) {
         acc[curr.key] = curr.value;
       }
       return acc;
     }, {});
-    // 변환된 객체를 JSON 문자열로 만들어 "ingredients" 키로 전송
     formData.append("ingredients", JSON.stringify(ingredientsObj));
     if (selectedImage) {
       formData.append("imageFile", selectedImage, selectedImage.name);
@@ -33,11 +53,12 @@ export default function RecipeForm({ onClose, onSubmit }) {
 
   return (
     <>
-      <ModalHeader>하이볼 레시피 작성</ModalHeader>
+      <ModalHeader>{initialName ? "레시피 수정" : "하이볼 레시피 작성"}</ModalHeader>
       <ModalBody>
         <div className="space-y-4">
+          {/* 제목 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">제목</label>
             <input
               type="text"
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -46,8 +67,9 @@ export default function RecipeForm({ onClose, onSubmit }) {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
+          {/* 만드는 법 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">making</label>
+            <label className="block text-sm font-medium text-gray-700">만드는 법</label>
             <Textarea
               isClearable
               className="mt-1 block w-full"
@@ -55,17 +77,24 @@ export default function RecipeForm({ onClose, onSubmit }) {
               variant="bordered"
               value={making}
               onChange={(e) => setMaking(e.target.value)}
+              onClear={() => setMaking("")}
             />
           </div>
+          {/* 재료 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Ingredients</label>
-            <IngredientInput
-              ingredients={ingredients}
-              onChange={setIngredients}
-            />
+            <label className="block text-sm font-medium text-gray-700">재료</label>
+            <IngredientInput ingredients={ingredients} onChange={setIngredients} />
           </div>
+          {/* 기존 이미지 미리보기 (수정 시) */}
+          {initialImageUrl && !selectedImage && (
+            <div className="mt-2">
+              <p className="text-sm text-gray-500 mb-1">기존 이미지 미리보기:</p>
+              <Image src={initialImageUrl} alt="기존 이미지" />
+            </div>
+          )}
+          {/* 이미지 업로드 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Image File (선택)</label>
+            <label className="block text-sm font-medium text-gray-700">이미지 파일 (선택)</label>
             <input
               type="file"
               className="mt-1 block w-full"
@@ -79,7 +108,7 @@ export default function RecipeForm({ onClose, onSubmit }) {
           취소
         </Button>
         <Button color="bg-primary" onPress={handleSubmit}>
-          등록
+          {initialName ? "수정" : "등록"}
         </Button>
       </ModalFooter>
     </>

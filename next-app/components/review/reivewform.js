@@ -30,6 +30,7 @@ export default function ReviewForm({
               variant="bordered"
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
+              onClear={() => setReviewText("")}
             />
           </div>
         </div>

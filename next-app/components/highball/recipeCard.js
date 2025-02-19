@@ -1,32 +1,38 @@
+"use client";
+
 import { Card, CardBody } from "@heroui/card";
-import { User, Textarea, Image } from "@heroui/react";
+import { Image, Textarea } from "@heroui/react";
 import Like from "@/components/buttons/likeButtons";
 import CardMenu from "@/components/highball/cardmenu";
-import { useTheme } from "next-themes";
-import { useSession } from "next-auth/react";
 import LoginUser from "../auth/loginUser";
 
-export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }) {
+export default function RecipeCard({
+  item,
+  session,
+  resolvedTheme,
+  onDelete,
+  onEdit,
+  onLikeToggle,
+  readOnly = false,
+}) {
   const isOwner = item.writeUser === session?.user?.id;
 
   return (
     <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1 mb-4 relative`}>
       <CardBody>
-        {/* 상단 우측 메뉴 (작성자일 경우) */}
         {isOwner && (
           <div className="absolute top-2 right-1">
             <CardMenu
-              onEdit={() => { if (onEdit) onEdit(item); }}
-              onDelete={() => { if (onDelete) onDelete(item.id, item.writeUser); }}
+              onEdit={() => onEdit && onEdit(item)}
+              onDelete={() => onDelete && onDelete(item.id, item.writeUser)}
             />
           </div>
         )}
-        {/* 사용자 프로필 정보 */}
         <div className="flex items-center">
           <LoginUser userId={item.writeUser} />
         </div>
         <div className="mt-1 mb-2">
-          <h2 className="font-semibold text-lg">🍹 {item.name ? item.name : "레시피"}</h2>
+          <h2 className="font-semibold text-lg">🍹 {item.name || "레시피"}</h2>
           <div className="flex justify-between items-center mt-2">
             <Image src={item.imageUrl ? item.imageUrl : "/LOGO.png"} alt="Recipe Image" />
           </div>
@@ -44,15 +50,12 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             </ul>
           </div>
         </div>
-        {/* 하단: 등록 시간과 좋아요 버튼 */}
         <div className="flex flex-row items-center mt-2">
-          <div className="flex flex-row items-center">
-            {item.createdAt && (
-              <span className="text-xs text-gray-500">
-                {new Date(item.createdAt).toLocaleString()}
-              </span>
-            )}
-          </div>
+          {item.createdAt && (
+            <span className="text-xs text-gray-500">
+              {new Date(item.createdAt).toLocaleString()}
+            </span>
+          )}
           <Like
             itemId={item.id}
             userEmail={session?.user?.id}
