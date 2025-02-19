@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { Card, CardBody } from "@heroui/card";
 import { Image } from "@heroui/react";
 import { Textarea } from "@heroui/react";

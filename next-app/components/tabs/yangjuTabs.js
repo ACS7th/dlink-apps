@@ -58,12 +58,17 @@ export default function YangjuTabs({ product, productCategory, productId }) {
         const res = await fetch(
           `/api/v1/reviews/search?category=${category}&drinkId=${drinkId}`
         );
+        if (res.status === 404) {
+          // 리뷰가 없는 경우
+          setReviews([]);
+          setErrorReview("리뷰가 없습니다.");
+          return;
+        }
         if (!res.ok) {
           throw new Error(`리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`);
         }
         const data = await res.json();
         if (!data || Object.keys(data).length === 0) {
-          console.warn("🚨 리뷰 데이터가 비어있습니다.");
           setReviews([]);
           return;
         }
@@ -76,6 +81,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
           })
         );
         setReviews(transformedReviews);
+        setErrorReview(null);
       } catch (error) {
         console.error("❌ 리뷰 불러오기 실패:", error.message);
         setReviews([]);
@@ -140,7 +146,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
       label: "추천 안주",
       content: <PairingCard
         alcohol={product}
-       />,
+      />,
     },
     {
       id: "highball",
