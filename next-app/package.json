@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/unstorage-adapter": "^2.7.4",
     "@aws-sdk/client-textract": "^3.741.0",
     "@heroui/react": "2.6.14",
     "aws-sdk": "^2.1692.0",
@@ -26,6 +27,7 @@
     "react": "18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-dom": "18.2.0",
+    "unstorage": "^1.14.4",
     "yup": "^1.4.0"
   },
   "devDependencies": {
