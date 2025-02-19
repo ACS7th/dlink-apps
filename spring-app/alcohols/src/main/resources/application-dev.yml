@@ -1,0 +1,16 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+springdoc:
+  api-docs:
+    path: /api/v1/alcohols/v3/api-docs
+
+logging:
+  level:
+    root: INFO
+    site.dlink.common: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.mongodb.driver: DEBUG
+    org.springframework.data.mongodb.core.query: DEBUG
