@@ -14,6 +14,25 @@ RUN gradle :pairing:bootJar --no-daemon
 FROM openjdk:21-jdk-slim AS production
 WORKDIR /app
 
+RUN apk update && apk add --no-cache \
+    chromium \
+    chromium-chromedriver \
+    harfbuzz \
+    nss \
+    freetype \
+    ttf-freefont \
+    fontconfig \
+    libstdc++ \
+    bash \
+    curl \
+    wget \
+    unzip \
+    glib \
+    xvfb
+
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROME_DRIVER=/usr/bin/chromedriver
+
 # 보안: 실행 사용자 추가 (루트 회피)
 RUN groupadd --system appgroup && useradd --system --create-home --gid appgroup appuser
 COPY --from=builder /app/pairing/build/libs/*.jar app.jar

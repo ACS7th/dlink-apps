@@ -85,7 +85,7 @@ public class PairingService {
                 1) 키는 **영어**만 사용 (예: dish_name, side_dish, description).
                 2) 필수 필드: dish_name, side_dish, description
                 3) side_dish는 **리스트(List) 형태**로 곁들임 메뉴를 표기
-                4) 값은 한글을 허용
+                4) 값은 한글로 표시
                 5) 절대 JSON 형식을 깨뜨리지 말 것
                 6) 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
 
@@ -133,10 +133,13 @@ public class PairingService {
                 1) 키는 **영어**만 사용 (예: dish_name, side_dish, description).
                 2) 필수 필드: dish_name, side_dish, description
                 3) side_dish는 **리스트(List) 형태**로 곁들임 메뉴를 표기
-                4) 값은 한글을 허용
-                5) 절대 JSON 형식을 깨뜨리지 말 것
-                6) 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
-                7) description은 60자 근처로 길게 대답
+                4) 모든 값은 한글로 표시해야 하며, 영어는 절대 포함하지 마세요.
+                5) JSON 형식 외의 추가적인 설명은 절대 출력하지 마세요.
+                6) 모든 텍스트는 UTF-8로 인코딩되어야 합니다.
+                7) 절대 JSON 형식을 깨뜨리지 말 것
+                8) 예시와 같은 구조를 유지하고, 그 외 설명은 쓰지 않기
+                9) description은 60자 근처로 길게 대답
+                10) explanation을 활용한 description 작성
 
                 예시 JSON:
                 {
