@@ -17,7 +17,7 @@ export async function GET(request) {
       params: { category },
       timeout: 5000,
     });
-
+    console.log("하이볼 레시피 API 응답:", res.data);
     return NextResponse.json(res.data);
   } catch (error) {
     console.error("하이볼 레시피 API 요청 오류:", error);

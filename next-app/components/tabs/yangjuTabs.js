@@ -2,42 +2,42 @@
 
 import { useEffect, useState } from "react";
 import { Tabs, Tab } from "@heroui/tabs";
-import { Card, CardBody } from "@heroui/card";
-import { User, Button, Link } from "@heroui/react";
-import { useTheme } from "next-themes";
 import { Spinner } from "@heroui/spinner";
-import StarRating from "@/components/starrating/starRating";
-import PairingCard from "@/components/cards/pairingCard";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import RecipeCard from "@/components/highball/recipeCard";
+import { Link } from "@heroui/react";
 import ReviewCard from "@/components/review/reviewcard";
+import PairingCard from "@/components/cards/pairingCard";
+import RecipeCard from "@/components/highball/recipeCard";
 
 export default function YangjuTabs({ productCategory, productId }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  const category = productCategory;
+  const drinkId = productId;
+
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [errorRecipe, setErrorRecipe] = useState(null);
+
   const [reviews, setReviews] = useState([]);
   const [loadingReview, setLoadingReview] = useState(false);
   const [errorReview, setErrorReview] = useState(null);
 
   // 하이볼 레시피 불러오기
   useEffect(() => {
-    if (!productCategory) return;
+    if (!category) return;
     setLoadingRecipe(true);
-
     async function fetchHighballRecipe() {
       try {
-        const categoryParam = encodeURIComponent(productCategory);
+        const categoryParam = encodeURIComponent(category);
         const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
-
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-
         const data = await res.json();
         setHighballRecipe(data);
       } catch (error) {
@@ -47,11 +47,48 @@ export default function YangjuTabs({ productCategory, productId }) {
         setLoadingRecipe(false);
       }
     }
-
     fetchHighballRecipe();
-  }, [productCategory]);
+  }, [category]);
 
-  // 탭에 들어갈 내용 정의
+  // 리뷰 목록 불러오기 
+  useEffect(() => {
+    async function fetchReviews() {
+      try {
+        setLoadingReview(true);
+        const res = await fetch(
+          `/api/v1/reviews/search?category=${category}&drinkId=${drinkId}`
+        );
+        if (!res.ok) {
+          throw new Error(`리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`);
+        }
+        const data = await res.json();
+        if (!data || Object.keys(data).length === 0) {
+          console.warn("🚨 리뷰 데이터가 비어있습니다.");
+          setReviews([]);
+          return;
+        }
+        // 응답 객체를 배열로 변환 (각 리뷰의 key 값을 writeUser 및 id로 설정)
+        const transformedReviews = Object.entries(data).map(
+          ([userId, review]) => ({
+            ...review,
+            writeUser: userId,
+            id: userId,
+          })
+        );
+        setReviews(transformedReviews);
+      } catch (error) {
+        console.error("❌ 리뷰 불러오기 실패:", error.message);
+        setReviews([]);
+        setErrorReview(error.message);
+      } finally {
+        setLoadingReview(false);
+      }
+    }
+    if (category && drinkId) {
+      fetchReviews();
+    }
+  }, [category, drinkId]);
+
   const tabs = [
     {
       id: "review",
@@ -66,9 +103,7 @@ export default function YangjuTabs({ productCategory, productId }) {
             <div className="py-4 text-center text-red-500">
               {errorReview}
             </div>
-          ) : reviews &&
-            Array.isArray(reviews) &&
-            reviews.length > 0 ? (
+          ) : reviews && reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.slice(0, 3).map((review) => (
                 <ReviewCard
@@ -91,7 +126,7 @@ export default function YangjuTabs({ productCategory, productId }) {
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm"
               onPress={() => {
-                router.push(`/reviews?category=${productCategory}&drinkId=${productId}`);
+                router.push(`/reviews?category=${category}&drinkId=${drinkId}`);
               }}
             >
               다른 리뷰 더보기
@@ -142,7 +177,7 @@ export default function YangjuTabs({ productCategory, productId }) {
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm"
               onPress={() => {
-                router.push(`/highballs?category=${productCategory}`);
+                router.push(`/highballs?category=${category}`);
               }}
             >
               전체 레시피 보기
