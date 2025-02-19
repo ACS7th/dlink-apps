@@ -7,12 +7,10 @@ import CardMenu from "@/components/highball/cardmenu";
 import LoginUser from "../auth/loginUser";
 
 export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }) {
-  const isOwner = item.writeUser === session?.user?.id;
-
   return (
     <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1 mb-4 relative`}>
       <CardBody>
-        {isOwner && (
+        {item.writeUser === session?.user?.id && (
           <div className="absolute top-2 right-1">
             <CardMenu
               onEdit={() => onEdit && onEdit(item)}
@@ -29,7 +27,12 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             <Image src={item.imageUrl ? item.imageUrl : "/LOGO.png"} alt="Recipe Image" />
           </div>
           <div className="mb-1 mt-2 font-bold">제조법</div>
-          <Textarea isReadOnly className="max-w-full" defaultValue={item.making} variant="bordered" />
+          <Textarea
+            isReadOnly
+            className="max-w-full"
+            value={item.making}  // 실시간 업데이트를 위해 value 사용
+            variant="bordered"
+          />
           <div className="text-base mt-2">
             <p className="font-bold">재료</p>
             <ul className="list-disc ml-4">

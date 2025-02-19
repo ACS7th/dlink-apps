@@ -17,6 +17,7 @@ export default function HighballSection() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
 
+  // 레시피 목록 및 정렬 옵션 상태
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
 
@@ -44,10 +45,12 @@ export default function HighballSection() {
   }, [category]);
 
   useEffect(() => {
-    if (category) fetchRecipes();
+    if (category) {
+      fetchRecipes();
+    }
   }, [category, fetchRecipes]);
 
-  // 레시피 등록 (POST)
+  // 레시피 등록 처리 (POST)
   const handleSubmitRecipe = async (formData, onClose) => {
     try {
       const queryParams = new URLSearchParams({
@@ -55,7 +58,8 @@ export default function HighballSection() {
         name: formData.get("name"),
         category,
         making: formData.get("making"),
-        ingredientsJSON: formData.get("ingredientsJSON"),
+        // 등록 시 재료는 "ingredients"라는 키로 전송 (백엔드 문서 참조)
+        ingredients: formData.get("ingredients"),
       });
 
       const url = `/api/v1/highball/recipes-post?${queryParams.toString()}`;
@@ -75,7 +79,7 @@ export default function HighballSection() {
     }
   };
 
-  // 레시피 삭제 (DELETE)
+  // 레시피 삭제 처리 (DELETE)
   const handleDeleteRecipe = async (id, recipeWriteUser) => {
     if (recipeWriteUser === session?.user?.id) {
       try {
@@ -99,7 +103,7 @@ export default function HighballSection() {
     );
   };
 
-  // 수정 버튼 클릭 시: 기존 레시피 데이터를 상태에 저장 후 수정 모달 열기
+  // 수정 버튼 클릭 시: 기존 데이터를 상태에 저장하고 수정 모달 열기
   const handleEditRecipe = (recipe) => {
     setRecipeToEdit(recipe);
     setEditName(recipe.name || "");
@@ -109,8 +113,8 @@ export default function HighballSection() {
     setIsEditModalOpen(true);
   };
 
-  // 레시피 수정 (PUT)
-  // RecipeForm의 onSubmit(formData, onClose) 콜백으로 생성한 FormData 사용
+  // 레시피 수정 처리 (PUT)
+  // RecipeForm의 onSubmit(formData, onClose) 콜백에서 생성한 FormData를 사용
   const handleSubmitEdit = async (formData, onClose) => {
     try {
       const url = `/api/v1/highball/modify?userId=${session?.user?.id}&category=${category}&recipeId=${recipeToEdit.id}`;
@@ -120,7 +124,7 @@ export default function HighballSection() {
         body: formData,
       });
       if (!res.ok) throw new Error("레시피 수정에 실패했습니다.");
-      const data = await res.json(); // 백엔드가 JSON 응답을 보내도록 가정
+      const data = await res.json(); // JSON 응답 가정
       console.log("레시피 수정 성공:", data);
       onClose();
       fetchRecipes();
@@ -147,7 +151,6 @@ export default function HighballSection() {
       <h1 className="text-2xl font-bold text-primary mb-1">하이볼 레시피</h1>
       <div className="h-[3px] bg-[#6F0029] mb-4" />
 
-      {/* 정렬 옵션 및 등록 버튼 */}
       <div className="flex justify-between items-center mb-4">
         <FilterDropdown
           title="정렬 옵션"
@@ -165,7 +168,6 @@ export default function HighballSection() {
         </Button>
       </div>
 
-      {/* 레시피 목록 */}
       {sortedRecipes.map((item) => (
         <RecipeCard
           key={item.id}
