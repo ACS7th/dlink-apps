@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button, Textarea, Image } from "@heroui/react";
 import { ModalHeader, ModalBody, ModalFooter } from "@heroui/modal";
 import IngredientInput from "@/components/highball/ingredients";
+import { ScrollShadow } from "@heroui/react";
 
 export default function RecipeForm({
   onClose,
@@ -17,8 +18,9 @@ export default function RecipeForm({
   const [making, setMaking] = useState(initialMaking);
   const [ingredients, setIngredients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
 
-  // 재료 JSON을 배열로 변환 (수정 모드)
+  // 초기 재료 JSON을 배열로 변환
   useEffect(() => {
     if (initialIngredientsJSON) {
       try {
@@ -35,10 +37,9 @@ export default function RecipeForm({
 
   const handleSubmit = () => {
     const formData = new FormData();
-    // 단, 수정 모드에서는 새로 입력한 값으로 덮어쓰도록 합니다.
     formData.append("name", name);
     formData.append("making", making);
-    // 재료 배열 → 객체 → JSON, key는 "ingredientsJSON"
+    // 재료 배열 → 객체 → JSON, key 이름은 "ingredientsJSON"으로 통일
     const ingredientsObj = ingredients.reduce((acc, curr) => {
       if (curr.key.trim() && curr.value.trim()) {
         acc[curr.key] = curr.value;
@@ -46,14 +47,23 @@ export default function RecipeForm({
       return acc;
     }, {});
     formData.append("ingredientsJSON", JSON.stringify(ingredientsObj));
+    // 이미지 파일: 새로 선택한 이미지가 있으면 전송, 없고 기존 이미지가 제거된 경우 빈 값 전송
     if (selectedImage) {
       formData.append("imageFile", selectedImage, selectedImage.name);
+    } else if (!currentImageUrl) {
+      // 만약 기존 이미지가 삭제되었으면 빈 값 전송 (백엔드에서 이를 인식하여 이미지를 삭제하도록)
+      formData.append("imageFile", "");
     }
     onSubmit(formData, onClose);
   };
 
   return (
-    <>
+    <ScrollShadow
+      hideScrollBar
+      className="max-h-[500px]"
+      offset={100}
+      orientation="horizontal"
+    >
       <ModalHeader>{initialName ? "레시피 수정" : "하이볼 레시피 작성"}</ModalHeader>
       <ModalBody>
         <div className="space-y-4">
@@ -86,11 +96,19 @@ export default function RecipeForm({
             <label className="block text-sm font-medium text-gray-700">재료</label>
             <IngredientInput ingredients={ingredients} onChange={setIngredients} />
           </div>
-          {/* 기존 이미지 미리보기 (수정 모드) */}
-          {initialImageUrl && !selectedImage && (
+          {/* 기존 이미지 미리보기 및 삭제 버튼 (수정 모드) */}
+          {currentImageUrl && !selectedImage && (
             <div className="mt-2">
               <p className="text-sm text-gray-500 mb-1">기존 이미지 미리보기:</p>
-              <Image src={initialImageUrl} alt="기존 이미지" />
+              <Image src={currentImageUrl} alt="기존 이미지" />
+              <Button
+                onPress={() => setCurrentImageUrl("")}
+                variant="light"
+                color="danger"
+                className="mt-1 text-xs"
+              >
+                이미지 삭제
+              </Button>
             </div>
           )}
           {/* 이미지 업로드 */}
@@ -112,6 +130,6 @@ export default function RecipeForm({
           {initialName ? "수정" : "등록"}
         </Button>
       </ModalFooter>
-    </>
+    </ScrollShadow>
   );
 }
