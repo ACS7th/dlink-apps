@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner } from "@heroui/react";
 
-export default function WineSearchResultsPage() {
+export default function WineSearchResultsPage({setTabKey}) {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("query");
   const router = useRouter();
@@ -28,6 +28,10 @@ export default function WineSearchResultsPage() {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         const fetchedResults = data.content || [];
+
+        if(fetchedResults.length === 0) {
+          setTabKey("Yangju");
+        }
 
         if (pageNumber === 0) {
           setSearchResults(fetchedResults);

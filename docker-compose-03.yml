@@ -1,7 +1,7 @@
 services:
 
   api-gateway:
-    image: api-gateway:dev
+    image: api-gateway:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-api-gateway
@@ -24,7 +24,7 @@ services:
       - dlink_net
 
   auth-service:
-    image: auth-service:dev
+    image: auth-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-auth
@@ -44,7 +44,7 @@ services:
       - dlink_net
 
   alcohol-service:
-    image: alcohol-service:dev
+    image: alcohol-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-alcohol
@@ -63,7 +63,7 @@ services:
       - dlink_net
 
   highball-service:
-    image: highball-service:dev
+    image: highball-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-highball
@@ -83,7 +83,7 @@ services:
       - dlink_net
 
   review-service:
-    image: review-service:dev
+    image: review-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-review
@@ -101,7 +101,7 @@ services:
       - dlink_net
 
   pairing-service:
-    image: pairing-service:dev
+    image: pairing-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-pairing
@@ -121,7 +121,7 @@ services:
       - dlink_net
 
   next-app:
-    image: next-app:dev
+    image: next-app:prod
     build:
       context: ./next-app/
       dockerfile: Dockerfile-dev

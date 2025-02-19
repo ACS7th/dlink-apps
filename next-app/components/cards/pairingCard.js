@@ -9,7 +9,7 @@ import axios from "axios";
 const PairingCard = ({ alcohol }) => {
   const { resolvedTheme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("Meat");
-  const [alcoholCate, setAlcoholCate] = useState("wine");
+  const [alcoholCate, setAlcoholCate] = useState("");
   const [isPairingLoading, setIsPairingLoading] = useState(true);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(true);
   const [pairingData, setPairingData] = useState(null);
@@ -18,10 +18,11 @@ const PairingCard = ({ alcohol }) => {
 
   // alcohol 객체의 tanin 유무에 따라 양주/와인 결정
   useEffect(() => {
+    console.log(alcohol)
     if (alcohol && Object.prototype.hasOwnProperty.call(alcohol, "tanin")) {
-      setAlcoholCate("yangju");
-    } else {
       setAlcoholCate("wine");
+    } else {
+      setAlcoholCate("yangju");
     }
   }, [alcohol]);
 
@@ -98,8 +99,8 @@ const PairingCard = ({ alcohol }) => {
               size="sm"
               radius="sm"
               className={`${selectedCategory === category
-                  ? "bg-primary text-white"
-                  : "bg-gray-200 text-black"
+                ? "bg-primary text-white"
+                : "bg-gray-200 text-black"
                 } transition duration-300`}
               onPress={() => setSelectedCategory(category)}
             >

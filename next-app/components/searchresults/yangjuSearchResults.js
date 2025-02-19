@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner, Tooltip } from "@heroui/react";
 
-export default function YangjuResultsPage() {
+export default function YangjuResultsPage({setTabKey}) {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("query");
   const router = useRouter();
@@ -29,8 +29,6 @@ export default function YangjuResultsPage() {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         const fetchedResults = data.content || [];
-
-        console.log("[API 응답 데이터]:", fetchedResults);
 
         if (pageNumber === 0) {
           setSearchResults(fetchedResults);

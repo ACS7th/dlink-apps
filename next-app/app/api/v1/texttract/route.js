@@ -2,10 +2,10 @@ import { TextractClient, AnalyzeDocumentCommand } from "@aws-sdk/client-textract
 import { NextResponse } from "next/server";
 
 const textract = new TextractClient({
-  region: process.env.AWS_REGION,
+  region: "ap-northeast-2",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
   },
 });
 

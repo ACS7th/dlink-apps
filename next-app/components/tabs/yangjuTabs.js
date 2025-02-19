@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import RecipeCard from "@/components/highball/recipeCard";
 import ReviewCard from "@/components/review/reviewcard";
 
-export default function YangjuTabs({ productCategory, productId }) {
+export default function YangjuTabs({ product, productCategory, productId }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -103,7 +103,9 @@ export default function YangjuTabs({ productCategory, productId }) {
     {
       id: "recommend",
       label: "추천 안주",
-      content: <PairingCard />,
+      content: <PairingCard
+        alcohol={product}
+       />,
     },
     {
       id: "highball",
