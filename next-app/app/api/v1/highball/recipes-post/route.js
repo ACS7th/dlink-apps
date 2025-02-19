@@ -24,7 +24,6 @@ export async function POST(request) {
       making,
     });
 
-    // 백엔드 API URL 구성 (예: http://localhost:9999/api/v1/highball/recipe?userId=...&name=...&category=...&making=...)
     const backendURL = `${process.env.SPRING_URI}/api/v1/highball/recipe?${queryParams.toString()}`;
     console.log("Backend URL:", backendURL);
 
