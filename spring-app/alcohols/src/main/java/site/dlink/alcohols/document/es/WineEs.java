@@ -19,6 +19,15 @@ public class WineEs {
     @Field(type = FieldType.Text)
     private String engName;
 
+    @Field(type = FieldType.Text)
+    private String image;
+
+    @Field(type = FieldType.Text)
+    private String price;
+
+    @Field(type = FieldType.Integer)
+    private int volume;
+
     @Field(type = FieldType.Integer)
     private int sweetness;
 
@@ -29,12 +38,17 @@ public class WineEs {
     private int body;
 
     @Field(type = FieldType.Integer)
-    private int tanin;
+    private int tannin;
 
     @Field(type = FieldType.Text)
-    private String foodPairing;
+    private String origin;
+
+    @Field(type = FieldType.Text)
+    private String percent;
+
+    @Field(type = FieldType.Text)
+    private String category;
 
     @Field(type = FieldType.Text)
     private String details;
-
 }
