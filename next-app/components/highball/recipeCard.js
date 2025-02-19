@@ -6,15 +6,7 @@ import Like from "@/components/buttons/likeButtons";
 import CardMenu from "@/components/highball/cardmenu";
 import LoginUser from "../auth/loginUser";
 
-export default function RecipeCard({
-  item,
-  session,
-  resolvedTheme,
-  onDelete,
-  onEdit,
-  onLikeToggle,
-  readOnly = false,
-}) {
+export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }) {
   const isOwner = item.writeUser === session?.user?.id;
 
   return (
