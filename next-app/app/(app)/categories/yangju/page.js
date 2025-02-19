@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation";
 import SearchCategory from "@/components/searchcategory/searchCategory";
 import filterData from "../wine/filterData";
 
+export const dynamic = 'force-dynamic';
+
 export default function WhiskeyPage() {
 
   const searchParams = useSearchParams();
