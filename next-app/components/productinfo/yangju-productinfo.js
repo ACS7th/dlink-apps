@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { Card, CardBody } from "@heroui/card";
 import { Image, Textarea } from "@heroui/react";
-import YangjuTabs from "@/components/tabs/yangjuTabs";
 
 export default function ProductDetail({ product }) {
 
@@ -12,7 +9,7 @@ export default function ProductDetail({ product }) {
     <>
       <div>
         <Card className="p-4 shadow-lg">
-          <div className="flex flex-row space-x-7 mb-4">
+          <div className="flex flex-row mb-4">
             <div className="flex-shrink-0">
               <Image
                 alt={product.korName || "상품 이미지"}
@@ -23,7 +20,7 @@ export default function ProductDetail({ product }) {
               />
             </div>
             <div className="flex flex-col justify-center">
-              <h6 className="font-bold text-xl">
+              <h6 className="font-bold text-xl mt-1">
                 {product.korName}
               </h6>
               <p className="text-tiny uppercase font-bold text-gray-500">
@@ -43,8 +40,6 @@ export default function ProductDetail({ product }) {
               isReadOnly
               className="max-w-full"
               defaultValue={product.explanation}
-              label="Description"
-              labelPlacement="outside"
               variant="bordered"
             />
           </CardBody>

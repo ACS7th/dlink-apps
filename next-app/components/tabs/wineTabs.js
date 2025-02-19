@@ -29,14 +29,18 @@ export default function WineTabs({ alcohol }) {
         : "";
 
   useEffect(() => {
-    // category와 drinkId가 모두 존재할 때만 리뷰를 불러옵니다.
-    if (!category || !drinkId) return;
     async function fetchReviews() {
       try {
         setLoadingReview(true);
         const res = await fetch(
           `/api/v1/reviews/search?category=${category}&drinkId=${drinkId}`
         );
+        // 만약 404 응답이면 리뷰가 없는 것으로 처리
+        if (res.status === 404) {
+          setReviews([]);
+          setErrorReview("리뷰가 없습니다.");
+          return;
+        }
         if (!res.ok) {
           throw new Error(
             `리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`
@@ -44,7 +48,6 @@ export default function WineTabs({ alcohol }) {
         }
         const data = await res.json();
         if (!data || Object.keys(data).length === 0) {
-          console.warn("🚨 리뷰 데이터가 비어있습니다.");
           setReviews([]);
           return;
         }
@@ -57,6 +60,7 @@ export default function WineTabs({ alcohol }) {
           })
         );
         setReviews(transformedReviews);
+        setErrorReview(null);
       } catch (error) {
         console.error("❌ 리뷰 불러오기 실패:", error.message);
         setReviews([]);
@@ -65,8 +69,50 @@ export default function WineTabs({ alcohol }) {
         setLoadingReview(false);
       }
     }
-    fetchReviews();
+    if (category && drinkId) {
+      fetchReviews();
+    }
   }, [category, drinkId]);
+
+  // useEffect(() => {
+  //   // category와 drinkId가 모두 존재할 때만 리뷰를 불러옵니다.
+  //   if (!category || !drinkId) return;
+  //   async function fetchReviews() {
+  //     try {
+  //       setLoadingReview(true);
+  //       const res = await fetch(
+  //         `/api/v1/reviews/search?category=${category}&drinkId=${drinkId}`
+  //       );
+  //       if (!res.ok) {
+  //         throw new Error(
+  //           `리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`
+  //         );
+  //       }
+  //       const data = await res.json();
+  //       if (!data || Object.keys(data).length === 0) {
+  //         console.warn("🚨 리뷰 데이터가 비어있습니다.");
+  //         setReviews([]);
+  //         return;
+  //       }
+  //       // 응답 객체를 배열로 변환 (각 리뷰의 key 값을 writeUser 및 id로 설정)
+  //       const transformedReviews = Object.entries(data).map(
+  //         ([userId, review]) => ({
+  //           ...review,
+  //           writeUser: userId,
+  //           id: userId,
+  //         })
+  //       );
+  //       setReviews(transformedReviews);
+  //     } catch (error) {
+  //       console.error("❌ 리뷰 불러오기 실패:", error.message);
+  //       setReviews([]);
+  //       setErrorReview(error.message);
+  //     } finally {
+  //       setLoadingReview(false);
+  //     }
+  //   }
+  //   fetchReviews();
+  // }, [category, drinkId]);
 
   const tabs = [
     {
@@ -95,7 +141,9 @@ export default function WineTabs({ alcohol }) {
               ))}
             </div>
           ) : (
-            <div className="py-4 text-center">리뷰가 없습니다.</div>
+            <div className="py-4 text-center">
+              리뷰가 없습니다.
+            </div>
           )}
           <div className="flex justify-center mt-4">
             <Link
