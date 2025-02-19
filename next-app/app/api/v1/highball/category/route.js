@@ -12,7 +12,7 @@ export async function GET(request) {
       return NextResponse.json({ error: "카테고리 값이 필요합니다." }, { status: 400 });
     }
 
-    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/category`;
+    const backendURL = `${process.env.SPRING_URI}/api/v1/highball/category?category=${category}`;
     const res = await axios.get(backendURL, {
       params: { category },
       timeout: 5000,

@@ -6,7 +6,7 @@ networks:
 
 services:
   api-gateway:
-    image: api-gateway:prod
+    image: api-gateway:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-api-gateway
@@ -28,7 +28,7 @@ services:
       - dlink_net
 
   auth-service:
-    image: auth-service:prod
+    image: auth-service:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-auth
@@ -46,7 +46,7 @@ services:
       - dlink_net
 
   alcohol-service:
-    image: alcohol-service:prod
+    image: alcohol-service:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-alcohol
@@ -64,7 +64,7 @@ services:
       - dlink_net
 
   highball-service:
-    image: highball-service:prod
+    image: highball-service:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-highball
@@ -83,7 +83,7 @@ services:
       - dlink_net
 
   review-service:
-    image: review-service:prod
+    image: review-service:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-review
@@ -100,7 +100,7 @@ services:
       - dlink_net
 
   pairing-service:
-    image: pairing-service:prod
+    image: pairing-service:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-pairing
@@ -119,7 +119,7 @@ services:
       - dlink_net
 
   next-app:
-    image: next-app:prod
+    image: next-app:dev
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-dev
@@ -139,10 +139,10 @@ services:
     networks:
       - dlink_net
 
-  redis:
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    networks:
-      - dlink_net
+  # redis:
+  #   image: redis
+  #   restart: always
+  #   ports:
+  #     - 6379:6379
+  #   networks:
+  #     - dlink_net

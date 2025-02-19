@@ -1,7 +1,7 @@
 services:
 
   api-gateway:
-    image: api-gateway
+    image: api-gateway:dev
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-dev/Dockerfile-api-gateway
@@ -124,7 +124,8 @@ services:
     image: next-app:dev
     build:
       context: ./next-app/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
+    restart: always
     ports:
       - "3000:3000"
     environment:
@@ -140,7 +141,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       SPRING_URI: ${SPRING_URI}
-      REDIS_URL: ${REDIS_URL}
+      REDIS_URI: ${REDIS_URI}
     networks:
       - dlink_net
     volumes:

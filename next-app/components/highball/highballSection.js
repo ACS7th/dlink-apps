@@ -17,7 +17,7 @@ export default function HighballSection() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
 
-  // 레시피 목록 state 및 정렬 옵션 state
+  // 레시피 목록 및 정렬 옵션 상태
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
 
@@ -44,10 +44,9 @@ export default function HighballSection() {
     }
   }, [category, fetchRecipes]);
 
-  // 레시피 등록 처리 (RecipeForm에서 사용)
+  // 레시피 등록 처리
   const handleSubmitRecipe = async (formData, onClose) => {
     try {
-      // queryParams 생성 (userId는 세션에서 가져옴)
       const queryParams = new URLSearchParams({
         userId: session?.user?.id,
         Name: formData.get("name"),
@@ -96,20 +95,27 @@ export default function HighballSection() {
     }
   };
 
-  // 정렬된 레시피 배열 계산 (정렬 옵션에 따라)
+  // 좋아요 토글 시 해당 레시피의 좋아요 수를 업데이트하는 함수
+  const handleUpdateLike = (itemId, newLikeCount) => {
+    setRecipes((prevRecipes) =>
+      prevRecipes.map((recipe) =>
+        recipe.id === itemId ? { ...recipe, likeCount: newLikeCount } : recipe
+      )
+    );
+  };
+
+  // 정렬 옵션에 따라 레시피 배열 정렬 (추천순은 좋아요 수 내림차순)
   const sortedRecipes = [...recipes].sort((a, b) => {
     if (filter === "추천순") {
-      // 좋아요 수 내림차순 (높은 좋아요 수가 먼저 나오도록)
       return b.likeCount - a.likeCount;
     } else if (filter === "최신순") {
-      // 등록 시간 내림차순 (최신 레시피가 먼저 나오도록)
       return new Date(b.createdAt) - new Date(a.createdAt);
     } else {
       return 0;
     }
   });
 
-  // 정렬 옵션을 위한 옵션 배열
+  // 정렬 옵션 배열
   const sortOptions = [
     { value: "추천순", label: "추천순" },
     { value: "최신순", label: "최신순" },
@@ -142,7 +148,7 @@ export default function HighballSection() {
         </Button>
       </div>
 
-      {/* 레시피 목록 */}
+      {/* 레시피 목록 (onLikeToggle prop을 RecipeCard에 전달) */}
       {sortedRecipes.map((item) => (
         <RecipeCard
           className="mb-4 p-2"
@@ -151,6 +157,7 @@ export default function HighballSection() {
           session={session}
           resolvedTheme={resolvedTheme}
           onDelete={handleDeleteRecipe}
+          onLikeToggle={handleUpdateLike}
         />
       ))}
 

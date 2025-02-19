@@ -4,17 +4,18 @@ import { useState, useEffect } from "react";
 
 export default function Like({
   itemId,
-  userEmail, // 부모에서 session.user.email 전달
+  userid,
   initialLikes = 0,
   initialLiked = false,
   className = "",
   readOnly = false,
+  onLikeToggle, // 부모에 좋아요 수 업데이트를 알리기 위한 콜백
 }) {
   const [likes, setLikes] = useState(initialLikes);
   const [liked, setLiked] = useState(initialLiked);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // (1) 페이지 최초 렌더링 시 서버에서 현재 좋아요 수 조회
+  // 페이지 최초 렌더링 시 서버에서 좋아요 수 조회
   useEffect(() => {
     async function fetchLikeCounts() {
       try {
@@ -36,36 +37,40 @@ export default function Like({
     }
   }, [itemId]);
 
-  // // 디버깅: 전달된 값 확인
-  // useEffect(() => {
-  //   console.log("Like 컴포넌트 - itemId:", itemId, "userEmail:", userEmail);
-  // }, [itemId, userEmail]);
-
-  // (2) 좋아요 버튼 클릭 (낙관적 업데이트 적용)
   const handleToggle = async () => {
     if (readOnly || isProcessing) return;
-
     setIsProcessing(true);
 
-    // 낙관적 업데이트
+    // 기존 상태 저장 (실패 시 복구용)
+    const prevLiked = liked;
+    const prevLikes = likes;
     const newLiked = !liked;
+    const newLikes = newLiked ? likes + 1 : likes - 1;
+
+    // 낙관적 업데이트
     setLiked(newLiked);
-    setLikes((prev) => (newLiked ? prev + 1 : prev - 1));
+    setLikes(newLikes);
+    if (onLikeToggle) {
+      onLikeToggle(itemId, newLikes);
+    }
 
     try {
-      const url = `/api/v1/highball/like?id=${itemId}&userId=${userEmail}`;
+      const url = `/api/v1/highball/like?id=${itemId}&userId=${userid}`;
       console.log("좋아요 요청 URL:", url);
       const res = await fetch(url, { method: "POST" });
       if (!res.ok) {
         throw new Error("좋아요 토글 실패");
       }
-      const data = await res.text(); // 백엔드가 텍스트 응답 반환
+      const data = await res.text();
       console.log("좋아요 토글 응답:", data);
     } catch (error) {
       console.error("좋아요 토글 오류:", error);
       // 실패 시 낙관적 업데이트 복구
-      setLiked(!newLiked);
-      setLikes((prev) => (newLiked ? prev - 1 : prev + 1));
+      setLiked(prevLiked);
+      setLikes(prevLikes);
+      if (onLikeToggle) {
+        onLikeToggle(itemId, prevLikes);
+      }
     } finally {
       setIsProcessing(false);
     }
