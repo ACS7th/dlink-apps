@@ -11,7 +11,7 @@ COPY . .
 RUN gradle :pairing:bootJar --no-daemon
 
 # Production Stage
-FROM openjdk:21-jdk-slim AS production
+FROM openjdk:21-jdk-alpine AS production
 WORKDIR /app
 
 RUN apk update && apk add --no-cache \

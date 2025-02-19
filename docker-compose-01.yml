@@ -6,13 +6,11 @@ networks:
 
 services:
   api-gateway:
-    image: api-gateway:prod
+    image: 192.168.3.83/dlink/api-gateway:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
     restart: always
-    ports:
-      - "9999:9999"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SERVER_PORT: 9999
@@ -26,13 +24,11 @@ services:
       - dlink_net
 
   auth-service:
-    image: auth-service:prod
+    image: 192.168.3.83/dlink/auth-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
     restart: always
-    ports:
-      - "9991:9991"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
@@ -42,13 +38,11 @@ services:
       - dlink_net
 
   alcohol-service:
-    image: alcohol-service:prod
+    image: 192.168.3.83/dlink/alcohol-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
     restart: always
-    ports:
-      - "9992:9992"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
@@ -58,13 +52,11 @@ services:
       - dlink_net
 
   highball-service:
-    image: highball-service:prod
+    image: 192.168.3.83/dlink/highball-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
     restart: always
-    ports:
-      - "9993:9993"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
@@ -75,13 +67,11 @@ services:
       - dlink_net
 
   review-service:
-    image: review-service:prod
+    image: 192.168.3.83/dlink/review-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
     restart: always
-    ports:
-      - "9994:9994"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
@@ -90,13 +80,11 @@ services:
       - dlink_net
 
   pairing-service:
-    image: pairing-service:prod
+    image: 192.168.3.83/dlink/pairing-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
     restart: always
-    ports:
-      - "9995:9995"
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
@@ -107,7 +95,7 @@ services:
       - dlink_net
 
   next-app:
-    image: next-app:prod
+    image: 192.168.3.83/dlink/next-app:prod
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
@@ -128,4 +116,3 @@ services:
       AWS_ECRET_KEY: ${AWS_SECRET_KEY}
     networks:
       - dlink_net
-

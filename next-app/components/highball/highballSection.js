@@ -24,7 +24,7 @@ export default function HighballSection() {
   // 등록 모달 제어
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // 수정 모달 및 상태
+  // 수정 모달 및 수정 데이터 상태
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [recipeToEdit, setRecipeToEdit] = useState(null);
   const [editName, setEditName] = useState("");
@@ -53,13 +53,12 @@ export default function HighballSection() {
   // 레시피 등록 처리 (POST)
   const handleSubmitRecipe = async (formData, onClose) => {
     try {
-      // query 파라미터에 필수 값들을 전달 (키는 모두 소문자로 통일)
       const queryParams = new URLSearchParams({
         userId: session?.user?.id,
         name: formData.get("name"),
         category,
         making: formData.get("making"),
-        // 등록 시 ingredients key 사용 (백엔드에서 ingredients로 처리)
+        // 등록 시 재료는 "ingredients"라는 키로 전송 (백엔드 문서 참조)
         ingredients: formData.get("ingredients"),
       });
 
@@ -104,7 +103,7 @@ export default function HighballSection() {
     );
   };
 
-  // 수정 버튼 클릭 시: 수정 모달 열고 초기값 세팅
+  // 수정 버튼 클릭 시: 기존 데이터를 상태에 저장하고 수정 모달 열기
   const handleEditRecipe = (recipe) => {
     setRecipeToEdit(recipe);
     setEditName(recipe.name || "");
@@ -115,7 +114,7 @@ export default function HighballSection() {
   };
 
   // 레시피 수정 처리 (PUT)
-  // RecipeForm의 onSubmit(formData, onClose) 콜백으로 생성된 FormData를 사용합니다.
+  // RecipeForm의 onSubmit(formData, onClose) 콜백에서 생성한 FormData를 사용
   const handleSubmitEdit = async (formData, onClose) => {
     try {
       const url = `/api/v1/highball/modify?userId=${session?.user?.id}&category=${category}&recipeId=${recipeToEdit.id}`;
@@ -125,7 +124,7 @@ export default function HighballSection() {
         body: formData,
       });
       if (!res.ok) throw new Error("레시피 수정에 실패했습니다.");
-      const data = await res.text();
+      const data = await res.json(); // JSON 응답 가정
       console.log("레시피 수정 성공:", data);
       onClose();
       fetchRecipes();
@@ -145,9 +144,7 @@ export default function HighballSection() {
     { value: "최신순", label: "최신순" },
   ];
 
-  if (status === "loading") {
-    return <Spinner className="flex mt-5" />;
-  }
+  if (status === "loading") return <Spinner className="flex mt-5" />;
 
   return (
     <div className="w-full max-w-full mx-auto p-3 md:p-6">
@@ -194,12 +191,7 @@ export default function HighballSection() {
 
       {/* 수정 모달 */}
       {isEditModalOpen && (
-        <Modal
-          isOpen={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
-          placement="auto"
-          className="mx-4"
-        >
+        <Modal isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen} placement="auto" className="mx-4">
           <ModalContent>
             {(onClose) => (
               <RecipeForm
@@ -207,7 +199,7 @@ export default function HighballSection() {
                 onSubmit={handleSubmitEdit}
                 initialName={editName}
                 initialMaking={editMaking}
-                initialIngredientsJSON={editIngredients}  // 키 변경: ingredientsJSON → ingredients? (여기서는 그대로 JSON 문자열)
+                initialIngredientsJSON={editIngredients}
                 initialImageUrl={editImageUrl}
               />
             )}
