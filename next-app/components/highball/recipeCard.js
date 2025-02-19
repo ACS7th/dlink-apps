@@ -30,7 +30,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           <Textarea
             isReadOnly
             className="max-w-full"
-            value={item.making}  // 실시간 업데이트를 위해 value 사용
+            value={item.making}  // 실시간 업데이트 위해 value 사용
             variant="bordered"
           />
           <div className="text-base mt-2">

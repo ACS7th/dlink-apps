@@ -17,14 +17,13 @@ export default function HighballSection() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
 
-  // 레시피 목록 및 정렬 옵션 상태
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
 
-  // 등록 모달 제어
+  // 등록 모달 제어 (FormData 방식 사용)
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // 수정 모달 및 수정 데이터 상태
+  // 수정 모달 및 수정 데이터 상태 (FormData 방식 사용)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [recipeToEdit, setRecipeToEdit] = useState(null);
   const [editName, setEditName] = useState("");
@@ -45,12 +44,10 @@ export default function HighballSection() {
   }, [category]);
 
   useEffect(() => {
-    if (category) {
-      fetchRecipes();
-    }
+    if (category) fetchRecipes();
   }, [category, fetchRecipes]);
 
-  // 레시피 등록 처리 (POST)
+  // 레시피 등록 처리 (POST) – FormData 방식
   const handleSubmitRecipe = async (formData, onClose) => {
     try {
       const queryParams = new URLSearchParams({
@@ -58,10 +55,8 @@ export default function HighballSection() {
         name: formData.get("name"),
         category,
         making: formData.get("making"),
-        // 등록 시 재료는 "ingredients"라는 키로 전송 (백엔드 문서 참조)
-        ingredients: formData.get("ingredients"),
+        ingredientsJSON: formData.get("ingredientsJSON"),
       });
-
       const url = `/api/v1/highball/recipes-post?${queryParams.toString()}`;
       console.log("레시피 등록 API 요청 URL:", url);
 
@@ -113,8 +108,7 @@ export default function HighballSection() {
     setIsEditModalOpen(true);
   };
 
-  // 레시피 수정 처리 (PUT)
-  // RecipeForm의 onSubmit(formData, onClose) 콜백에서 생성한 FormData를 사용
+  // 레시피 수정 처리 (PUT) – FormData 방식
   const handleSubmitEdit = async (formData, onClose) => {
     try {
       const url = `/api/v1/highball/modify?userId=${session?.user?.id}&category=${category}&recipeId=${recipeToEdit.id}`;
@@ -124,7 +118,7 @@ export default function HighballSection() {
         body: formData,
       });
       if (!res.ok) throw new Error("레시피 수정에 실패했습니다.");
-      const data = await res.json(); // JSON 응답 가정
+      const data = await res.json();
       console.log("레시피 수정 성공:", data);
       onClose();
       fetchRecipes();
@@ -180,7 +174,7 @@ export default function HighballSection() {
         />
       ))}
 
-      {/* 등록 모달 */}
+      {/* 등록 모달 (FormData 방식 사용) */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto" className="mx-4">
         <ModalContent>
           {(onClose) => (
@@ -189,7 +183,7 @@ export default function HighballSection() {
         </ModalContent>
       </Modal>
 
-      {/* 수정 모달 */}
+      {/* 수정 모달 (FormData 방식 사용) */}
       {isEditModalOpen && (
         <Modal isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen} placement="auto" className="mx-4">
           <ModalContent>
