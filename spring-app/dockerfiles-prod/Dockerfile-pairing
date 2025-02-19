@@ -2,18 +2,20 @@
 FROM gradle:8.12.0-jdk21-alpine AS builder
 WORKDIR /app
 
-# Gradle 캐싱을 활용한 최적화
+# Gradle 캐싱 최적화
 COPY gradle gradle
+COPY gradlew gradlew
 COPY build.gradle settings.gradle ./
-COPY pairing pairing
-RUN gradle :pairing:dependencies --no-daemon
+RUN chmod +x gradlew
+
+# 종속성 미리 다운로드하여 캐싱
+RUN ./gradlew :pairing:dependencies --no-daemon
+
+# 소스 코드 복사 및 빌드
 COPY . .
-RUN gradle :pairing:bootJar --no-daemon
+RUN ./gradlew :pairing:bootJar --no-daemon
 
-# Production Stage
-FROM openjdk:21-jdk-alpine AS production
-WORKDIR /app
-
+# 필수 패키지 설치 (Chromium & ChromeDriver 포함)
 RUN apk update && apk add --no-cache \
     chromium \
     chromium-chromedriver \
@@ -30,18 +32,21 @@ RUN apk update && apk add --no-cache \
     glib \
     xvfb
 
+# 환경 변수 설정 (Selenium 사용을 위한 경로 지정)
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_DRIVER=/usr/bin/chromedriver
 
-# 보안: 실행 사용자 추가 (루트 회피)
+# 실행 사용자 추가 (보안 강화)
 RUN groupadd --system appgroup && useradd --system --create-home --gid appgroup appuser
-COPY --from=builder /app/pairing/build/libs/*.jar app.jar
 
-# 보안: 소유자 변경 및 권한 최소화
+# 애플리케이션 복사
+COPY /app/build/libs/*.jar app.jar
+
+# 소유권 변경 및 실행 권한 부여
 RUN chown -R appuser:appgroup /app && chmod 750 /app/app.jar
 
 USER appuser
 
-EXPOSE 9995
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
