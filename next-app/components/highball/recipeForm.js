@@ -20,7 +20,7 @@ export default function RecipeForm({
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
 
-  // 초기 재료 JSON을 배열로 변환
+  // 초기 재료 JSON을 배열로 변환 (수정 모드)
   useEffect(() => {
     if (initialIngredientsJSON) {
       try {
@@ -29,6 +29,7 @@ export default function RecipeForm({
         setIngredients(arr);
       } catch (error) {
         console.error("재료 파싱 오류:", error);
+        setIngredients([{ key: "", value: "" }]);
       }
     } else {
       setIngredients([{ key: "", value: "" }]);
@@ -39,31 +40,26 @@ export default function RecipeForm({
     const formData = new FormData();
     formData.append("name", name);
     formData.append("making", making);
-    // 재료 배열 → 객체 → JSON, key 이름은 "ingredientsJSON"으로 통일
+    // 재료 배열 → 객체 → JSON, 여기서는 백엔드 문서에 맞춰 키 이름을 "ingredients"로 전송
     const ingredientsObj = ingredients.reduce((acc, curr) => {
       if (curr.key.trim() && curr.value.trim()) {
         acc[curr.key] = curr.value;
       }
       return acc;
     }, {});
-    formData.append("ingredientsJSON", JSON.stringify(ingredientsObj));
-    // 이미지 파일: 새로 선택한 이미지가 있으면 전송, 없고 기존 이미지가 제거된 경우 빈 값 전송
+    formData.append("ingredients", JSON.stringify(ingredientsObj));
+    // 이미지 파일: 새로 선택한 이미지가 있으면 전송, 없으면 기존 이미지 유지 또는 삭제 처리
     if (selectedImage) {
       formData.append("imageFile", selectedImage, selectedImage.name);
     } else if (!currentImageUrl) {
-      // 만약 기존 이미지가 삭제되었으면 빈 값 전송 (백엔드에서 이를 인식하여 이미지를 삭제하도록)
+      // 기존 이미지가 삭제되었으면 빈 값 전송
       formData.append("imageFile", "");
     }
     onSubmit(formData, onClose);
   };
 
   return (
-    <ScrollShadow
-      hideScrollBar
-      className="max-h-[500px]"
-      offset={100}
-      orientation="horizontal"
-    >
+    <ScrollShadow className="max-h-[500px] overflow-y-auto" size={100}>
       <ModalHeader>{initialName ? "레시피 수정" : "하이볼 레시피 작성"}</ModalHeader>
       <ModalBody>
         <div className="space-y-4">

@@ -5,6 +5,14 @@ import { useState, useEffect } from "react";
 export default function IngredientInput({ ingredients = [], onChange }) {
   const [items, setItems] = useState(ingredients);
 
+  // prop ingredients가 변경되면 내부 상태 업데이트
+  useEffect(() => {
+    if (JSON.stringify(ingredients) !== JSON.stringify(items)) {
+      setItems(ingredients);
+    }
+  }, [ingredients]);
+
+
   useEffect(() => {
     onChange && onChange(items);
   }, [items, onChange]);
