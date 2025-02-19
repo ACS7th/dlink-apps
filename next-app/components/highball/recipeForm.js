@@ -18,7 +18,7 @@ export default function RecipeForm({
   const [ingredients, setIngredients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // 초기 재료 JSON을 배열로 변환 (있으면)
+  // 재료 JSON을 배열로 변환 (수정 모드)
   useEffect(() => {
     if (initialIngredientsJSON) {
       try {
@@ -35,16 +35,17 @@ export default function RecipeForm({
 
   const handleSubmit = () => {
     const formData = new FormData();
+    // 단, 수정 모드에서는 새로 입력한 값으로 덮어쓰도록 합니다.
     formData.append("name", name);
     formData.append("making", making);
-    // 재료 배열 → 객체 → JSON (백엔드에서 key는 "ingredients"로 처리)
+    // 재료 배열 → 객체 → JSON, key는 "ingredientsJSON"
     const ingredientsObj = ingredients.reduce((acc, curr) => {
       if (curr.key.trim() && curr.value.trim()) {
         acc[curr.key] = curr.value;
       }
       return acc;
     }, {});
-    formData.append("ingredients", JSON.stringify(ingredientsObj));
+    formData.append("ingredientsJSON", JSON.stringify(ingredientsObj));
     if (selectedImage) {
       formData.append("imageFile", selectedImage, selectedImage.name);
     }
@@ -85,7 +86,7 @@ export default function RecipeForm({
             <label className="block text-sm font-medium text-gray-700">재료</label>
             <IngredientInput ingredients={ingredients} onChange={setIngredients} />
           </div>
-          {/* 기존 이미지 미리보기 (수정 시) */}
+          {/* 기존 이미지 미리보기 (수정 모드) */}
           {initialImageUrl && !selectedImage && (
             <div className="mt-2">
               <p className="text-sm text-gray-500 mb-1">기존 이미지 미리보기:</p>

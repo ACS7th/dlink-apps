@@ -17,14 +17,13 @@ export default function HighballSection() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
 
-  // 레시피 목록 및 정렬 옵션 상태
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
 
   // 등록 모달 제어
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // 수정 모달 및 상태
+  // 수정 모달 및 수정 데이터 상태
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [recipeToEdit, setRecipeToEdit] = useState(null);
   const [editName, setEditName] = useState("");
@@ -45,22 +44,18 @@ export default function HighballSection() {
   }, [category]);
 
   useEffect(() => {
-    if (category) {
-      fetchRecipes();
-    }
+    if (category) fetchRecipes();
   }, [category, fetchRecipes]);
 
-  // 레시피 등록 처리 (POST)
+  // 레시피 등록 (POST)
   const handleSubmitRecipe = async (formData, onClose) => {
     try {
-      // query 파라미터에 필수 값들을 전달 (키는 모두 소문자로 통일)
       const queryParams = new URLSearchParams({
         userId: session?.user?.id,
         name: formData.get("name"),
         category,
         making: formData.get("making"),
-        // 등록 시 ingredients key 사용 (백엔드에서 ingredients로 처리)
-        ingredients: formData.get("ingredients"),
+        ingredientsJSON: formData.get("ingredientsJSON"),
       });
 
       const url = `/api/v1/highball/recipes-post?${queryParams.toString()}`;
@@ -80,7 +75,7 @@ export default function HighballSection() {
     }
   };
 
-  // 레시피 삭제 처리 (DELETE)
+  // 레시피 삭제 (DELETE)
   const handleDeleteRecipe = async (id, recipeWriteUser) => {
     if (recipeWriteUser === session?.user?.id) {
       try {
@@ -104,7 +99,7 @@ export default function HighballSection() {
     );
   };
 
-  // 수정 버튼 클릭 시: 수정 모달 열고 초기값 세팅
+  // 수정 버튼 클릭 시: 기존 레시피 데이터를 상태에 저장 후 수정 모달 열기
   const handleEditRecipe = (recipe) => {
     setRecipeToEdit(recipe);
     setEditName(recipe.name || "");
@@ -114,8 +109,8 @@ export default function HighballSection() {
     setIsEditModalOpen(true);
   };
 
-  // 레시피 수정 처리 (PUT)
-  // RecipeForm의 onSubmit(formData, onClose) 콜백으로 생성된 FormData를 사용합니다.
+  // 레시피 수정 (PUT)
+  // RecipeForm의 onSubmit(formData, onClose) 콜백으로 생성한 FormData 사용
   const handleSubmitEdit = async (formData, onClose) => {
     try {
       const url = `/api/v1/highball/modify?userId=${session?.user?.id}&category=${category}&recipeId=${recipeToEdit.id}`;
@@ -125,7 +120,7 @@ export default function HighballSection() {
         body: formData,
       });
       if (!res.ok) throw new Error("레시피 수정에 실패했습니다.");
-      const data = await res.text();
+      const data = await res.json(); // 백엔드가 JSON 응답을 보내도록 가정
       console.log("레시피 수정 성공:", data);
       onClose();
       fetchRecipes();
@@ -145,15 +140,14 @@ export default function HighballSection() {
     { value: "최신순", label: "최신순" },
   ];
 
-  if (status === "loading") {
-    return <Spinner className="flex mt-5" />;
-  }
+  if (status === "loading") return <Spinner className="flex mt-5" />;
 
   return (
     <div className="w-full max-w-full mx-auto p-3 md:p-6">
       <h1 className="text-2xl font-bold text-primary mb-1">하이볼 레시피</h1>
       <div className="h-[3px] bg-[#6F0029] mb-4" />
 
+      {/* 정렬 옵션 및 등록 버튼 */}
       <div className="flex justify-between items-center mb-4">
         <FilterDropdown
           title="정렬 옵션"
@@ -171,6 +165,7 @@ export default function HighballSection() {
         </Button>
       </div>
 
+      {/* 레시피 목록 */}
       {sortedRecipes.map((item) => (
         <RecipeCard
           key={item.id}
@@ -194,12 +189,7 @@ export default function HighballSection() {
 
       {/* 수정 모달 */}
       {isEditModalOpen && (
-        <Modal
-          isOpen={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
-          placement="auto"
-          className="mx-4"
-        >
+        <Modal isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen} placement="auto" className="mx-4">
           <ModalContent>
             {(onClose) => (
               <RecipeForm
@@ -207,7 +197,7 @@ export default function HighballSection() {
                 onSubmit={handleSubmitEdit}
                 initialName={editName}
                 initialMaking={editMaking}
-                initialIngredientsJSON={editIngredients}  // 키 변경: ingredientsJSON → ingredients? (여기서는 그대로 JSON 문자열)
+                initialIngredientsJSON={editIngredients}
                 initialImageUrl={editImageUrl}
               />
             )}
