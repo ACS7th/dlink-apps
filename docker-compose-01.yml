@@ -6,7 +6,7 @@ networks:
 
 services:
   api-gateway:
-    image: 192.168.3.83/dlink/api-gateway:prod
+    image: 192.168.3.81/dlink/api-gateway:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
@@ -24,7 +24,7 @@ services:
       - dlink_net
 
   auth-service:
-    image: 192.168.3.83/dlink/auth-service:prod
+    image: 192.168.3.81/dlink/auth-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
@@ -38,7 +38,7 @@ services:
       - dlink_net
 
   alcohol-service:
-    image: 192.168.3.83/dlink/alcohol-service:prod
+    image: 192.168.3.81/dlink/alcohol-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
@@ -52,7 +52,7 @@ services:
       - dlink_net
 
   highball-service:
-    image: 192.168.3.83/dlink/highball-service:prod
+    image: 192.168.3.81/dlink/highball-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
@@ -67,7 +67,7 @@ services:
       - dlink_net
 
   review-service:
-    image: 192.168.3.83/dlink/review-service:prod
+    image: 192.168.3.81/dlink/review-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
@@ -80,7 +80,7 @@ services:
       - dlink_net
 
   pairing-service:
-    image: 192.168.3.83/dlink/pairing-service:prod
+    image: 192.168.3.81/dlink/pairing-service:prod
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
@@ -95,7 +95,7 @@ services:
       - dlink_net
 
   next-app:
-    image: 192.168.3.83/dlink/next-app:prod
+    image: 192.168.3.81/dlink/next-app:prod
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
@@ -112,6 +112,7 @@ services:
       NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
       NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
       NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_ECRET_KEY: ${AWS_SECRET_KEY}
     networks:
