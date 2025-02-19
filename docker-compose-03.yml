@@ -116,3 +116,4 @@ services:
       AWS_ECRET_KEY: ${AWS_SECRET_KEY}
     networks:
       - dlink_net
+
