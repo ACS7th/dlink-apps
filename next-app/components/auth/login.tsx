@@ -1,8 +1,8 @@
 "use client";
 
-import { Alert, Button, Image, Input } from "@heroui/react";
+import { addToast, Alert, Button, Image, Input } from "@heroui/react";
 import { useEffect, useState } from "react";
-import { signIn} from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -64,6 +64,11 @@ export default function Login() {
             }
 
             setError(result?.error || "로그인 실패");
+            addToast({
+                title: "로그인 실패",
+                description: result?.error || "로그인 실패입니다!",
+                color: "danger",
+            });
         } catch (error) {
             console.error("로그인 오류:", error);
             setError("로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
@@ -77,7 +82,6 @@ export default function Login() {
             <div className="text-center text-[25px] font-bold mb-6">로그인</div>
 
             <div className="flex flex-col gap-4">
-                {/* 이메일 입력 */}
                 <Input
                     variant="bordered"
                     label="이메일"
@@ -86,9 +90,9 @@ export default function Login() {
                     isInvalid={!!emailError}
                     errorMessage={emailError}
                     onChange={handleEmailChange}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 />
 
-                {/* 비밀번호 입력 */}
                 <Input
                     variant="bordered"
                     label="비밀번호"
@@ -97,17 +101,9 @@ export default function Login() {
                     isInvalid={!!passwordError}
                     errorMessage={passwordError}
                     onChange={handlePasswordChange}
+                    onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                 />
             </div>
-            {error && (
-                <Alert
-                    isClosable
-                    className="mt-4 text-sm md:text-base"
-                    color="danger"
-                >
-                    {error}
-                </Alert>
-            )}
 
             <div className="flex justify-center mt-6">
                 <Button

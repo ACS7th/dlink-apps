@@ -70,7 +70,7 @@ export const SidebarWrapper = () => {
                                 title="양주"
                             />
                         </SidebarMenu>
-                        <SidebarMenu title="Links">
+                        {/* <SidebarMenu title="Links">
                             <SidebarItem
                                 isActive={pathname === "/developers"}
                                 title="Github"
@@ -81,7 +81,7 @@ export const SidebarWrapper = () => {
                                 title="Notion"
                                 icon={<ReportsIcon />}
                             />
-                        </SidebarMenu>
+                        </SidebarMenu> */}
                     </div>
                     <div className={Sidebar.Footer()}>
                         <Tooltip content="Settings" color="primary">

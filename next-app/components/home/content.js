@@ -9,21 +9,23 @@ import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import FunnelIcon from "@/components/icons/funnelicon";
+import { addToast } from "@heroui/toast";
 
 export default function Content() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const { data: session } = useSession();
   const router = useRouter();
 
-  // 검색 버튼 클릭 (경고 알람 및 페이지 이동)
   const handleSearch = () => {
     setIsSearchLoading(true);
     if (!searchQuery.trim()) {
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000);
+      addToast({
+        title: "검색어 미입력",
+        description: "검색어를 입력해주세요.",
+        color: "danger",
+      });
     } else {
       router.push(`/searchresults?query=${encodeURIComponent(searchQuery)}`);
     }
@@ -61,11 +63,6 @@ export default function Content() {
         <ImageUploadButton />
       </div>
 
-      {showAlert && (
-        <div className="alert-container mt-3">
-          <Alert color="warning" title="검색어 미입력" />
-        </div>
-      )}
     </div>
   );
 }

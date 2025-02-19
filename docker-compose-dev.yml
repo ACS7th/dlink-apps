@@ -142,7 +142,6 @@ services:
       AWS_ECRET_KEY: ${AWS_SECRET_KEY}
     volumes:
       - ./next-app:/app 
-      - /app/node_modules 
       - /app/.next
     networks:
       - dlink_net

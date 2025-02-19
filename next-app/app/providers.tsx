@@ -4,6 +4,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { SessionProvider } from "next-auth/react";
+import { ToastProvider } from "@heroui/toast";
 
 export interface ProvidersProps {
     children: React.ReactNode;
@@ -19,6 +20,12 @@ export function Providers({ children, themeProps }: ProvidersProps) {
                     attribute="class"
                     {...themeProps}
                 >
+                    <ToastProvider
+                        toastProps={{
+                            timeout: 3000
+                        }}
+                        placement="bottom-center"
+                    />
                     {children}
                 </NextThemesProvider>
             </HeroUIProvider>
