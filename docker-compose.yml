@@ -124,7 +124,8 @@ services:
     image: next-app:dev
     build:
       context: ./next-app/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
+    restart: always
     ports:
       - "3000:3000"
     environment:

@@ -51,9 +51,6 @@ export default function YangjuTabs({ productCategory, productId }) {
     fetchHighballRecipe();
   }, [productCategory]);
 
-  // 리뷰 데이터
-
-
   // 탭에 들어갈 내용 정의
   const tabs = [
     {

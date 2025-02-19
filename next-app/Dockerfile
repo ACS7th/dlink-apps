@@ -2,7 +2,8 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --production
+# RUN npm ci --production
+RUN npm ci 
 
 # 2. Build Layer
 FROM node:18-alpine AS builder
@@ -16,7 +17,8 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 
 # Set environment
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
+ENV NODE_ENV=development
 
 # Copy necessary files from builder
 COPY --from=builder /app/next.config.js ./next.config.js
