@@ -1,3 +1,4 @@
 dalbok_accessKeys.csv
 *.deb
 logs*/
+*logs*/
