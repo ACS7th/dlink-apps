@@ -53,7 +53,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           )}
           <Like
             itemId={item.id}
-            userEmail={session?.user?.id}
+            userid={session?.user?.id}
             initialLikes={item.likeCount}
             initialLiked={item.likedUsers && item.likedUsers.includes(session?.user?.id)}
             className="flex flex-row items-end ml-auto"

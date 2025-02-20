@@ -27,10 +27,34 @@ export default function YangjuTabs({ product, productCategory, productId }) {
   const [loadingReview, setLoadingReview] = useState(false);
   const [errorReview, setErrorReview] = useState(null);
 
-  // 하이볼 레시피 불러오기
+  // // 하이볼 레시피 불러오기
+  // useEffect(() => {
+  //   if (!category) return;
+  //   setLoadingRecipe(true);
+  //   async function fetchHighballRecipe() {
+  //     try {
+  //       const categoryParam = encodeURIComponent(category);
+  //       const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! status: ${res.status}`);
+  //       }
+  //       const data = await res.json();
+
+  //       setHighballRecipe(data);
+  //     } catch (error) {
+  //       console.error("하이볼 레시피 호출 오류:", error);
+  //       setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
+  //     } finally {
+  //       setLoadingRecipe(false);
+  //     }
+  //   }
+  //   fetchHighballRecipe();
+  // }, [category]);
+
   useEffect(() => {
     if (!category) return;
     setLoadingRecipe(true);
+
     async function fetchHighballRecipe() {
       try {
         const categoryParam = encodeURIComponent(category);
@@ -39,7 +63,13 @@ export default function YangjuTabs({ product, productCategory, productId }) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
-        setHighballRecipe(data);
+        console.log("data:", data);
+        // 좋아요(likeCount) 기준 내림차순 정렬 후 상위 3개 선택
+        const sortedRecipes = data
+          .sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
+          .slice(0, 3);
+        console.log("sortedRecipes:", sortedRecipes);
+        setHighballRecipe(sortedRecipes);
       } catch (error) {
         console.error("하이볼 레시피 호출 오류:", error);
         setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
@@ -47,8 +77,10 @@ export default function YangjuTabs({ product, productCategory, productId }) {
         setLoadingRecipe(false);
       }
     }
+
     fetchHighballRecipe();
   }, [category]);
+
 
   // 리뷰 목록 불러오기 
   useEffect(() => {
