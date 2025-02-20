@@ -37,9 +37,6 @@ export default function ImageUploadButton() {
         return;
       }
 
-      // setErrorMessage("");
-      // setShowAlert(true);
-      // setTimeout(() => setShowAlert(false), 1000);
       setIsImageUploading(true);
 
       const formData = new FormData();

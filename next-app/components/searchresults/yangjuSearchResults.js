@@ -4,7 +4,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner, Tooltip } from "@heroui/react";
 
-export default function YangjuResultsPage({setTabKey}) {
+export const dynamic = 'force-dynamic';
+
+export default function YangjuResultsPage({ setTabKey }) {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("query");
   const router = useRouter();
@@ -69,18 +71,18 @@ export default function YangjuResultsPage({setTabKey}) {
       },
       { threshold: 1.0 }
     );
-  
+
     if (currentLoader) {
       observer.observe(currentLoader);
     }
-  
+
     return () => {
       if (currentLoader) {
         observer.unobserve(currentLoader);
       }
     };
   }, [loadMoreItems, loading, hasMore]);
-  
+
 
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);

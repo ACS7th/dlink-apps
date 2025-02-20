@@ -1,5 +1,6 @@
 import { TextractClient, AnalyzeDocumentCommand } from "@aws-sdk/client-textract";
 import { NextResponse } from "next/server";
+export const dynamic = 'force-dynamic';
 
 const textract = new TextractClient({
   region: "ap-northeast-2",
@@ -9,7 +10,7 @@ const textract = new TextractClient({
   },
 });
 
-// ✅ 이미지에서 텍스트 추출 API
+// 이미지에서 텍스트 추출 API
 export async function POST(req) {
   try {
     const formData = await req.formData();

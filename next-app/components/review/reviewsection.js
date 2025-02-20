@@ -10,6 +10,8 @@ import ReviewCard from "@/components/review/reviewcard";
 import ReviewForm from "@/components/review/reivewform";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
 
+export const dynamic = 'force-dynamic';
+
 export default function ReviewSection() {
   const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();

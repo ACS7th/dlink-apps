@@ -4,7 +4,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner } from "@heroui/react";
 
-export default function WineSearchResultsPage({setTabKey}) {
+export const dynamic = 'force-dynamic';
+
+export default function WineSearchResultsPage({ setTabKey }) {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("query");
   const router = useRouter();
@@ -29,7 +31,7 @@ export default function WineSearchResultsPage({setTabKey}) {
         const data = await res.json();
         const fetchedResults = data.content || [];
 
-        if(fetchedResults.length === 0) {
+        if (fetchedResults.length === 0) {
           setTabKey("Yangju");
         }
 
@@ -72,18 +74,18 @@ export default function WineSearchResultsPage({setTabKey}) {
       },
       { threshold: 1.0 }
     );
-  
+
     if (currentLoader) {
       observer.observe(currentLoader);
     }
-  
+
     return () => {
       if (currentLoader) {
         observer.unobserve(currentLoader);
       }
     };
   }, [loadMoreItems, loading, hasMore]);
-  
+
 
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);

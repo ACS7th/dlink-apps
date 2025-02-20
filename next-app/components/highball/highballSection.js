@@ -11,6 +11,8 @@ import RecipeCard from "@/components/highball/recipeCard";
 import RecipeForm from "@/components/highball/recipeForm";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
 
+export const dynamic = 'force-dynamic';
+
 export default function HighballSection() {
   const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();
