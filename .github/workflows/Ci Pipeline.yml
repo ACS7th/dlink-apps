@@ -11,9 +11,9 @@ on:
       - develop
 
 jobs:
-  build-spring:
-    name: Spring Boot Build & Test
-    runs-on: self-hosted  # <== Runner 변경
+  build-backend:
+    name: Build & Test Spring Boot
+    runs-on: self-hosted
 
     steps:
       - name: 코드 체크아웃
@@ -27,13 +27,13 @@ jobs:
 
       - name: Gradle 빌드 & 테스트
         run: |
-          cd backend
+          cd spring-app
           chmod +x gradlew
           ./gradlew build --no-daemon
 
-  build-nextjs:
-    name: Next.js Build & Test
-    runs-on: self-hosted  # <== Runner 변경
+  build-frontend:
+    name: Build & Test Next.js
+    runs-on: self-hosted
 
     steps:
       - name: 코드 체크아웃
@@ -46,15 +46,31 @@ jobs:
 
       - name: Next.js 빌드 & 테스트
         run: |
-          cd frontend
+          cd next-app
           npm install
           npm run lint
           npm run build
 
+  test-kafka:
+    name: Test Kafka Consumers
+    runs-on: self-hosted
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Python 환경 설정
+        run: |
+          cd kafka/consumer
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pytest
+
   docker-build-push:
     name: Build & Push Docker Images
-    runs-on: self-hosted  # <== Runner 변경
-    needs: [build-spring, build-nextjs]
+    runs-on: self-hosted
+    needs: [build-backend, build-frontend, test-kafka]
 
     steps:
       - name: 코드 체크아웃
@@ -62,13 +78,13 @@ jobs:
 
       - name: Docker 빌드 & 태깅
         run: |
-          docker build -t harbor.local/my-app-backend:latest ./backend
-          docker build -t harbor.local/my-app-frontend:latest ./frontend
+          docker build -t harbor.local/dlink-backend:latest ./spring-app
+          docker build -t harbor.local/dlink-frontend:latest ./next-app
 
       - name: Harbor 로그인
         run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login harbor.local -u ${{ secrets.HARBOR_USERNAME }} --password-stdin
 
       - name: Docker 이미지 푸시
         run: |
-          docker push harbor.local/my-app-backend:latest
-          docker push harbor.local/my-app-frontend:latest
+          docker push harbor.local/dlink-backend:latest
+          docker push harbor.local/dlink-frontend:latest
