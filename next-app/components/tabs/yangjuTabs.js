@@ -11,8 +11,6 @@ import ReviewCard from "@/components/review/reviewcard";
 import PairingCard from "@/components/cards/pairingCard";
 import RecipeCard from "@/components/highball/recipeCard";
 
-/*************  ✨ Codeium Command ⭐  *************/
-/******  4c0b136f-827d-4489-8df3-c2c159d6b7a6  *******/
 export default function YangjuTabs({ product, productCategory, productId }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
@@ -42,6 +40,8 @@ export default function YangjuTabs({ product, productCategory, productId }) {
         }
         const data = await res.json();
         setHighballRecipe(data);
+        console.log(highballRecipe)
+        console.log(category)
       } catch (error) {
         console.error("하이볼 레시피 호출 오류:", error);
         setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
@@ -50,7 +50,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
       }
     }
     fetchHighballRecipe();
-  }, [category]);
+  }, [category, highballRecipe]);
 
   // 리뷰 목록 불러오기 
   useEffect(() => {

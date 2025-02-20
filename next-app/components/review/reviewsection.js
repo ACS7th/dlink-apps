@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Spinner, Button } from "@heroui/react";
+import { Spinner, Button, addToast } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { Modal, ModalContent } from "@heroui/modal";
 import { useSearchParams } from "next/navigation";
@@ -80,6 +80,7 @@ export default function ReviewSection() {
     try {
       const userId = session?.user?.id;
       if (!userId) throw new Error("로그인이 필요합니다.");
+      if ( !selectedRating ) addToast({ title: '제출 실패', description: '별점을 선택해주세요.', color: 'danger' });
 
       const res = await fetch("/api/v1/reviews/post", {
         method: "POST",
