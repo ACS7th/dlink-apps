@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@heroui/react";
 
+export const dynamic = 'force-dynamic';
+
 const subcategoryToType = {
   Gin: "진",
   Rum: "럼",
@@ -20,7 +22,7 @@ export default function SearchCategory({
 }) {
   const searchParams = useSearchParams();
   const subcategory = propSubcategory || searchParams.get("subcategory");
-  
+
   // filters를 useMemo로 감싸서 참조가 변경되지 않도록 함
   const validCategoryFilters = useMemo(() => filters || {}, [filters]);
 

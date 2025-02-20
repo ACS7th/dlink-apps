@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@heroui/react";
+import { addToast, Button } from "@heroui/react";
 import { Alert } from "@heroui/alert";
 import { CameraIcon } from "@/components/icons/cameraicon";
 import axios from "axios";
@@ -37,9 +37,6 @@ export default function ImageUploadButton() {
         return;
       }
 
-      // setErrorMessage("");
-      // setShowAlert(true);
-      // setTimeout(() => setShowAlert(false), 1000);
       setIsImageUploading(true);
 
       const formData = new FormData();
@@ -54,7 +51,12 @@ export default function ImageUploadButton() {
 
       } catch (error) {
         console.error("❌ 업로드 오류:", error);
-        setErrorMessage("파일 업로드 또는 검색 실패");
+        addToast({
+          title: "업로드 오류",
+          description: "파일 업로드에 실패했습니다.",
+          color: "danger",
+        })
+        
       } finally {
         setIsImageUploading(false);
       }
@@ -74,13 +76,6 @@ export default function ImageUploadButton() {
         className="hidden"
         onChange={handleImageChange}
       />
-
-      {/* 파일 검증 오류 메시지 */}
-      {errorMessage && (
-        <div className="alert-container mt-2">
-          <Alert color="danger" title={errorMessage} />
-        </div>
-      )}
 
       {/* 파일 업로드 성공 알림 */}
       {showAlert && (

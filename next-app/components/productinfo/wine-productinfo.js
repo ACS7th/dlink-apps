@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { Card, CardBody } from "@heroui/card";
 import { Image } from "@heroui/react";
 import { Textarea } from "@heroui/react";
@@ -9,8 +7,8 @@ import { Progress } from "@heroui/react";
 
 export default function wineDetail({ wine }) {
   return (
-    <Card className="p-4">
-      <div className="flex items-center space-x-7 mb-4">
+    <Card className="p-4 shadow-lg">
+      <div className="flex flex-row mb-4">
         <div className="flex-shrink-0">
           <Image
             alt={wine.korName}
@@ -24,9 +22,16 @@ export default function wineDetail({ wine }) {
           <h6 className="font-bold text-xl mt-1">
             {wine.korName}
           </h6>
-          <h7 className="text-tiny uppercase font-bold text-gray-500">
+          <p className="text-tiny uppercase font-bold text-gray-500">
             {wine.engName}
-          </h7>
+          </p>
+          <p className="text-sm mt-2">
+            <p>원산지: {wine.origin}</p>
+            <p>도수: {wine.percent}%</p>
+            <p>용량: {wine.volume}ml</p>
+            <p>가격: {wine?.price?.toLocaleString()}원</p>
+            <p>카테고리: {wine.category}</p>
+          </p>
         </div>
       </div>
       <CardBody>
@@ -34,8 +39,6 @@ export default function wineDetail({ wine }) {
           isReadOnly
           className="max-w-full"
           value={wine.details}
-          label="Description"
-          labelPlacement="outside"
           variant="bordered"
         />
         <div className="space-y-3 mt-5">
@@ -53,12 +56,12 @@ export default function wineDetail({ wine }) {
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm font-semibold w-16">떫은맛</span>
-            <Progress value={wine.tanin * 20} />
+            <Progress value={wine.tannin * 20} />
             {/* <span className="text-xs w-8 text-left">%</span> */}
           </div>
         </div>
 
       </CardBody>
-    </Card>
+    </Card >
   );
 }

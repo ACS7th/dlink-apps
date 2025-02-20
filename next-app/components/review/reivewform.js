@@ -30,15 +30,16 @@ export default function ReviewForm({
               variant="bordered"
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
+              onClear={() => setReviewText("")}
             />
           </div>
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose}>
+        <Button color="primary" onPress={onClose}>
           취소
         </Button>
-        <Button color="bg-primary" onPress={onSubmit}>
+        <Button color="primary" onPress={onSubmit}>
           등록
         </Button>
       </ModalFooter>

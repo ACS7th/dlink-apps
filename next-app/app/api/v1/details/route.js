@@ -13,7 +13,7 @@ export async function GET(request) {
     }
 
     const res = await axios.get(`${process.env.SPRING_URI}/api/v1/alcohols/${id}`)
-
+    console.log("상품 상세 정보:", res.data);
     return NextResponse.json(res.data);
   } catch (error) {
     console.error("API 호출 오류:", error);

@@ -13,8 +13,8 @@ export async function POST(request) {
     const formData = await request.formData();
     const name = formData.get("name");
     const making = formData.get("making");
-    const ingredients = formData.get("ingredients"); // JSON 문자열, 예: {" ㅇ ":" ㅇ "}
-    const imageFile = formData.get("imageFile"); // 선택적 파일
+    const ingredients = formData.get("ingredients");
+    const imageFile = formData.get("imageFile");
 
     // 백엔드에 전달할 query parameters 구성: userId, name, category, making
     const queryParams = new URLSearchParams({
@@ -24,7 +24,6 @@ export async function POST(request) {
       making,
     });
 
-    // 백엔드 API URL 구성 (예: http://localhost:9999/api/v1/highball/recipe?userId=...&name=...&category=...&making=...)
     const backendURL = `${process.env.SPRING_URI}/api/v1/highball/recipe?${queryParams.toString()}`;
     console.log("Backend URL:", backendURL);
 
