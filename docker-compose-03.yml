@@ -147,5 +147,28 @@ services:
     volumes:
       - ./next-app:/app
 
+  kafka:
+    build:
+      context: ./kafka/broker
+      dockerfile: Dockerfile
+    container_name: kafka-broker-3
+    environment:
+      - BROKER_ID=3
+      - ZOOKEEPER_CONNECT=192.168.3.81:2181
+      - LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - ADVERTISED_LISTENERS=PLAINTEXT://192.168.3.83:9092
+      - LOG_DIRS=/var/lib/kafka/logs-3
+    volumes:
+      - ./kafka/logs-2:/var/lib/kafka/logs-3
+    ports:
+      - "9092:9092"
+    networks:
+      - kafka_net
+    restart: unless-stopped
+
+
 networks:
   dlink_net:
+  kafka_net:
+    external: true
+    name: dlink-apps_kafka_net

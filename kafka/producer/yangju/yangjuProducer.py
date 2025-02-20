@@ -1,5 +1,6 @@
-from kafka import KafkaProducer
+import os
 import json
+from kafka import KafkaProducer
 from brandyCrawler import crawlBrandy
 from ginCrawler import crawlGin
 from rumCrawler import crawlRum
@@ -8,8 +9,11 @@ from tequilaCrawler import crawlTequila
 from vodkaCrawler import crawlVodka
 from whiskeyCrawler import crawlWhiskey
 
+# 환경 변수에서 Kafka 브로커 정보 가져오기 (없으면 기본값: localhost:9092)
+KAFKA_BROKERS = os.getenv("KAFKA_BROKERS", "localhost:9092").split(",")
+
 producer = KafkaProducer(
-    bootstrap_servers=['localhost:9092', 'localhost:9093', 'localhost:9094'],
+    bootstrap_servers=KAFKA_BROKERS,
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 

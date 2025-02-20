@@ -18,7 +18,7 @@ RUN wget https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSI
     rm kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
 # 5. Kafka 설정 파일 복사 (템플릿 형태)
-COPY server.properties /usr/local/kafka/config/server.properties.template
+COPY server.properties.template /usr/local/kafka/config/server.properties.template
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
