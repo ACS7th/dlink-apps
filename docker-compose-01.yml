@@ -30,6 +30,7 @@ services:
       - LISTENERS=PLAINTEXT://0.0.0.0:9092
       - ADVERTISED_LISTENERS=PLAINTEXT://192.168.3.81:9092
       - LOG_DIRS=/var/lib/kafka/logs-1
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
     volumes: 
       - ./kafka/logs-1:/var/lib/kafka/logs-1
     ports:
@@ -38,7 +39,53 @@ services:
       - kafka_net
     restart: unless-stopped
 
+  yangjuconsumer:
+    build:
+      context: ./kafka/consumer/yangju
+      dockerfile: Dockerfile
+    container_name: yangjuconsumer
+    environment:
+      - KAFKA_BROKER=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
+      - MONGO_URI=mongodb://admin:admin@192.168.3.81:27017/
+      - AWS_REGION=us-east-1
+      - AWS_CREDENTIALS_PATH=/app/dalbok_accessKeys.csv
+      - BEDROCK_MODEL_ID=arn:aws:bedrock:us-east-1:633966959963:inference-profile/us.anthropic.claude-3-5-sonnet-20241022-v2:0    
+      - DATABASE_NAME=dlink_db
+      - COLLECTION_NAME=brandy,gin,rum,liqueur,tequila,vodka,whiskey
+      - TOPIC_NAME=brandyTopic,ginTopic,rumTopic,liqueurTopic,tequilaTopic,vodkaTopic,whiskeyTopic
+    depends_on:
+      - kafka
+    volumes:
+      - ./kafka/consumer/yangju:/app
+    working_dir: /app
+    command: ["python", "yangjuConsumer.py"]
+    networks:
+      - kafka_net
+    restart: unless-stopped
+
+  highballconsumer:
+    build:
+      context: ./kafka/consumer/highball
+      dockerfile: Dockerfile
+    container_name: highballconsumer
+    environment:
+      - KAFKA_BROKER=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
+      - MONGO_URI=mongodb://admin:admin@192.168.3.81:27017/
+      - DATABASE_NAME=dlink_db
+      - COLLECTION_NAME=highball
+      - TOPIC_NAME=highballTopic
+    depends_on:
+      - kafka
+    volumes: 
+      - ./kafka/consumer/highball:/app
+    working_dir: /app
+    command: ["python", "highballConsumer.py"]
+    networks:
+      - kafka_net
+    restart: unless-stopped
+
+
+
 networks:
   kafka_net:
     driver: bridge
-

@@ -11,6 +11,7 @@ services:
       - LISTENERS=PLAINTEXT://0.0.0.0:9092
       - ADVERTISED_LISTENERS=PLAINTEXT://192.168.3.82:9092
       - LOG_DIRS=/var/lib/kafka/logs-2
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
     volumes:
       - ./kafka/logs-2:/var/lib/kafka/logs-2
     ports:
