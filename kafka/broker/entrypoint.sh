@@ -5,7 +5,7 @@ echo "BROKER_ID=${BROKER_ID}"
 echo "ZOOKEEPER_CONNECT=${ZOOKEEPER_CONNECT}"
 echo "LISTENERS=${LISTENERS}"
 echo "ADVERTISED_LISTENERS=${ADVERTISED_LISTENERS}"
-echo "LOG_DIR=${LOG_DIR}"
+echo "LOG_DIRS=${LOG_DIRS}"
 
 # 2. server.properties 환경 변수 치환하여 생성
 envsubst < /usr/local/kafka/config/server.properties.template > /usr/local/kafka/config/server.properties
