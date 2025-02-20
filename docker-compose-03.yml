@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   api-gateway:
     image: 192.168.3.81/dlink/api-gateway:v1.0
     build:
@@ -96,8 +97,6 @@ services:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
     restart: always
-    ports:
-      - "3000-3002:3000"
     environment:
       NODE_ENV: ${NODE_ENV}
       SPRING_URI: ${SPRING_URI}
@@ -136,6 +135,17 @@ services:
     networks:
       - kafka_net
     restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./property/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - next-app
+    networks:
+      - dlink_net
 
 networks:
   dlink_net:
