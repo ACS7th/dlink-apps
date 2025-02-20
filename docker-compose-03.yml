@@ -109,7 +109,7 @@ services:
       NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_ECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
     networks:
       - dlink_net
     deploy:
