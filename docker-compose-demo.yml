@@ -1,9 +1,5 @@
 version: '3.8'
 
-networks:
-  dlink_net:
-    driver: bridge
-
 services:
   api-gateway:
     image: dealim/api-gateway:demo
@@ -105,3 +101,7 @@ services:
       NEXTAUTH_URL: http://localhost:3000
     networks:
       - dlink_net
+
+networks:
+  dlink_net:
+    driver: bridge

@@ -97,7 +97,7 @@ services:
       dockerfile: ./Dockerfile-prod
     restart: always
     ports:
-      - "3000:3000"
+      - "3000-3002:3000"
     environment:
       NODE_ENV: ${NODE_ENV}
       SPRING_URI: ${SPRING_URI}
@@ -113,6 +113,10 @@ services:
       AWS_ECRET_KEY: ${AWS_SECRET_KEY}
     networks:
       - dlink_net
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
 
   kafka:
     build:
@@ -132,7 +136,6 @@ services:
     networks:
       - kafka_net
     restart: unless-stopped
-
 
 networks:
   dlink_net:
