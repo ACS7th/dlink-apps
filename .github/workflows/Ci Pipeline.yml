@@ -4,59 +4,71 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+  build-spring:
+    name: Spring Boot Build & Test
+    runs-on: self-hosted  # <== Runner 변경
 
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v3
 
-      # 🔹 Java 17 설정 (Spring Boot)
       - name: JDK 17 설정
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 🔹 Node.js 18 설정 (Next.js)
-      - name: Node.js 18 설정
+      - name: Gradle 빌드 & 테스트
+        run: |
+          cd backend
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+  build-nextjs:
+    name: Next.js Build & Test
+    runs-on: self-hosted  # <== Runner 변경
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Node.js 설정
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # 🔹 Gradle 빌드 (Spring Boot)
-      - name: Spring Boot 빌드
-        run: |
-          cd backend
-          ./gradlew build -x test
-
-      # 🔹 Next.js 빌드
-      - name: Next.js 빌드
+      - name: Next.js 빌드 & 테스트
         run: |
           cd frontend
           npm install
+          npm run lint
           npm run build
 
-      # 🔹 Docker 설치
-      - name: Docker 설치
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
+  docker-build-push:
+    name: Build & Push Docker Images
+    runs-on: self-hosted  # <== Runner 변경
+    needs: [build-spring, build-nextjs]
 
-      # 🔹 Harbor 로그인
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Docker 빌드 & 태깅
+        run: |
+          docker build -t harbor.local/my-app-backend:latest ./backend
+          docker build -t harbor.local/my-app-frontend:latest ./frontend
+
       - name: Harbor 로그인
         run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login harbor.local -u ${{ secrets.HARBOR_USERNAME }} --password-stdin
 
-      # 🔹 Docker 이미지 빌드 및 푸시
-      - name: Docker 이미지 빌드 및 푸시
+      - name: Docker 이미지 푸시
         run: |
-          docker build -t harbor.local/library/spring-app:latest ./backend
-          docker build -t harbor.local/library/next-app:latest ./frontend
-
-          docker push harbor.local/library/spring-app:latest
-          docker push harbor.local/library/next-app:latest
+          docker push harbor.local/my-app-backend:latest
+          docker push harbor.local/my-app-frontend:latest
