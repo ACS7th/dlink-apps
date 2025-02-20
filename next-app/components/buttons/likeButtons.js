@@ -47,6 +47,10 @@ export default function Like({
     const newLiked = !liked;
     const newLikes = newLiked ? likes + 1 : likes - 1;
 
+    if (onLikeToggle) {
+      onLikeToggle(itemId, newLikes); // 👍 부모 컴포넌트에 좋아요 변경 전달
+    }
+
     // 낙관적 업데이트
     setLiked(newLiked);
     setLikes(newLikes);
