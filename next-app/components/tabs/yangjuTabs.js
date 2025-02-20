@@ -11,6 +11,8 @@ import ReviewCard from "@/components/review/reviewcard";
 import PairingCard from "@/components/cards/pairingCard";
 import RecipeCard from "@/components/highball/recipeCard";
 
+/*************  ✨ Codeium Command ⭐  *************/
+/******  4c0b136f-827d-4489-8df3-c2c159d6b7a6  *******/
 export default function YangjuTabs({ product, productCategory, productId }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();

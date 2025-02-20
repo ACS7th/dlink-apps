@@ -37,23 +37,23 @@ export default function IngredientInput({ ingredients = [], onChange }) {
         <div key={i} className="flex space-x-1 mt-1">
           <input
             type="text"
-            placeholder="Key"
+            placeholder="재료명"
             value={item.key}
             onChange={(e) => handleChange(i, "key", e.target.value)}
-            className="border p-1 rounded text-sm w-1/3"
+            className="border p-1 rounded text-sm w-20"
           />
           <input
             type="text"
-            placeholder="Value"
+            placeholder="수량"
             value={item.value}
             onChange={(e) => handleChange(i, "value", e.target.value)}
-            className="border p-1 rounded text-sm w-2/3"
+            className="border p-1 rounded text-sm w-20"
           />
           <button
             onClick={() => removeItem(i)}
             className="bg-red-200 px-2 py-1 rounded text-sm"
           >
-            Remove
+            삭제
           </button>
         </div>
       ))}
@@ -61,7 +61,7 @@ export default function IngredientInput({ ingredients = [], onChange }) {
         onClick={addItem}
         className="mt-2 bg-blue-200 px-2 py-1 rounded text-sm"
       >
-        Add Ingredient
+        재료 추가
       </button>
     </div>
   );
