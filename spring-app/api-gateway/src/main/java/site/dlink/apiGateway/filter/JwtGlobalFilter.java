@@ -26,12 +26,13 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
+        log.info("API 요청 : {}", path);
+
+
         if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
-            log.info("🔓 JWT 검증 제외 경로: {}", path);
             return chain.filter(exchange);
         }
 
-        log.info("🔐 JWT 검증 필터 실행 ...");
         String header = request.getHeaders().getFirst("Authorization");
 
         if (header == null) {
