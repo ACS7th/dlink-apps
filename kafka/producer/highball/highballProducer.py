@@ -4,7 +4,7 @@ import json
 from highballCrawler import crawlHighball
 
 # ✅ Kafka 브로커 주소를 환경 변수에서 가져옴 (기본값: 'localhost:9092')
-kafka_brokers = os.getenv("KAFKA_BROKER", "localhost:9092").split(",")
+kafka_brokers = os.getenv("KAFKA_BROKERS", "localhost:9092").split(",")
 
 # ✅ Kafka 프로듀서 설정
 producer = KafkaProducer(

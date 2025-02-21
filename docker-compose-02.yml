@@ -27,7 +27,7 @@ services:
     container_name: yangjuproducer
     environment:
       - PYTHONUNBUFFERED=1
-      - KAFKA_BROKER=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
+      - KAFKA_BROKERS=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
     volumes:
       - ./kafka/producer/yangju:/app
     working_dir: /app
@@ -45,7 +45,7 @@ services:
     container_name: highballproducer
     environment: 
       - PYTHONUNBUFFERED=1
-      - KAFKA_BROKER=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
+      - KAFKA_BROKERS=192.168.3.81:9092,192.168.3.82:9092,192.168.3.83:9092
     volumes: 
       - ./kafka/producer/highball:/app
     working_dir: /app
@@ -58,6 +58,5 @@ services:
 
 networks:
   kafka_net:
-    external: true
-    name: dlink-apps_kafka_net
+    driver: bridge
 
