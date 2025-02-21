@@ -119,6 +119,7 @@ services:
         condition: on-failure
 
   kafka:
+    image: 192.168.3.81/dlink/kafka:v1.0
     build:
       context: ./kafka/broker
       dockerfile: Dockerfile

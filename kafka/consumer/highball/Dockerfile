@@ -2,8 +2,7 @@
 # Python 3.10.12-alpine 기반 이미지 사용
 FROM python:3.10.12-alpine
 
-# 시스템 패키지 업데이트 및 필수 패키지 설치
-RUN apk update && apk add --no-cache \
+# 시스템 패키지 업데이트 및 필수 패키지 설치 RUN apk update && apk add --no-cache \
     bash \
     wget \
     curl \
