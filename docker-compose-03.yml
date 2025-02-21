@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
+
   api-gateway:
-    image: 192.168.3.81/dlink/api-gateway:v1.0
+    image: 192.168.3.81/dlink/api-gateway:v1.1
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
@@ -17,7 +18,8 @@ services:
       REVIEW_SERVICE_URI: ${REVIEW_SERVICE_URI}
       PAIRING_SERVICE_URI: ${PAIRING_SERVICE_URI}
     networks:
-      - dlink_net
+      - front_net
+      - back_net
 
   auth-service:
     image: 192.168.3.81/dlink/auth-service:v1.0
@@ -31,7 +33,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       SERVER_PORT: 9991
     networks:
-      - dlink_net
+      - front_net
 
   alcohol-service:
     image: 192.168.3.81/dlink/alcohol-service:v1.0
@@ -45,7 +47,7 @@ services:
       ES_DATASOURCE_URI: ${ES_DATASOURCE_URI}
       SERVER_PORT: 9992
     networks:
-      - dlink_net
+      - back_net
 
   highball-service:
     image: 192.168.3.81/dlink/highball-service:v1.0
@@ -60,7 +62,7 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       SERVER_PORT: 9993
     networks:
-      - dlink_net
+      - back_net
 
   review-service:
     image: 192.168.3.81/dlink/review-service:v1.0
@@ -73,7 +75,7 @@ services:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
       SERVER_PORT: 9994
     networks:
-      - dlink_net
+      - back_net
 
   pairing-service:
     image: 192.168.3.81/dlink/pairing-service:v1.0
@@ -88,7 +90,7 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       SERVER_PORT: 9995
     networks:
-      - dlink_net
+      - back_net
 
   next-app:
     image: 192.168.3.81/dlink/next-app:v1.0
@@ -96,8 +98,6 @@ services:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       NODE_ENV: ${NODE_ENV}
       SPRING_URI: ${SPRING_URI}
@@ -110,11 +110,16 @@ services:
       NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_ECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
     networks:
-      - dlink_net
+      - front_net
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
 
   kafka:
+    image: 192.168.3.81/dlink/kafka:v1.0
     build:
       context: ./kafka/broker
       dockerfile: Dockerfile
@@ -125,17 +130,58 @@ services:
       - LISTENERS=PLAINTEXT://0.0.0.0:9092
       - ADVERTISED_LISTENERS=PLAINTEXT://192.168.3.83:9092
       - LOG_DIRS=/var/lib/kafka/logs-3
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
     volumes:
-      - ./kafka/logs-2:/var/lib/kafka/logs-3
+      - ./kafka/logs-3:/var/lib/kafka/logs-3
     ports:
       - "9092:9092"
     networks:
       - kafka_net
     restart: unless-stopped
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./property/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - next-app
+    networks:
+      - front_net
+
+  redis-master:
+    image: redis:6.2
+    container_name: redis-master
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/master/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - redis_net
+
+  redis-slave:
+    image: redis:6.2
+    container_name: redis-slave
+    restart: always
+    ports:
+      - "6380:6379"
+    depends_on:
+      - redis-master
+    volumes:
+      - ./redis/slave/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--replicaof", "redis-master", "6379"]
+    networks:
+      - redis_net
 
 networks:
-  dlink_net:
+  front_net:
+    driver: bridge
+  back_net:
     driver: bridge
   kafka_net:
+    driver: bridge
+  redis_net:
     driver: bridge
