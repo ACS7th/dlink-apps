@@ -1,27 +1,25 @@
-name: Build and Push to Harbor
+name: Deploy to Harbor
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'docker-compose-03.yml'
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: self-hosted
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Log in to Harbor
-        run: echo "${{ secrets.HARBOR_PASSWORD }}" | docker login 192.168.3.81 -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
-
-      - name: Build Docker image
         run: |
-          docker-compose -f docker-compose-03.yml build
-
-      - name: Tag and Push Docker image
+          echo "Harbor12345" | docker login 192.168.3.81 -u "admin" --password-stdin
+      
+      - name: Build Docker Image
         run: |
-          docker tag dlink-apps_test:latest 192.168.3.81/dlink/test:latest
+          docker build -t 192.168.3.81/dlink/test:latest -f docker-compose-03.yml .
+
+      - name: Push to Harbor
+        run: |
           docker push 192.168.3.81/dlink/test:latest
