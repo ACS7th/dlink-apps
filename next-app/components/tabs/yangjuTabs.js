@@ -161,8 +161,9 @@ export default function YangjuTabs({ product, productCategory, productId }) {
           <div className="flex justify-center mt-4">
             <Link
               isBlock
+              disableAnimation
               showAnchorIcon
-              className="text-blue-500 hover:underline text-sm"
+              className="text-blue-500 hover:underline text-sm cursor-pointer"
               onPress={() => {
                 router.push(`/reviews?category=${category}&drinkId=${drinkId}`);
               }}
@@ -215,7 +216,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
             <Link
               isBlock
               showAnchorIcon
-              className="text-blue-500 hover:underline text-sm"
+              className="text-blue-500 hover:underline text-sm cursor-pointer"
               onPress={() => {
                 router.push(`/highballs?category=${category}`);
               }}

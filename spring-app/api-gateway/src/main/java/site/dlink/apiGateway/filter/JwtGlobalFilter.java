@@ -3,6 +3,9 @@ package site.dlink.apiGateway.filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+
+import java.net.InetSocketAddress;
+
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -12,7 +15,6 @@ import reactor.core.publisher.Mono;
 import site.dlink.apiGateway.constants.gatewayConstants;
 import site.dlink.apiGateway.validator.JwtValidator;
 
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -20,14 +22,22 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
 
     private final JwtValidator jwtValidator;
 
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
+        String clientIp = request.getHeaders().getFirst("X-Forwarded-For");
 
-        log.info("API 요청 : {}", path);
+        if (clientIp == null || clientIp.isEmpty()) {
+            InetSocketAddress remoteAddress = request.getRemoteAddress();
+            if (remoteAddress != null) {
+                clientIp = remoteAddress.getAddress().getHostAddress();
+            } else {
+                clientIp = "UNKNOWN"; // Fallback 값
+            }
+        }
 
+        log.info("API 요청 : {} by {}", path, clientIp);
 
         if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);

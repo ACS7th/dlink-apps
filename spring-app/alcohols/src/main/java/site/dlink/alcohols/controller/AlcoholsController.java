@@ -24,9 +24,6 @@ public class AlcoholsController {
     private final YangjuService yangjuService;
     private final WineService wineService;
 
-    /**
-     * (1) 술 정보 조회 (ID 기반)
-     */
     @Operation(
             summary = "술 정보 조회 (ID 기반)",
             description = "MongoDB에서 와인 또는 양주의 정보를 ID를 통해 검색합니다.",
