@@ -1,6 +1,9 @@
+"use client"
+
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Checkbox } from "@heroui/react";
+import WineSearchResultsPage from "../searchresults/wineSearchResults";
 
 export const dynamic = 'force-dynamic';
 
@@ -81,26 +84,28 @@ export default function SearchCategory({
 
   return (
     <div className="w-full max-w-full mx-auto p-4 md:p-6">
-      <h1 className="text-2xl font-bold text-[#6F0029] mb-1">{title}</h1>
-      <div className="h-[3px] bg-[#6F0029] mb-4" />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-        {Object.entries(validCategoryFilters).map(([filterCategory, options]) => (
-          <div key={filterCategory} className="bg-gray-100 p-2 rounded">
-            <h3 className="text-md font-bold mb-2">{filterCategory}</h3>
-            <div className="grid grid-cols-2 gap-1">
-              {options.map((option) => (
-                <Checkbox
-                  key={option}
-                  checked={selectedFilters[filterCategory]?.includes(option)}
-                  onChange={() => toggleFilter(filterCategory, option)}
-                >
-                  {option}
-                </Checkbox>
-              ))}
+      <h1 className="text-2xl font-bold text-primary mb-1">{title}</h1>
+      <div className="h-[3px] bg-primary mb-4" />
+      {category === "yangju" ?
+        <div className="flex flex-col md:flex-row space-x-5">
+          {Object.entries(validCategoryFilters).map(([filterCategory, options]) => (
+            <div key={filterCategory} className="bg-gray-100 p-2 rounded">
+              <h3 className="text-md font-bold mb-2">{filterCategory}</h3>
+              <div className="flex space-x-1">
+                {options.map((option) => (
+                  <Checkbox
+                    key={option}
+                    checked={selectedFilters[filterCategory]?.includes(option)}
+                    onChange={() => toggleFilter(filterCategory, option)}
+                  >
+                    {option}
+                  </Checkbox>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+        : <WineSearchResultsPage/>}
     </div>
   );
 }

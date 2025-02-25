@@ -36,7 +36,7 @@ export const AuthLayoutWrapper = ({ children }: Props) => {
                     <h1 className="font-bold text-[45px]">DLink Application</h1>
                     <div className="text-slate-500 mt-4">
                         좋은 술과 안주, 그리고 다양한 하이볼 레시피를 제공하는
-                        애플리케이션입니다. <br/>
+                        애플리케이션입니다. <br />
                         취향에 맞는 술과 완벽한 페어링을 찾아보세요!
                     </div>
                 </div>

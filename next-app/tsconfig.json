@@ -41,7 +41,7 @@
     "components/icons/funnelicon.js",
     "app/api/auth/[...nextauth]/route.ts",
     "components/auth/login.tsx"
-, "app/(app)/categories/yangju/page"  ],
+, "app/(app)/categories/yangju/page.js"  ],
   "exclude": [
     "node_modules"
   ]
