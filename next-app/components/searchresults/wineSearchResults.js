@@ -22,11 +22,23 @@ export default function WineSearchResultsPage({ setTabKey }) {
     async (pageNumber) => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/v1/alcohols/wines/search?keyword=${encodeURIComponent(
-            keyword
-          )}&page=${pageNumber}&size=${size}`
-        );
+
+        let res;
+
+        if (keyword) {
+          res = await fetch(
+            `/api/v1/alcohols/wines/search?keyword=${encodeURIComponent(keyword)}&page=${pageNumber}&size=${size}`
+          );
+        } else {
+          res = await fetch(
+            `/api/v1/alcohols/wines?page=${pageNumber}&size=${size}`
+          );
+        }
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         const fetchedResults = data.content || [];
@@ -47,11 +59,10 @@ export default function WineSearchResultsPage({ setTabKey }) {
         setHasMore(false);
       }
       setLoading(false);
-    },
-    [keyword]
-  );
+    }, [keyword]);
 
   useEffect(() => {
+    console.log(keyword);
     setPage(0);
     fetchResults(0);
   }, [keyword, fetchResults]);
@@ -95,8 +106,14 @@ export default function WineSearchResultsPage({ setTabKey }) {
   return (
     <div className="px-2">
       <h1 className="text-md text-center mb-4">
-        <b>{keyword}</b>에 대한 검색 결과: {searchResults.length}건
+        {keyword && (
+          <>
+            <b>{keyword}</b>에 대한{" "}
+          </>
+        )}
+        검색 결과: {searchResults.length}건
       </h1>
+
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {searchResults.map((result) => (
