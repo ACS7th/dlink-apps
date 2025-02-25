@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
 
   api-gateway:
-    image: 192.168.3.81/dlink/api-gateway:v1.1
+    image: 192.168.3.81/dlink/api-gateway:v1.2
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
@@ -142,7 +140,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "3000:3000"
     volumes:
       - ./property/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
