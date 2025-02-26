@@ -10,7 +10,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    bat "docker compose -f ${DOCKER_COMPOSE_FILE} build"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry([credentialsId: "docker-hub-credentials", url: ""]) {
-                        bat "docker compose -f ${DOCKER_COMPOSE_FILE} push"
+                        sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                     }
                 }
             }
