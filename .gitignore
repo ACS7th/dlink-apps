@@ -1,2 +1,5 @@
 .env
 .DS_Store
+kafka-logs-1/
+kafka-logs-2/
+logs-3/
