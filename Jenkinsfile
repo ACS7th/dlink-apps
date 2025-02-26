@@ -6,12 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/ACS7th/dlink-apps'
-            }
-        }
-
         stage('Login to Docker Registry') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-access', url: '']) {
