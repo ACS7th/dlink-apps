@@ -7,7 +7,7 @@ pipeline {
 
     stages {
 
-        stage('Build Docker Images') {
+        stage('Build with Docker Compose') {
             steps {
                 script {
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
@@ -17,10 +17,8 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                script {
-                    withDockerRegistry([credentialsId: "docker-hub-credentials", url: ""]) {
-                        sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
-                    }
+                withDockerRegistry([credentialsId: 'dockerhub-access', url: '']) {
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
         }
@@ -28,11 +26,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Docker Compose build & push completed successfully!"
+            echo '✅ Docker Compose build & push completed successfully!'
         }
         failure {
-            echo "❌ Build failed. Check logs."
+            echo '❌ Build failed. Check logs.'
         }
     }
 }
-
