@@ -17,7 +17,7 @@ pipeline {
         stage('Build with Docker Compose') {
             steps {
                 script {
-                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} build"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
                 }
             }
         }
@@ -25,7 +25,7 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} push"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
         }
