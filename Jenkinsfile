@@ -6,16 +6,10 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/ACS7th/dlink-apps'
-            }
-        }
-
         stage('Login to Docker Registry') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-access', url: '']) {
-                    echo "✅ Docker login successful"
+                    echo "✅ Docker login successful!"
                 }
             }
         }
@@ -23,7 +17,7 @@ pipeline {
         stage('Build with Docker Compose') {
             steps {
                 script {
-                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} build"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
                 }
             }
         }
@@ -31,7 +25,7 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    sh "docker-compose -f ${DOCKER_COMPOSE_FILE} push"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
         }
