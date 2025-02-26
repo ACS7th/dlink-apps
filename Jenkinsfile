@@ -9,7 +9,7 @@ pipeline {
         stage('Login to Docker Registry') {
             steps {
                 withDockerRegistry([credentialsId: 'dockerhub-access', url: '']) {
-                    echo "✅ Docker login successful"
+                    echo "✅ Docker login successful!"
                 }
             }
         }
