@@ -5,16 +5,14 @@ const SPRING_HOST = process.env.SPRING_URI
   ? new url.URL(process.env.SPRING_URI).hostname
   : null;
 
-const nextConfig = {
+module.exports = {
   reactStrictMode: false,
   images: {
-    domains: ["lh3.googleusercontent.com", SPRING_HOST].filter(Boolean),
-    domains: ['kaja2002.com'],
+    domains: [
+      "lh3.googleusercontent.com", 
+      SPRING_HOST, 
+      "kaja2002.com"
+    ].filter(Boolean),
   },
-
-};
-
-module.exports = {
-  nextConfig,
   output: 'standalone',
 };

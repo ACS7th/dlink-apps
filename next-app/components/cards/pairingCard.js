@@ -6,6 +6,8 @@ import { useTheme } from "next-themes";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
+import { useRef } from "react";
+
 const PairingCard = ({ alcohol }) => {
   const { resolvedTheme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("Meat");
@@ -16,9 +18,11 @@ const PairingCard = ({ alcohol }) => {
   const [youtubeLink, setYoutubeLink] = useState("");
   const categories = ["Meat", "Sea Food", "Fried", "Snack"];
 
+  // AbortController를 위한 ref 생성
+  const pairingAbortControllerRef = useRef(null);
+
   // alcohol 객체의 tanin 유무에 따라 양주/와인 결정
   useEffect(() => {
-    console.log(alcohol)
     if (alcohol && Object.prototype.hasOwnProperty.call(alcohol, "tanin")) {
       setAlcoholCate("wine");
     } else {
@@ -35,40 +39,57 @@ const PairingCard = ({ alcohol }) => {
       });
       setYoutubeLink(ytResponse.data.result);
     } catch (error) {
-      console.error("Failed to fetch YouTube link:", error);
+      if (axios.isCancel(error)) {
+        console.log("YouTube 요청이 취소되었습니다.");
+      } else {
+        console.error("Failed to fetch YouTube link:", error);
+      }
     } finally {
       setIsThumbnailLoading(false);
     }
   }, []);
 
-  // fetchPairing 함수를 useCallback으로 감싸서 의존성 문제 해결
-  const fetchPairing = useCallback(async (selectedCategory) => {
+  const fetchPairing = useCallback(async (selectedCategory, category) => {
+    if (pairingAbortControllerRef.current) {
+      pairingAbortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    pairingAbortControllerRef.current = controller;
+
     const pairingDataRequest = { ...alcohol, category: selectedCategory };
     setIsPairingLoading(true);
     setIsThumbnailLoading(true);
     setPairingData(null);
+
     try {
-      const endpoint =
-        alcoholCate === "yangju" ? "/api/v1/pairing/yangju" : "/api/v1/pairing/wine";
-      const response = await axios.post(endpoint, pairingDataRequest);
-      console.log("추천 응답:", response.data);
+      const endpoint = category === "yangju" ? "/api/v1/pairing/yangju" : "/api/v1/pairing/wine";
+      const response = await axios.post(endpoint, pairingDataRequest, {
+        signal: controller.signal, // AbortController의 signal 사용
+      });
+
       setPairingData(response.data.data);
+      setIsPairingLoading(false);
+
       if (response.data.data && response.data.data.dish_name) {
         fetchYoutubeLink(response.data.data.dish_name);
-      } else {
-        setIsThumbnailLoading(false);
-      }
+      } 
+      
     } catch (error) {
-      console.error("Failed to fetch recommendation:", error);
-    } finally {
-      setIsPairingLoading(false);
+      if (axios.isCancel(error)) {
+        console.log("Pairing 요청이 취소되었습니다.");
+      } else {
+        console.error("Failed to fetch recommendation:", error);
+      }
     }
-  }, [alcohol, alcoholCate, fetchYoutubeLink]);
+    
+    
+  }, [alcohol, fetchYoutubeLink]);
 
-  // 선택된 카테고리나 alcoholCate가 변경될 때 pairing API 호출
   useEffect(() => {
-    fetchPairing(selectedCategory);
-  }, [selectedCategory, alcoholCate, fetchPairing]);
+    if (!alcoholCate) return;
+    fetchPairing(selectedCategory, alcoholCate);
+  }, [selectedCategory, fetchPairing, alcoholCate]);
 
   const getYoutubeThumbnailFromLink = (link) => {
     if (!link) return "";
@@ -79,13 +100,11 @@ const PairingCard = ({ alcohol }) => {
 
   const thumbnailUrl = getYoutubeThumbnailFromLink(youtubeLink);
 
-  // 컴포넌트 언마운트 시 상태 초기화
   useEffect(() => {
     return () => {
-      setPairingData(null);
-      setYoutubeLink("");
-      setIsPairingLoading(true);
-      setIsThumbnailLoading(true);
+      if (pairingAbortControllerRef.current) {
+        pairingAbortControllerRef.current.abort();
+      }
     };
   }, []);
 
@@ -168,9 +187,9 @@ const PairingCard = ({ alcohol }) => {
                   </>
                 )}
               </>
-            ) : (
-              <p className="text-sm">추천 결과가 없습니다.</p>
-            )}
+            ) :
+              (<p className="text-sm">추천 결과가 없습니다.</p>)
+            }
           </div>
         </div>
       </CardBody>

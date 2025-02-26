@@ -22,9 +22,6 @@ public class YangjuController {
 
     private final YangjuService yangjuService;
 
-    /**
-     * (1) 모든 양주 조회 (페이징)
-     */
     @Operation(
             summary = "모든 양주 조회",
             description = "ElasticSearch에 저장된 모든 양주 정보를 페이징하여 반환합니다.",
@@ -43,9 +40,6 @@ public class YangjuController {
         return yangjuService.findAllYangjus(page, size);
     }
 
-    /**
-     * (2) 양주 검색 (키워드 기반)
-     */
     @Operation(
             summary = "양주 검색",
             description = "키워드를 기반으로 양주를 ElasticSearch에서 검색합니다.",

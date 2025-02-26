@@ -22,7 +22,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
                 >
                     <ToastProvider
                         toastProps={{
-                            timeout: 3000
+                            timeout: 3000,
                         }}
                         placement="bottom-center"
                     />

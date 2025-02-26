@@ -1,7 +1,13 @@
+import os
+import shutil
 import json
 import requests
 import time
 from deep_translator import GoogleTranslator
+
+# ✅ ChromeDriver 경로 설정 (환경 변수 또는 자동 검색)
+chromedriver_path = os.environ.get("CHROMEDRIVER_PATH") or shutil.which("chromedriver") or "/usr/bin/chromedriver"
+print(f"🔍 [INFO] ChromeDriver 경로: {chromedriver_path}")
 
 # 기본 API URL
 BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
@@ -86,4 +92,10 @@ def crawlHighball():
 
     print(f"✅ [SUCCESS] 하이볼 칵테일 크롤링 완료! 총 {len(data)}개 수집됨.")
     return data
+
+if __name__ == "__main__":
+    highballData = crawlHighball()
+    print(f"\n총 {len(highballData)}개의 데이터가 크롤링되었습니다.\n")
+    for i, item in enumerate(highballData[:3], 1):
+        print(f"{i}. {item}\n")
 

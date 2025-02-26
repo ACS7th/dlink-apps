@@ -14,8 +14,8 @@ cloud:
     stack:
       auto: false
     credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
+      access-key: ${AWS_ACCESS_KEY:default-access-key}
+      secret-key: ${AWS_SECRET_KEY:default-secret-key}
     region:
       static: ap-northeast-2
 

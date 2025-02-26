@@ -1,6 +1,8 @@
 package site.dlink.review.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -8,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import site.dlink.review.dto.ReviewRequest;
+import java.time.Instant;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final MongoTemplate mongoTemplate;
@@ -44,19 +48,26 @@ public class ReviewService {
             return null;
         }
 
+        // Fetch existing reviews or initialize if null
         Map<String, Object> reviews = drinkDoc.get("reviews", Map.class);
         if (reviews == null) {
             reviews = new HashMap<>();
             drinkDoc.put("reviews", reviews);
         }
 
-        Map<String, String> reviewMap = new HashMap<>();
+        // Prepare the review map with createdAt and updatedAt
+        Map<String, Object> reviewMap = new HashMap<>();
         reviewMap.put("rating", request.getRating());
         reviewMap.put("content", request.getContent());
+        reviewMap.put("createdAt", Instant.now().toString());
+        reviewMap.put("updatedAt", Instant.now().toString());
 
+        // Add or update the review for the user
         reviews.put(userId, reviewMap);
 
+        // Save the updated document
         mongoTemplate.save(drinkDoc, category);
+
         return drinkDoc;
     }
 

@@ -21,9 +21,6 @@ public class WineController {
 
     private final WineService wineService;
 
-    /**
-     * (1) 전체 와인 조회 (페이징)
-     */
     @Operation(
             summary = "전체 와인 조회",
             description = "저장된 모든 와인 정보를 페이지네이션 형식으로 반환합니다.",
@@ -42,9 +39,6 @@ public class WineController {
         return wineService.findAllWines(page, size);
     }
 
-    /**
-     * (2) 와인 키워드 검색 (페이징)
-     */
     @Operation(
             summary = "와인 검색",
             description = "키워드를 포함한 와인 정보를 페이지네이션 형식으로 검색 및 반환합니다.",

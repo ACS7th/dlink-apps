@@ -28,4 +28,3 @@ services:
 networks:
   kafka_network:
     driver: bridge
-

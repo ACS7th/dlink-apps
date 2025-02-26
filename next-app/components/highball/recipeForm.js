@@ -19,6 +19,7 @@ export default function RecipeForm({
   const [ingredients, setIngredients] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   // 초기 재료 JSON을 배열로 변환 (수정 모드)
   useEffect(() => {
@@ -36,7 +37,8 @@ export default function RecipeForm({
     }
   }, [initialIngredientsJSON]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsSubmitLoading(true);
     const formData = new FormData();
     formData.append("name", name);
     formData.append("making", making);
@@ -55,11 +57,12 @@ export default function RecipeForm({
       // 기존 이미지가 삭제되었으면 빈 값 전송
       formData.append("imageFile", "");
     }
-    onSubmit(formData, onClose);
+    await onSubmit(formData, onClose);
+    setIsSubmitLoading(false);
   };
 
   return (
-    <ScrollShadow className="max-h-[500px] overflow-y-auto" size={100}>
+    <ScrollShadow className="max-h-[520px] overflow-y-auto" size={100}>
       <ModalHeader>{initialName ? "레시피 수정" : "하이볼 레시피 작성"}</ModalHeader>
       <ModalBody>
         <div className="space-y-4">
@@ -68,7 +71,7 @@ export default function RecipeForm({
             <label className="block text-sm font-medium text-gray-700">제목</label>
             <input
               type="text"
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              className="mt-1 block w-full border border-gray-300 rounded-lg p-2"
               placeholder="예: 하이볼"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -119,10 +122,10 @@ export default function RecipeForm({
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="light" onPress={onClose}>
+        <Button color="primary" onPress={onClose}>
           취소
         </Button>
-        <Button color="bg-primary" onPress={handleSubmit}>
+        <Button color="primary" onPress={handleSubmit} isLoading={isSubmitLoading}>
           {initialName ? "수정" : "등록"}
         </Button>
       </ModalFooter>

@@ -51,6 +51,14 @@ public class YangjuService {
                 return null;
         }
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * MongoDB에서 모든 양주 문서를 검색하여 각 컬렉션의 문서 목록을 반환합니다.
+ *
+ * @return 각 양주 컬렉션 이름을 키로 하고, 해당 컬렉션의 문서 리스트를 값으로 하는 맵(Map)
+ */
+
+/******  21de7a72-7289-4859-8952-f0be2cf628af  *******/
         public Map<String, List<Document>> findAllDocuments() {
                 Map<String, List<Document>> allResults = new HashMap<>();
 
@@ -74,7 +82,7 @@ public class YangjuService {
                 IndexCoordinates indexCoordinates = IndexCoordinates.of(Arrays.stream(AlcoholConstants.YANGJU_INDICES)
                                 .map(index -> MongoConstants.DATABASE+ "." + index)
                                 .toArray(String[]::new));
-
+                
                 NativeQuery query = NativeQuery.builder()
                                 .withQuery(q -> q.matchAll(m -> m))
                                 .withPageable(PageRequest.of(page, size))
