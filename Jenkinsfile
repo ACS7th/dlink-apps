@@ -7,18 +7,26 @@ pipeline {
     }
 
     stages {
+        stage('Build Java Project') {
+            steps {
+                script {
+                    dir('spring-app') { // spring-app 폴더에서 Gradle 빌드 실행
+                        sh "./gradlew classes"
+                    }
+                }
+            }
+        }
 
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
-
                         script {
-			    sh "echo 'SonarQube Token: \$SONAR_AUTH_TOKEN'"
                             sh """
                             sonar-scanner \
                                 -Dsonar.projectKey=dlink-apps \
-                                -Dsonar.sources=. \
+                                -Dsonar.sources=next-app,spring-app \
+                                -Dsonar.java.binaries=spring-app/build/classes \
                                 -Dsonar.host.url=http://192.168.3.81:10111 \
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
                             """
@@ -42,21 +50,19 @@ pipeline {
             steps {
                 script {
                     def changedFiles = sh(script: "git diff --name-only HEAD^ HEAD", returnStdout: true).trim().split("\n")
-
                     echo "Changed Files: ${changedFiles.join(', ')}"
 
                     def servicesToBuild = []
                     def serviceMappings = [
                         "api-gateway"     : "spring-app/api-gateway/",
-                        "auth-service"    : "spring-app/auth-service/",
-                        "alcohol-service" : "spring-app/alcohol-service/",
-                        "highball-service": "spring-app/highball-service/",
-                        "review-service"  : "spring-app/review-service/",
-                        "pairing-service" : "spring-app/pairing-service/",
+                        "auth-service"    : "spring-app/auth/",
+                        "alcohol-service" : "spring-app/alcohols/",
+                        "highball-service": "spring-app/highball/",
+                        "review-service"  : "spring-app/review/",
+                        "pairing-service" : "spring-app/pairing/",
                         "next-app"        : "next-app/"
                     ]
 
-                    // 변경된 파일이 속한 서비스만 리스트에 추가
                     serviceMappings.each { service, path ->
                         if (changedFiles.any { it.contains(path) }) {
                             servicesToBuild.add(service)
@@ -69,7 +75,6 @@ pipeline {
                         return
                     }
 
-                    // 환경 변수로 빌드할 서비스 전달
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
                     echo "Services to build: ${env.SERVICES_TO_BUILD}"
                 }
@@ -108,3 +113,4 @@ pipeline {
         }
     }
 }
+
