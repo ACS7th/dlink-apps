@@ -28,7 +28,7 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withDockerRegistry([credentialsId: 'harbor-access', url: "http://${HARBOR_URL}"]) {
+                withDockerRegistry([credentialsId: 'harbor-access', url: "https://${HARBOR_URL}"]) {
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
