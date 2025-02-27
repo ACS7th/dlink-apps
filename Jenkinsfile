@@ -23,6 +23,16 @@ pipeline {
                 script {
                     def changedFiles = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim().split("\n")
 
+                    def filteredFiles = changedFiles.findAll { 
+                        it.endsWith(".java") || it.endsWith(".yml") || it.endsWith("Dockerfile")
+                    }
+
+                    if (filteredFiles.isEmpty()) {
+                        echo "No relevant changes detected. Skipping build."
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
+
                     def servicesToBuild = []
                     def serviceMappings = [
                         "api-gateway"     : "spring-app/api-gateway/",
@@ -35,13 +45,13 @@ pipeline {
                     ]
 
                     serviceMappings.each { service, path ->
-                        if (changedFiles.any { it.startsWith(path) }) {
+                        if (filteredFiles.any { it.startsWith(path) }) {
                             servicesToBuild.add(service)
                         }
                     }
 
                     if (servicesToBuild.isEmpty()) {
-                        echo "No changes detected. Skipping build."
+                        echo "No matching service changes detected. Skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
@@ -64,7 +74,7 @@ pipeline {
                     }
                 }
                 stages {
-                    stage("Build ${SERVICE}") {
+                    stage("Build $SERVICE") {
                         steps {
                             script {
                                 sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${SERVICE}"
@@ -87,7 +97,7 @@ pipeline {
                     }
                 }
                 stages {
-                    stage("Push ${SERVICE}") {
+                    stage("Push $SERVICE") {
                         steps {
                             withDockerRegistry([credentialsId: 'harbor-access', url: "https://${HARBOR_URL}"]) {
                                 sh "docker compose -f ${DOCKER_COMPOSE_FILE} push ${SERVICE}"
