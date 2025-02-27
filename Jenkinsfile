@@ -4,14 +4,15 @@ pipeline {
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose-build.yml"
         HARBOR_URL = "192.168.3.81"
+        SONAR_HOST_URL = "http://192.168.3.81:10111"
+        SONAR_PROJECT_KEY = "dlink-apps"
     }
 
     stages {
-
-        stage('Build claases for sonar') {
+        stage('Build classes for sonar') {
             steps {
                 script {
-                    dir('spring-app') { // spring-app 폴더에서 Gradle 빌드 실행
+                    dir('spring-app') { // spring-app 폴더에서 Gradle 빌드
                         sh "./gradlew classes"
                     }
                 }
@@ -23,18 +24,17 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
                         script {
-                            def sonarStatus = sh(script: """
+                            sh """
                             sonar-scanner \
-                                -Dsonar.projectKey=dlink-apps \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                                 -Dsonar.sources=. \
                                 -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
-                                -Dsonar.host.url=http://192.168.3.81:10111 \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
-                            """ )
-
+                            """
                         }
 
-                        timeout(time: 1, unit: 'MINUTES') { 
+                        timeout(time: 1, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: true
                         }
                     }
@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-	stage('Login to Harbor') {
+        stage('Login to Harbor') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'harbor-access', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
