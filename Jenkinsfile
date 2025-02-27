@@ -8,7 +8,7 @@ pipeline {
 
     stages {
 
-        stage('Build Java Project') {
+        stage('build claases for sonar') {
             steps {
                 script {
                     dir('spring-app') { // spring-app 폴더에서 Gradle 빌드 실행
@@ -18,25 +18,30 @@ pipeline {
             }
         }
 
-	stage('SonarQube analysis') {
-	    steps {
-		withSonarQubeEnv('sonarqube') {
-		    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
-			script {
-			    sh """
-			    sonar-scanner \
-				-Dsonar.projectKey=dlink-apps \
-				-Dsonar.sources=. \
-				-Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
-				-Dsonar.host.url=http://192.168.3.81:10111 \
-				-Dsonar.login=\$SONAR_AUTH_TOKEN
-			    """
-			}
-		    }
-		}
-	    }
-}
-        stage('Login to Harbor') {
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
+                        script {
+                            def sonarStatus = sh(script: """
+                            sonar-scanner \
+                                -Dsonar.projectKey=dlink-apps \
+                                -Dsonar.sources=. \
+                                -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
+                                -Dsonar.host.url=http://192.168.3.81:10111 \
+                                -Dsonar.login=\$SONAR_AUTH_TOKEN
+                            """, returnStatus: true)
+
+                            if (sonarStatus != 0) {
+                                error "❌ SonarQube analysis failed. Stopping the pipeline."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+	stage('Login to Harbor') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'harbor-access', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
