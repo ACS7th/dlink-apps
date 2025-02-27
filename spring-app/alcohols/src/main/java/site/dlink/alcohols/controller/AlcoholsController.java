@@ -25,7 +25,7 @@ public class AlcoholsController {
     private final WineService wineService;
 
     /**
-     * (1) 술 정보 조회 (ID 기반)
+     * (1) 술 정보 조회 (ID 기반) 
      */
     @Operation(
             summary = "술 정보 조회 (ID 기반)",

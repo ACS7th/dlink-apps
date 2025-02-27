@@ -1,127 +1,43 @@
 services:
 
   api-gateway:
-    image: dealim/api-gateway:v2.0
+    image: 192.168.3.81/dlink/api-gateway:v2.0.1
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SERVER_PORT: 9999
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      AUTH_SERVICE_URI: ${AUTH_SERVICE_URI}
-      ALCOHOL_SERVICE_URI: ${ALCOHOL_SERVICE_URI}
-      HIGHBALL_SERVICE_URI: ${HIGHBALL_SERVICE_URI}
-      REVIEW_SERVICE_URI: ${REVIEW_SERVICE_URI}
-      PAIRING_SERVICE_URI: ${PAIRING_SERVICE_URI}
-    networks:
-      - front_net
-      - back_net
 
   auth-service:
-    image: dealim/auth-service:v2.0
+    image: 192.168.3.81/dlink/auth-service:v2.0.0
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      SERVER_PORT: 9991
-    networks:
-      - front_net
 
   alcohol-service:
-    image: dealim/alcohol-service:v2.0
+    image: 192.168.3.81/dlink/alcohol-service:v2.0.0
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      ES_DATASOURCE_URI: ${ES_DATASOURCE_URI}
-      SERVER_PORT: 9992
-    networks:
-      - back_net
 
   highball-service:
-    image: dealim/highball-service:v2.0
+    image: 192.168.3.81/dlink/highball-service:v2.0.0
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-      SERVER_PORT: 9993
-    networks:
-      - back_net
 
   review-service:
-    image: dealim/review-service:v2.0
+    image: 192.168.3.81/dlink/review-service:v2.0.0
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      SERVER_PORT: 9994
-    networks:
-      - back_net
 
   pairing-service:
-    image: dealim/pairing-service:v2.0
+    image: 192.168.3.81/dlink/pairing-service:v2.0.0
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-      SERVER_PORT: 9995
-    networks:
-      - back_net
 
   next-app:
-    image: dealim/next-app:v2.0
+    image: 192.168.3.81/dlink/next-app:v2.0.0
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
-    restart: always
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      SPRING_URI: ${SPRING_URI}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      KAKAO_REST_API: ${KAKAO_REST_API}
-      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
-      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
-      NEXTAUTH_SECRET: ${JWT_SECRET_KEY}
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-    networks:
-      - front_net
-    deploy:
-      replicas: 3
-      restart_policy:
-        condition: on-failure
-
-networks:
-  front_net:
-    driver: bridge
-  back_net:
-    driver: bridge
-  kafka_net:
-    driver: bridge
-  redis_net:
-    driver: bridge
