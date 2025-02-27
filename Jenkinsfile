@@ -23,35 +23,25 @@ pipeline {
                 script {
                     def changedFiles = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim().split("\n")
 
-                    def filteredFiles = changedFiles.findAll { 
-                        it.endsWith(".java") || it.endsWith(".yml") || it.endsWith("Dockerfile")
-                    }
-
-                    if (filteredFiles.isEmpty()) {
-                        echo "No relevant changes detected. Skipping build."
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    }
-
                     def servicesToBuild = []
                     def serviceMappings = [
-                        "api-gateway"     : "spring-app/api-gateway/",
-                        "auth-service"    : "spring-app/auth-service/",
-                        "alcohol-service" : "spring-app/alcohol-service/",
-                        "highball-service": "spring-app/highball-service/",
-                        "review-service"  : "spring-app/review-service/",
-                        "pairing-service" : "spring-app/pairing-service/",
+                        "api-gateway"     : "spring-app/",
+                        "auth-service"    : "spring-app/",
+                        "alcohol-service" : "spring-app/",
+                        "highball-service": "spring-app/",
+                        "review-service"  : "spring-app/",
+                        "pairing-service" : "spring-app/",
                         "next-app"        : "next-app/"
                     ]
 
                     serviceMappings.each { service, path ->
-                        if (filteredFiles.any { it.startsWith(path) }) {
+                        if (changedFiles.any { it.startsWith(path) }) {
                             servicesToBuild.add(service)
                         }
                     }
 
                     if (servicesToBuild.isEmpty()) {
-                        echo "No matching service changes detected. Skipping build."
+                        echo "No changes detected. Skipping build."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
@@ -118,4 +108,3 @@ pipeline {
         }
     }
 }
-
