@@ -7,6 +7,13 @@ pipeline {
     }
 
     stages {
+         stage('SonarQube analysis') {
+             steps {
+                 withSonarQubeEnv('sonarqube') {
+                     sh 'mvn sonar:sonar'
+                 }
+             }
+         }
 
         stage('Login to Harbor') {
             steps {
