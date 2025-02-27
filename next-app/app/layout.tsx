@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 export const metadata: Metadata = {
   title: "DLink",
-  description: "The Perfect Link - Drink, Dine, Delight",
+  description: "The Perfect Link - Drink, Dine, Delight.",
 };
 
 export default function RootLayout({
