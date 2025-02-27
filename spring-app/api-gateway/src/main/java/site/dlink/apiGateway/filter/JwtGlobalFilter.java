@@ -26,7 +26,7 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        log.info("API 요청 경로 : {}", path);
+        log.info("API request path : {}", path);
 
 
         if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
