@@ -30,11 +30,12 @@ pipeline {
                                 -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
                                 -Dsonar.host.url=http://192.168.3.81:10111 \
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
-                            """, returnStatus: true)
+                            """ )
 
-                            if (sonarStatus != 0) {
-                                error "❌ SonarQube analysis failed. Stopping the pipeline."
-                            }
+                        }
+
+                        timeout(time: 1, unit: 'MINUTES') { 
+                            waitForQualityGate abortPipeline: true
                         }
                     }
                 }
