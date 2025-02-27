@@ -11,7 +11,7 @@ pipeline {
         stage('Login to Harbor') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'harbor-credentials', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'harbor-access', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh "docker login ${HARBOR_URL} -u ${HARBOR_USER} -p ${HARBOR_PASS}"
                     }
                 }
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withDockerRegistry([credentialsId: 'harbor-credentials', url: "http://${HARBOR_URL}"]) {
+                withDockerRegistry([credentialsId: 'harbor-access', url: "http://${HARBOR_URL}"]) {
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
