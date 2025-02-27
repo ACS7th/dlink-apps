@@ -7,13 +7,24 @@ pipeline {
     }
 
     stages {
-         stage('SonarQube analysis') {
-             steps {
-                 withSonarQubeEnv('sonarqube') {
-			echo 'complete'
-                 }
-             }
-         }
+
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
+                        script {
+                            sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=dlink-apps \
+                                -Dsonar.sources=. \
+                                -Dsonar.host.url=http://192.168.3.81:10111 \
+                                -Dsonar.login=\$SONAR_AUTH_TOKEN
+                            """
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Login to Harbor') {
             steps {
