@@ -8,7 +8,7 @@ pipeline {
 
     stages {
 
-        stage('build claases for sonar') {
+        stage('Build claases for sonar') {
             steps {
                 script {
                     dir('spring-app') { // spring-app 폴더에서 Gradle 빌드 실행
