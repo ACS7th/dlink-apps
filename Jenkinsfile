@@ -79,7 +79,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Selected Docker Compose services build & push completed successfully!'
+            echo '✅ Docker Compose services build & push completed successfully!'
         }
         failure {
             echo '❌ Build failed. Check logs.'
