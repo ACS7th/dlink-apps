@@ -18,82 +18,18 @@ pipeline {
             }
         }
 
-        stage('Detect Changed Services') {
+        stage('Build with Docker Compose') {
             steps {
                 script {
-                    def changedFiles = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim().split("\n")
-
-                    def servicesToBuild = []
-                    def serviceMappings = [
-                        "api-gateway"     : "spring-app/",
-                        "auth-service"    : "spring-app/",
-                        "alcohol-service" : "spring-app/",
-                        "highball-service": "spring-app/",
-                        "review-service"  : "spring-app/",
-                        "pairing-service" : "spring-app/",
-                        "next-app"        : "next-app/"
-                    ]
-
-                    serviceMappings.each { service, path ->
-                        if (changedFiles.any { it.startsWith(path) }) {
-                            servicesToBuild.add(service)
-                        }
-                    }
-
-                    if (servicesToBuild.isEmpty()) {
-                        echo "No changes detected. Skipping build."
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    }
-
-                    env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
-                    echo "Services to build: ${env.SERVICES_TO_BUILD}"
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} build"
                 }
             }
         }
 
-        stage('Build Changed Services') {
-            when {
-                expression { env.SERVICES_TO_BUILD != null && env.SERVICES_TO_BUILD.trim() != "" }
-            }
-            matrix {
-                axes {
-                    axis {
-                        name 'SERVICE'
-                        values env.SERVICES_TO_BUILD.split(" ")
-                    }
-                }
-                stages {
-                    stage("Build $SERVICE") {
-                        steps {
-                            script {
-                                sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${SERVICE}"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Push Changed Services') {
-            when {
-                expression { env.SERVICES_TO_BUILD != null && env.SERVICES_TO_BUILD.trim() != "" }
-            }
-            matrix {
-                axes {
-                    axis {
-                        name 'SERVICE'
-                        values env.SERVICES_TO_BUILD.split(" ")
-                    }
-                }
-                stages {
-                    stage("Push $SERVICE") {
-                        steps {
-                            withDockerRegistry([credentialsId: 'harbor-access', url: "https://${HARBOR_URL}"]) {
-                                sh "docker compose -f ${DOCKER_COMPOSE_FILE} push ${SERVICE}"
-                            }
-                        }
-                    }
+        stage('Push Docker Images') {
+            steps {
+                withDockerRegistry([credentialsId: 'harbor-access', url: "https://${HARBOR_URL}"]) {
+                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} push"
                 }
             }
         }
@@ -101,7 +37,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Selected Docker Compose services build & push completed successfully!'
+            echo '✅ Docker Compose build & push to Harbor completed successfully!'
         }
         failure {
             echo '❌ Build failed. Check logs.'
