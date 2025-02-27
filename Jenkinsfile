@@ -12,7 +12,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
+
                         script {
+			    sh "echo 'SonarQube Token: \$SONAR_AUTH_TOKEN'"
                             sh """
                             sonar-scanner \
                                 -Dsonar.projectKey=dlink-apps \
