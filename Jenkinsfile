@@ -33,6 +33,8 @@ pipeline {
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
                             """
                         }
+                        def qualityGate = waitForQualityGate abortPipeline: false
+                        echo "🔍 SonarQube Quality Gate Status: ${qualityGate.status}"
 
                         timeout(time: 1, unit: 'MINUTES') {
                             waitForQualityGate abortPipeline: true
