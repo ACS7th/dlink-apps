@@ -9,7 +9,7 @@ pipeline {
     }
 
     stages {
-        stage('Build classes for sonar') {
+        stage('Build java classes for SonarQube') {
             steps {
                 script {
                     dir('spring-app') { // spring-app 폴더에서 Gradle 빌드
@@ -19,7 +19,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('Check Quality Gate') {
+        stage('Check Sonar Qube Quality Gate') {
             steps {
                 script {
                     def response = sh(script: """
@@ -71,7 +71,7 @@ pipeline {
             }
         }
 
-        stage('Detect Changed Services') {
+        stage('Detect Changed Applications') {
             steps {
                 script {
                     def changedFiles = sh(script: "git diff --name-only HEAD^ HEAD", returnStdout: true).trim().split("\n")
@@ -106,7 +106,7 @@ pipeline {
             }
         }
 
-        stage('Build Changed Services') {
+        stage('Build Changed Applications') {
             when {
                 expression { env.SERVICES_TO_BUILD != null && env.SERVICES_TO_BUILD.trim() != "" }
             }
@@ -117,7 +117,7 @@ pipeline {
             }
         }
 
-        stage('Push Changed Services') {
+        stage('Push Changed Applications') {
             when {
                 expression { env.SERVICES_TO_BUILD != null && env.SERVICES_TO_BUILD.trim() != "" }
             }
@@ -131,7 +131,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Docker Compose build & push to Harbor completed successfully!'
+            echo '✅ Build & push to Harbor completed successfully!'
         }
         failure {
             echo '❌ Build failed. Check logs.'
