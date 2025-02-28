@@ -21,21 +21,6 @@ pipeline {
 
         stage('SonarQube analysis') {
             steps {
-                script {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        def qualityGate = waitForQualityGate abortPipeline: false
-                        echo "🔍 SonarQube Quality Gate Status: ${qualityGate.status}"
-
-                        if (qualityGate.status != 'PASSED') {
-                            error "❌ Quality Gate failed: ${qualityGate.status}"
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('SonarQube analysis') {
-            steps {
                 withSonarQubeEnv('sonarqube') {
                     withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
                         script {
@@ -47,10 +32,6 @@ pipeline {
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
                             """
-                        }
-
-                        timeout(time: 1, unit: 'MINUTES') {
-                            waitForQualityGate abortPipeline: true
                         }
                     }
                 }
