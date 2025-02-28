@@ -28,6 +28,9 @@ pipeline {
                             sonar-scanner \
                                 -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                                 -Dsonar.sources=. \
+                                -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
+                                -Dsonar.ts.tslint.reportPaths=reports/tslint.json \
+                                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
                                 -Dsonar.login=\$SONAR_AUTH_TOKEN
                             """
