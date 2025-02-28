@@ -27,7 +27,6 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
         String clientIp = request.getHeaders().getFirst("X-Forwarded-For");
-        String username = "1' or '1'='1";
 
         if (clientIp == null || clientIp.isEmpty()) {
             InetSocketAddress remoteAddress = request.getRemoteAddress();
