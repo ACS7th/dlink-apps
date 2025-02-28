@@ -40,6 +40,19 @@ pipeline {
             }
         }
 
+        stage('Quality Gate Check') {
+            steps {
+                script {
+                    timeout(time: 1, unit: 'MINUTES') {
+                        def qualityGate = waitForQualityGate()
+                        if (qualityGate.status != 'OK') {
+                            error "Pipeline failed due to Quality Gate failure: ${qualityGate.status}"
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Login to Harbor') {
             steps {
                 script {
