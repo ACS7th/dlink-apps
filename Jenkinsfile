@@ -40,14 +40,22 @@ pipeline {
             }
         }
 
-        stage('Quality Gate Check') {
+        stage('Check Quality Gate') {
             steps {
                 script {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        def qualityGate = waitForQualityGate()
-                        if (qualityGate.status != 'OK') {
-                            error "Pipeline failed due to Quality Gate failure: ${qualityGate.status}"
-                        }
+                    def response = sh(script: """
+                        sleep 10
+                        curl -u "squ_86da577bcf1c0f85af5879dd40e8280eb5610dbc:" \\
+                            "http://192.168.3.81:10111/api/qualitygates/project_status?projectKey=dlink-apps"
+                    """, returnStdout: true).trim()
+
+                    def json = readJSON(text: response)
+                    def qualityGateStatus = json.projectStatus.status
+
+                    if (qualityGateStatus != "OK") {
+                        error "Pipeline failed due to Quality Gate failure: ${qualityGateStatus}"
+                    } else {
+                        echo "Quality Gate passed successfully!"
                     }
                 }
             }
