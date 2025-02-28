@@ -9,26 +9,12 @@ pipeline {
     }
 
     stages {
+
         stage('Build java classes for SonarQube') {
             steps {
                 script {
-                    dir('spring-app') { // spring-app 폴더에서 Gradle 빌드
+                    dir('spring-app') {
                         sh "./gradlew classes"
-                    }
-                }
-            }
-        }
-
-        stage('Build java classes for SonarQube') {
-            steps {
-                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
-                    script {
-
-                        env.SONAR_AUTH_TOKEN = SONAR_AUTH_TOKEN
-
-                        dir('spring-app') {
-                            sh "./gradlew classes"
-                        }
                     }
                 }
             }
@@ -37,17 +23,19 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    script {
-                        sh """
-                        sonar-scanner \
-                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.sources=. \
-                            -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
-                            -Dsonar.ts.tslint.reportPaths=reports/tslint.json \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                            -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.login=${env.SONAR_AUTH_TOKEN}
-                        """
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
+                        script {
+                            sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                -Dsonar.sources=. \
+                                -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \
+                                -Dsonar.ts.tslint.reportPaths=reports/tslint.json \
+                                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=\$SONAR_AUTH_TOKEN
+                            """
+                        }
                     }
                 }
             }
@@ -55,25 +43,27 @@ pipeline {
 
         stage('Check Sonar Qube Quality Gate') {
             steps {
-                script {
-                    def response = sh(script: """
-                        sleep 10
-                        curl -u "${env.SONAR_AUTH_TOKEN}:" \\
-                            "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY}"
-                    """, returnStdout: true).trim()
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
+                    script {
+                        def response = sh(script: """
+                            sleep 10
+                            curl -u "\$SONAR_AUTH_TOKEN:" \\
+                                "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY}"
+                        """, returnStdout: true).trim()
 
-                    def json = readJSON(text: response)
-                    def qualityGateStatus = json.projectStatus.status
+                        def json = readJSON(text: response)
+                        def qualityGateStatus = json.projectStatus.status
 
-                    if (qualityGateStatus != "OK") {
-                        error "❌ Pipeline failed due to Quality Gate failure: ${qualityGateStatus}"
-                    } else {
-                        echo "✅ Quality Gate passed successfully!"
+                        if (qualityGateStatus != "OK") {
+                            error "❌ Pipeline failed due to Quality Gate failure: ${qualityGateStatus}"
+                        } else {
+                            echo "✅ Quality Gate passed successfully!"
+                        }
                     }
                 }
             }
         }
-    }
+
         stage('Login to Harbor') {
             steps {
                 script {
