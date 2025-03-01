@@ -63,48 +63,41 @@ pipeline {
         stage('Detect & Build Changed Applications from docker-compose-build.yml') {
             steps {
                 script {
-                    // (1) git diff로 변경된 파일 목록 확인
-                    def changedFiles = sh(script: "git diff --name-only HEAD^ HEAD", returnStdout: true).trim().split("\n")
-                    echo "Changed Files: ${changedFiles.join(', ')}"
+                    // (1) docker-compose-build.yml에서 빌드될 이미지 태그 추출
+                    def composeContent = readFile(DOCKER_COMPOSE_FILE)
 
-                    // (2) docker-compose-build.yml이 변경되었는지 검사
-                    if (!changedFiles.contains("${DOCKER_COMPOSE_FILE}")) {
-                        echo "No changes in ${DOCKER_COMPOSE_FILE}. Skipping build."
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    }
-
-                    // (3) 변경된 docker-compose-build.yml 내용 중 이미지 라인 파싱
-                    def composeDiff = sh(
-                        script: "git diff HEAD^ HEAD -- ${DOCKER_COMPOSE_FILE}",
-                        returnStdout: true
-                    ).trim()
+                    echo "🔍 composeContent 내용:\n${composeContent}" // 파일 전체 확인
 
                     def servicesToBuild = []
-                    //  - “+image: 192.168.3.81/dlink/서비스명:버전” 형태를 찾기 위한 정규식 (추가된 라인만 탐지하려면 ^+ 사용)
-                    def pattern = ~/^\+.*image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
+                    def pattern = ~/image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
 
-                    composeDiff.eachLine { line ->
+                    // (2) `image:`가 있는 라인만 필터링
+                    composeContent.eachLine { line ->
                         def matcher = (line =~ pattern)
                         if (matcher) {
-                            // matcher[0][1] => 서비스명, matcher[0][2] => 버전
                             def serviceName = matcher[0][1]
-                            servicesToBuild << serviceName
+                            def versionTag = matcher[0][2]
+
+                            echo "✅ 매칭됨: 서비스=${serviceName}, 버전=${versionTag}"
+
+                            servicesToBuild.add(serviceName)
+                        } else {
+                            echo "❌ 매칭 안됨: ${line}"
                         }
                     }
 
-                    // (4) 중복 제거 및 결과 확인
+                    // (3) 중복 제거 및 최종 빌드할 서비스 확인
                     servicesToBuild = servicesToBuild.unique()
                     if (servicesToBuild.isEmpty()) {
-                        echo "No changed service lines found in ${DOCKER_COMPOSE_FILE}. Skipping."
+                        echo "🚀 No services need to be built. Skipping."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
 
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
-                    echo "Services to build: ${env.SERVICES_TO_BUILD}"
+                    echo "🛠️ Services to build: ${env.SERVICES_TO_BUILD}"
 
-                    // (5) 실제 Docker build
+                    // (4) 실제 Docker build 실행
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${env.SERVICES_TO_BUILD}"
                 }
             }
