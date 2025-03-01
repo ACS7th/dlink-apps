@@ -49,7 +49,7 @@ export const SidebarWrapper = () => {
                             isActive={pathname === "/"}
                             href="/"
                         />
-                        <SidebarMenu title="술 조회">
+                        <SidebarMenu title="Alcohols">
                             <SidebarItem
                                 isActive={pathname === "/categories/wine"}
                                 title="와인"
