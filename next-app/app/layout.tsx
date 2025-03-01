@@ -5,8 +5,8 @@ import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 
 export const metadata: Metadata = {
-  title: "DLink2",
-  description: "The Perfect Link - Drink, Dine, Delight.",
+  title: "DLink",
+  description: "The Perfect Link - Drink, Dine, Delight",
 };
 
 export default function RootLayout({
