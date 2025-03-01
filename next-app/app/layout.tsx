@@ -5,7 +5,7 @@ import { fontSans } from "@/config/fonts";
 import clsx from "clsx";
 
 export const metadata: Metadata = {
-  title: "DLink",
+  title: "DLink2",
   description: "The Perfect Link - Drink, Dine, Delight.",
 };
 

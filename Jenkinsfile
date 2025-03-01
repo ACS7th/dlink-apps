@@ -166,6 +166,7 @@ pipeline {
                             if (patchFile && currentVersion) {
                                 // 예: sed -i 's|image: 192.168.3.81/dlink/api-gateway:.*|image: 192.168.3.81/dlink/api-gateway:v2.0.2|' ...
                                 sh """
+                                echo ${currentVersion}
                                 sed -i 's|image: ${HARBOR_URL}/dlink/${service}:.*|image: ${HARBOR_URL}/dlink/${service}:${currentVersion}|' dlink-manifests/overlays/production/patches/${patchFile}
                                 """
                             } else {
