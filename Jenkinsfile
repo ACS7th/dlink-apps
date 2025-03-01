@@ -65,18 +65,18 @@ pipeline {
                 script {
                     // (1) docker-compose-build.yml 읽기
                     def composeContent = readFile(DOCKER_COMPOSE_FILE)
-                    echo "🔍 composeContent 내용:\n${composeContent}" // 파일 전체 확인
+                    echo "🔍 composeContent 내용:\n${composeContent}"
 
                     def servicesToBuild = []
-                    def pattern = ~/image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/  // 🔥 정규식 수정
+                    def pattern = ~/image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/
 
                     // (2) `image:`가 있는 라인만 필터링
                     composeContent.eachLine { line ->
                         def matcher = (line =~ pattern)
                         if (matcher) {
-                            def harborUrl = matcher[0][1]    // Harbor URL (ex: 192.168.3.81)
-                            def serviceName = matcher[0][2] // 서비스명 (ex: api-gateway)
-                            def versionTag = matcher[0][3]  // 버전 (ex: v2.0.3)
+                            def harborUrl = matcher[0][1]
+                            def serviceName = matcher[0][2]
+                            def versionTag = matcher[0][3]
 
                             echo "✅ 매칭됨: Harbor=${harborUrl}, 서비스=${serviceName}, 버전=${versionTag}"
 
