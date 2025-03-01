@@ -3,22 +3,19 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose-build.yml"
-        HARBOR_URL = "192.168.3.81"
-        SONAR_HOST_URL = "http://192.168.3.81:10111"
-        SONAR_PROJECT_KEY = "dlink-apps"
+        HARBOR_URL          = "192.168.3.81"
+        SONAR_HOST_URL      = "http://192.168.3.81:10111"
+        SONAR_PROJECT_KEY   = "dlink-apps"
     }
 
     stages {
-
         stage('Build & SonarQube Analysis') {
             steps {
                 script {
-                    // (1) Java 컴파일
                     dir('spring-app') {
                         sh "./gradlew classes"
                     }
 
-                    // (2) SonarQube 분석
                     withSonarQubeEnv('sonarqube') {
                         withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_AUTH_TOKEN')]) {
                             sh """
@@ -63,31 +60,43 @@ pipeline {
             }
         }
 
-        stage('Detect & Build Changed Applications') {
+        stage('Detect & Build Changed Applications from docker-compose-build.yml') {
             steps {
                 script {
+                    // (1) git diff로 변경된 파일 목록 확인
                     def changedFiles = sh(script: "git diff --name-only HEAD^ HEAD", returnStdout: true).trim().split("\n")
                     echo "Changed Files: ${changedFiles.join(', ')}"
 
-                    def servicesToBuild = []
-                    def serviceMappings = [
-                        "api-gateway"     : "spring-app/api-gateway/",
-                        "auth-service"    : "spring-app/auth/",
-                        "alcohol-service" : "spring-app/alcohols/",
-                        "highball-service": "spring-app/highball/",
-                        "review-service"  : "spring-app/review/",
-                        "pairing-service" : "spring-app/pairing/",
-                        "next-app"        : "next-app/"
-                    ]
+                    // (2) docker-compose-build.yml이 변경되었는지 검사
+                    if (!changedFiles.contains("${DOCKER_COMPOSE_FILE}")) {
+                        echo "No changes in ${DOCKER_COMPOSE_FILE}. Skipping build."
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
 
-                    serviceMappings.each { service, path ->
-                        if (changedFiles.any { it.contains(path) }) {
-                            servicesToBuild.add(service)
+                    // (3) 변경된 docker-compose-build.yml 내용 중 이미지 라인 파싱
+                    def composeDiff = sh(
+                        script: "git diff HEAD^ HEAD -- ${DOCKER_COMPOSE_FILE}",
+                        returnStdout: true
+                    ).trim()
+
+                    def servicesToBuild = []
+                    //  - “+image: 192.168.3.81/dlink/서비스명:버전” 형태를 찾기 위한 정규식 (추가된 라인만 탐지하려면 ^+ 사용)
+                    def pattern = ~/^\+.*image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
+
+                    composeDiff.eachLine { line ->
+                        def matcher = (line =~ pattern)
+                        if (matcher) {
+                            // matcher[0][1] => 서비스명, matcher[0][2] => 버전
+                            def serviceName = matcher[0][1]
+                            servicesToBuild << serviceName
                         }
                     }
 
+                    // (4) 중복 제거 및 결과 확인
+                    servicesToBuild = servicesToBuild.unique()
                     if (servicesToBuild.isEmpty()) {
-                        echo "No matching service changes detected. Skipping build."
+                        echo "No changed service lines found in ${DOCKER_COMPOSE_FILE}. Skipping."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
@@ -95,6 +104,7 @@ pipeline {
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
                     echo "Services to build: ${env.SERVICES_TO_BUILD}"
 
+                    // (5) 실제 Docker build
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${env.SERVICES_TO_BUILD}"
                 }
             }
@@ -124,20 +134,19 @@ pipeline {
             }
             steps {
                 script {
-                    // (1) docker-compose-build.yml에서 빌드된 이미지 태그 파싱
+                    // (1) docker-compose-build.yml에서 빌드된 이미지 태그 다시 파싱
                     def composeContent = readFile(DOCKER_COMPOSE_FILE)
                     def versionMap = [:]
                     composeContent.eachLine { line ->
-                        // image: 192.168.3.81/dlink/api-gateway:v2.0.2
                         def matcher = line =~ /image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
                         if (matcher) {
-                            def serviceName = matcher[0][1]  // ex) api-gateway
-                            def versionTag = matcher[0][2]   // ex) v2.0.2
+                            def serviceName = matcher[0][1]
+                            def versionTag = matcher[0][2]
                             versionMap[serviceName] = versionTag
                         }
                     }
 
-                    // (2) 서비스명 -> 패치 파일 매핑 (예시: gateway-patch.yaml 등)
+                    // (2) 서비스명 -> 패치파일 매핑
                     def patchMap = [
                         "api-gateway":      "gateway-patch.yaml",
                         "auth-service":     "auth-patch.yaml",
@@ -148,7 +157,7 @@ pipeline {
                         "next-app":         "next-patch.yaml"
                     ]
 
-                    // (3) dlink-manifests 저장소 클론 & staging 브랜치 체크아웃
+                    // (3) Git clone & checkout
                     withCredentials([usernamePassword(credentialsId: 'github-access', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
                         sh """
                         rm -rf dlink-manifests
@@ -159,14 +168,13 @@ pipeline {
                         git config user.email "dealimmmm@gmail.com"
                         """
 
-                        // (4) 변경된 서비스들만 manifest patch 파일의 image 태그 업데이트
+                        // (4) 변경된 서비스들의 image 태그 업데이트
                         env.SERVICES_TO_BUILD.split(" ").each { service ->
-                            def patchFile = patchMap[service]
+                            def patchFile      = patchMap[service]
                             def currentVersion = versionMap[service]
                             echo "Current version for service '${service}': ${currentVersion}"
 
                             if (patchFile && currentVersion) {
-                                // 예: sed -i 's|image: 192.168.3.81/dlink/api-gateway:.*|image: 192.168.3.81/dlink/api-gateway:v2.0.2|' ...
                                 sh """
                                 sed -i 's|image: ${HARBOR_URL}/dlink/${service}:.*|image: ${HARBOR_URL}/dlink/${service}:${currentVersion}|' dlink-manifests/overlays/production/patches/${patchFile}
                                 """
@@ -175,7 +183,7 @@ pipeline {
                             }
                         }
 
-                        // (5) Git 커밋 & 푸시
+                        // (5) Git commit & push
                         sh """
                         cd dlink-manifests
                         git add overlays/production/patches
