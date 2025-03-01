@@ -155,6 +155,8 @@ pipeline {
                         git clone https://\$GIT_USER:\$GIT_PASS@github.com/ACS7th/dlink-manifests.git
                         cd dlink-manifests
                         git checkout staging
+                        git config user.name "dealim"
+                        git config user.email "dealimmmm@gmail.com"
                         """
 
                         // (4) 변경된 서비스들만 manifest patch 파일의 image 태그 업데이트
