@@ -61,7 +61,7 @@ pipeline {
             }
         }
 
-        stage('Detect & Build Changed Applications from docker-compose-build.yml') {
+        stage('Detect & Build Changed Applications') {
             steps {
                 script {
                     // (1) `git diff` 실행하여 변경된 `image:` 라인만 추출
