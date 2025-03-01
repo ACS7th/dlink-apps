@@ -80,9 +80,10 @@ pipeline {
                     echo "🔍 변경된 이미지 라인:\n${composeDiff}"
 
                     def servicesToBuild = []
+                    def versionMap = [:]
                     def pattern = ~/^\+\s*image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 수정
 
-                    // (3) 변경된 `image:` 라인에서 서비스명 추출
+                    // (3) 변경된 `image:` 라인에서 서비스명 및 버전 추출
                     composeDiff.eachLine { line ->
                         def matcher = (line =~ pattern)
                         if (matcher) {
@@ -90,9 +91,10 @@ pipeline {
                             def serviceName = matcher[0][2] // 서비스명 (ex: api-gateway)
                             def versionTag = matcher[0][3]  // 버전 (ex: v2.0.4)
 
-                            echo "✅ 변경 감지됨: Harbor=${harborUrl}, 서비스=${serviceName}, 버전=${versionTag}"
+                            echo "✅ 변경 감지됨: 서비스=${serviceName}, 버전=${versionTag}"
 
                             servicesToBuild.add(serviceName)
+                            versionMap[serviceName] = versionTag
                         } else {
                             echo "❌ 매칭 안됨: ${line}"
                         }
@@ -107,7 +109,10 @@ pipeline {
                     }
 
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
-                    echo "Services to build: ${env.SERVICES_TO_BUILD}"
+                    env.VERSION_MAP = versionMap.collect { k, v -> "${k}:${v}" }.join(",") // 환경 변수에 버전 맵 저장
+
+                    echo "🛠️ Services to build: ${env.SERVICES_TO_BUILD}"
+                    echo "🛠️ Version Map: ${env.VERSION_MAP}"
 
                     // (5) Docker build 실행
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${env.SERVICES_TO_BUILD}"
@@ -140,6 +145,7 @@ pipeline {
             steps {
                 script {
                     echo "🔍 SERVICES_TO_BUILD: ${env.SERVICES_TO_BUILD}"
+                    echo "🔍 VERSION_MAP: ${env.VERSION_MAP}"
 
                     // (1) 서비스명 -> manifest patch 파일 매핑
                     def patchMap = [
@@ -163,10 +169,19 @@ pipeline {
                         git config user.email "dealimmmm@gmail.com"
                         """
 
-                        // (3) 빌드된 이미지 정보 기반으로 manifest 업데이트
+                        // (3) 버전 맵을 `env.VERSION_MAP`에서 추출
+                        def versionMap = [:]
+                        env.VERSION_MAP.split(",").each { entry ->
+                            def parts = entry.split(":")
+                            if (parts.length == 2) {
+                                versionMap[parts[0]] = parts[1]
+                            }
+                        }
+
+                        // (4) 빌드된 이미지 정보 기반으로 manifest 업데이트
                         env.SERVICES_TO_BUILD.split(" ").each { service ->
                             def patchFile = patchMap[service]
-                            def currentVersion = env."${service}_VERSION"
+                            def currentVersion = versionMap[service]
 
                             if (patchFile && currentVersion) {
                                 echo "🔄 ${patchFile} 업데이트 중 (버전: ${currentVersion})"
@@ -179,7 +194,7 @@ pipeline {
                             }
                         }
 
-                        // (4) Git commit & push 
+                        // (5) Git commit & push
                         sh """
                         cd dlink-manifests
                         git add overlays/production/patches
