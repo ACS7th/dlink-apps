@@ -63,26 +63,26 @@ pipeline {
         stage('Detect & Build Changed Applications from docker-compose-build.yml') {
             steps {
                 script {
-                    // (1) docker-compose-build.yml에서 빌드될 이미지 태그 추출
+                    // (1) docker-compose-build.yml 읽기
                     def composeContent = readFile(DOCKER_COMPOSE_FILE)
-
                     echo "🔍 composeContent 내용:\n${composeContent}" // 파일 전체 확인
 
                     def servicesToBuild = []
-                    def pattern = ~/image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
+                    def pattern = ~/image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/  // 🔥 정규식 수정
 
                     // (2) `image:`가 있는 라인만 필터링
                     composeContent.eachLine { line ->
                         def matcher = (line =~ pattern)
                         if (matcher) {
-                            def serviceName = matcher[0][1]
-                            def versionTag = matcher[0][2]
+                            def harborUrl = matcher[0][1]    // Harbor URL (ex: 192.168.3.81)
+                            def serviceName = matcher[0][2] // 서비스명 (ex: api-gateway)
+                            def versionTag = matcher[0][3]  // 버전 (ex: v2.0.3)
 
-                            echo "✅ 매칭됨: 서비스=${serviceName}, 버전=${versionTag}"
+                            echo "✅ 매칭됨: Harbor=${harborUrl}, 서비스=${serviceName}, 버전=${versionTag}"
 
                             servicesToBuild.add(serviceName)
                         } else {
-                            echo "❌ 매칭 안됨: ${line}"
+                            echo "❌ 매칭 안됨: ${line}"  // 🔥 디버깅을 위해 매칭 안 된 라인 출력
                         }
                     }
 
