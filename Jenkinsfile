@@ -63,30 +63,41 @@ pipeline {
         stage('Detect & Build Changed Applications from docker-compose-build.yml') {
             steps {
                 script {
-                    // (1) docker-compose-build.yml 읽기
-                    def composeContent = readFile(DOCKER_COMPOSE_FILE)
-                    echo "🔍 composeContent 내용:\n${composeContent}"
+                    // (1) `git diff` 실행하여 변경된 `image:` 라인만 추출
+                    def composeDiff = sh(
+                        script: "git diff HEAD^ HEAD -- ${DOCKER_COMPOSE_FILE} | grep '^+.*image:' || true",
+                        returnStdout: true
+                    ).trim()
+
+                    // (2) 변경된 라인이 없으면 스킵
+                    if (!composeDiff) {
+                        echo "🚀 No image changes detected in ${DOCKER_COMPOSE_FILE}. Skipping build."
+                        currentBuild.result = 'SUCCESS'
+                        return
+                    }
+
+                    echo "🔍 변경된 이미지 라인:\n${composeDiff}"
 
                     def servicesToBuild = []
-                    def pattern = ~/image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/
+                    def pattern = ~/^\+\s*image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 수정
 
-                    // (2) `image:`가 있는 라인만 필터링
-                    composeContent.eachLine { line ->
+                    // (3) 변경된 `image:` 라인에서 서비스명 추출
+                    composeDiff.eachLine { line ->
                         def matcher = (line =~ pattern)
                         if (matcher) {
-                            def harborUrl = matcher[0][1]
-                            def serviceName = matcher[0][2]
-                            def versionTag = matcher[0][3]
+                            def harborUrl = matcher[0][1]    // IP (ex: 192.168.3.81)
+                            def serviceName = matcher[0][2] // 서비스명 (ex: api-gateway)
+                            def versionTag = matcher[0][3]  // 버전 (ex: v2.0.4)
 
-                            echo "✅ 매칭됨: Harbor=${harborUrl}, 서비스=${serviceName}, 버전=${versionTag}"
+                            echo "✅ 변경 감지됨: Harbor=${harborUrl}, 서비스=${serviceName}, 버전=${versionTag}"
 
                             servicesToBuild.add(serviceName)
                         } else {
-                            echo "❌ 매칭 안됨: ${line}"  // 🔥 디버깅을 위해 매칭 안 된 라인 출력
+                            echo "❌ 매칭 안됨: ${line}"
                         }
                     }
 
-                    // (3) 중복 제거 및 최종 빌드할 서비스 확인
+                    // (4) 중복 제거 및 최종 빌드할 서비스 확인
                     servicesToBuild = servicesToBuild.unique()
                     if (servicesToBuild.isEmpty()) {
                         echo "🚀 No services need to be built. Skipping."
@@ -97,7 +108,7 @@ pipeline {
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
                     echo "🛠️ Services to build: ${env.SERVICES_TO_BUILD}"
 
-                    // (4) 실제 Docker build 실행
+                    // (5) Docker build 실행
                     sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${env.SERVICES_TO_BUILD}"
                 }
             }
