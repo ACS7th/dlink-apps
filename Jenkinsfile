@@ -136,12 +136,16 @@ pipeline {
                 script {
                     // (1) docker-compose-build.yml에서 빌드된 이미지 태그 다시 파싱
                     def composeContent = readFile(DOCKER_COMPOSE_FILE)
+                    echo "🔍 composeContent 내용:\n${composeContent}" // ⭐ 파일 전체 내용 출력
+
                     def versionMap = [:]
                     composeContent.eachLine { line ->
                         def matcher = line =~ /image:\s*${HARBOR_URL}\/dlink\/([^:]+):([\w\.]+)/
                         if (matcher) {
                             def serviceName = matcher[0][1]
                             def versionTag = matcher[0][2]
+                            echo "✅ 매칭됨: 서비스=${serviceName}, 버전=${versionTag}"  // ⭐ 매칭된 값 출력
+
                             versionMap[serviceName] = versionTag
                         }
                     }

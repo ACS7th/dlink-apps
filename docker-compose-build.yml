@@ -7,7 +7,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
 
   auth-service:
-    image: 192.168.3.81/dlink/auth-service:v2.0.1
+    image: 192.168.3.81/dlink/auth-service:v2.0.2
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
