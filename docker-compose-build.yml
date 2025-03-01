@@ -1,13 +1,13 @@
 services:
 
   api-gateway:
-    image: 192.168.3.81/dlink/api-gateway:v2.0.2
+    image: 192.168.3.81/dlink/api-gateway:v2.0.5
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
 
   auth-service:
-    image: 192.168.3.81/dlink/auth-service:v2.0.0
+    image: 192.168.3.81/dlink/auth-service:v2.0.7
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
@@ -37,7 +37,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
 
   next-app:
-    image: 192.168.3.81/dlink/next-app:v2.0.0
+    image: 192.168.3.81/dlink/next-app:v2.0.5
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod

@@ -8,6 +8,7 @@ import site.dlink.highball.enums.HighballCateEnum;
 import site.dlink.highball.repository.HighballRepository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,10 @@ public class HighballService {
     public long toggleLike(String highballId, String userId) {
         Highball highball = highballRepository.findById(highballId)
                 .orElseThrow(() -> new IllegalArgumentException("Highball not found with id: " + highballId));
+
+        if(highball.getLikedUsers() == null) {
+            highball.setLikedUsers(new HashSet<>());
+        }
 
         if (highball.getLikedUsers().contains(userId)) {
             highball.getLikedUsers().remove(userId);
