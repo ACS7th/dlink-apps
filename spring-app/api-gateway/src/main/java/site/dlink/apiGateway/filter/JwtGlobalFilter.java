@@ -33,7 +33,7 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
             if (remoteAddress != null) {
                 clientIp = remoteAddress.getAddress().getHostAddress();
             } else {
-                clientIp = "UNKNOWN"; // Fallback 값
+                clientIp = "UNKNOWNN"; // Fallback 값
             }
         }
 
