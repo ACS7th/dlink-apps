@@ -32,9 +32,6 @@ public class AuthController {
         this.userService = userService;
     }
 
-    /**
-     * (1) 사용자 기본 정보 조회
-     */
     @Operation(
             summary = "사용자 조회",
             description = "시스템에 등록된 사용자의 정보를 반환합니다.",
@@ -48,9 +45,6 @@ public class AuthController {
         return userService.getUserDtoById(id);
     }
 
-    /**
-     * (2) 회원 가입
-     */
     @Operation(
             summary = "회원 가입",
             description = "이메일, 비밀번호, 이름 등 필수 정보를 입력받아 회원 가입을 처리합니다.",
@@ -69,9 +63,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.join(joinDto));
     }
 
-    /**
-     * (3) 회원 정보 수정
-     */
     @Operation(
             summary = "회원 정보 수정",
             description = "이메일 기반으로 회원의 이름, 비밀번호 등의 정보를 수정합니다.",
@@ -118,4 +109,5 @@ public class AuthController {
             return ResponseEntity.badRequest().body("소셜 로그인 실패");
         }
     }
+
 }
