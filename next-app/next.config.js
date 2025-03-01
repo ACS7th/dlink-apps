@@ -9,8 +9,8 @@ module.exports = {
   reactStrictMode: false,
   images: {
     domains: [
-      "lh3.googleusercontent.com", 
-      SPRING_HOST, 
+      "lh3.googleusercontent.com",
+      SPRING_HOST,
       "kaja2002.com"
     ].filter(Boolean),
   },

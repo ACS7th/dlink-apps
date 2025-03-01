@@ -1,0 +1,6 @@
+projectKey=dlink-apps
+serverUrl=http://192.168.3.81:10111
+serverVersion=9.6.1.59531
+dashboardUrl=http://192.168.3.81:10111/dashboard?id=dlink-apps
+ceTaskId=AZVKguEfMhvsGz8iu9sR
+ceTaskUrl=http://192.168.3.81:10111/api/ce/task?id=AZVKguEfMhvsGz8iu9sR
