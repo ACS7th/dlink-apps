@@ -3,6 +3,7 @@ networks:
     driver: bridge
 
 services:
+
   api-gateway:
     image: api-gateway:dev
     build:
