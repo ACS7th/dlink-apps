@@ -77,45 +77,48 @@ pipeline {
                         return
                     }
 
-                    echo "🔍 변경된 이미지 라인:\n${composeDiff}"
+                    echo "📌 변경된 이미지 라인:\n${composeDiff}" // ✅ 디버깅용
 
                     def servicesToBuild = []
                     def versionMap = [:]
-                    def pattern = ~/^\+\s*image:\s*(\d+\.\d+\.\d+\.\d+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 수정
+                    def pattern = ~/image:\s*(\S+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 개선
 
-                    // (3) 변경된 `image:` 라인에서 서비스명 및 버전 추출
-                    composeDiff.eachLine { line ->
-                        def matcher = (line =~ pattern)
-                        if (matcher) {
-                            def harborUrl = matcher[0][1]    // IP (ex: 192.168.3.81)
-                            def serviceName = matcher[0][2] // 서비스명 (ex: api-gateway)
-                            def versionTag = matcher[0][3]  // 버전 (ex: v2.0.4)
+                    // (3) `+` 기준으로 줄을 분리하여 처리
+                    composeDiff.split('\n').each { line ->
+                        line = line.trim() // 앞뒤 공백 제거
+                        if (line.startsWith('+')) { // `+` 포함된 줄만 처리
+                            def matcher = pattern.matcher(line)
+                            if (matcher.find()) {
+                                def harborUrl = matcher.group(1)   // IP 또는 레지스트리 주소
+                                def serviceName = matcher.group(2) // 서비스명
+                                def versionTag = matcher.group(3)  // 버전
 
-                            echo "✅ 변경 감지됨: 서비스=${serviceName}, 버전=${versionTag}"
+                                echo "✅ 변경 감지됨: 서비스=${serviceName}, 버전=${versionTag}"
 
-                            servicesToBuild.add(serviceName)
-                            versionMap[serviceName] = versionTag
-                        } else {
-                            echo "❌ 매칭 안됨: ${line}"
+                                servicesToBuild.add(serviceName)
+                                versionMap[serviceName] = versionTag
+                            }
                         }
                     }
 
                     // (4) 중복 제거 및 최종 빌드할 서비스 확인
                     servicesToBuild = servicesToBuild.unique()
                     if (servicesToBuild.isEmpty()) {
-                        echo "No services need to be built. Skipping."
+                        echo "🚀 No services need to be built. Skipping."
                         currentBuild.result = 'SUCCESS'
                         return
                     }
 
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
-                    env.VERSION_MAP = versionMap.collect { k, v -> "${k}:${v}" }.join(",") // 환경 변수에 버전 맵 저장
+                    env.VERSION_MAP = versionMap.collect { k, v -> "${k}:${v}" }.join(",")
 
-                    echo "🛠️ Services to build: ${env.SERVICES_TO_BUILD}"
-                    echo "🛠️ Version Map: ${env.VERSION_MAP}"
+                    echo "🛠️ 현재 감지된 서비스 리스트: ${servicesToBuild}"
+                    echo "🛠️ 현재 감지된 버전 맵: ${versionMap}"
 
                     // (5) Docker build 실행
-                    sh "docker compose -f ${DOCKER_COMPOSE_FILE} build ${env.SERVICES_TO_BUILD}"
+                    def buildCommand = "docker compose -f ${DOCKER_COMPOSE_FILE} build ${servicesToBuild.join(' ')}"
+                    echo "🚀 실행할 Docker Build 명령어: ${buildCommand}"
+                    sh buildCommand
                 }
             }
         }
