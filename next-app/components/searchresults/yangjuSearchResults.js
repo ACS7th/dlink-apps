@@ -135,45 +135,58 @@
 // }
 
 
+
+
+
+
+
+
+
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner, Tooltip } from "@heroui/react";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export default function YangjuResultsPage({ setTabKey, tabKey }) {
+export default function YangjuResultsPage({ subcategory }) {
   const searchParams = useSearchParams();
-  const keyword = searchParams.get("query");
+  const keyword = searchParams.get("query"); // 검색어 (검색바에서 입력한 값)
   const router = useRouter();
 
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]); // ✅ 필터링된 데이터 저장
   const [page, setPage] = useState(0);
   const size = 10;
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
+  // ✅ 백엔드 API에서 데이터 가져오기
   const fetchResults = useCallback(
     async (pageNumber) => {
-      console.log(`[API 호출] 페이지: ${pageNumber}, 키워드: ${keyword}`);
+      console.log(`[API 호출] 페이지: ${pageNumber}, 검색어: ${keyword}, 서브카테고리: ${subcategory}`);
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/v1/alcohols/yangjus/search?keyword=${encodeURIComponent(keyword)}&page=${pageNumber}&size=${size}`
-        );
+        let url = `/api/v1/alcohols/yangjus?page=${pageNumber}&size=${size}`;
+
+        // ✅ 검색어가 있는 경우 → 검색 API 호출
+        if (keyword) {
+          url = `/api/v1/alcohols/yangjus/search?keyword=${encodeURIComponent(keyword)}&page=${pageNumber}&size=${size}`;
+        }
+        // ✅ 서브카테고리가 있는 경우 → 특정 컬렉션만 조회
+        else if (subcategory) {
+          url = `/api/v1/alcohols/yangjus/${subcategory}?page=${pageNumber}&size=${size}`;
+        }
+
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         const fetchedResults = data.content || [];
 
         if (pageNumber === 0) {
           setSearchResults(fetchedResults);
-
-          // ✅ "처음 검색 시"에만 와인 탭으로 자동 변경
-          if (fetchedResults.length === 0 && tabKey === "Wine") {
-            setTabKey("Wine");
-          }
         } else {
           setSearchResults((prev) => [...prev, ...fetchedResults]);
         }
@@ -181,17 +194,20 @@ export default function YangjuResultsPage({ setTabKey, tabKey }) {
         setHasMore(fetchedResults.length === size);
       } catch (error) {
         console.error("[API 호출 오류]:", error);
+        setHasMore(false);
       }
       setLoading(false);
     },
-    [keyword, tabKey]
+    [keyword, subcategory]
   );
 
+  // ✅ 검색어 또는 서브카테고리 변경 시 데이터 새로 불러오기
   useEffect(() => {
     setPage(0);
     fetchResults(0);
-  }, [keyword, fetchResults]);
+  }, [keyword, subcategory, fetchResults]);
 
+  // ✅ 무한 스크롤 로직
   const loadMoreItems = useCallback(() => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
@@ -223,6 +239,7 @@ export default function YangjuResultsPage({ setTabKey, tabKey }) {
     };
   }, [loadMoreItems, loading, hasMore]);
 
+  // ✅ 카드 클릭 시 상세 페이지 이동
   const handleCardClick = (id) => {
     console.log(`[카드 클릭]: ID = ${id}`);
     router.push(`/yangju-details/${id}`);
@@ -231,7 +248,17 @@ export default function YangjuResultsPage({ setTabKey, tabKey }) {
   return (
     <div className="px-2">
       <h1 className="text-md text-center mb-4">
-        <b>{keyword}</b>에 대한 검색 결과: {searchResults.length}건
+        {keyword ? (
+          <p>
+            <b>{keyword}</b> 검색 결과: {searchResults.length}건
+          </p>
+        ) : subcategory ? (
+          <p>
+            <b>{subcategory}</b> 카테고리의 검색 결과: {searchResults.length}건
+          </p>
+        ) : (
+          "모든 양주 목록"
+        )}
       </h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
