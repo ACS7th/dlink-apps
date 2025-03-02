@@ -85,7 +85,6 @@ pipeline {
 
                     // (3) `+` 기준으로 줄을 분리하여 처리
                     composeDiff.split('\n').each { line ->
-                        echo "test"
                         line = line.trim() // 앞뒤 공백 제거
                         if (line.startsWith('+')) { // `+` 포함된 줄만 처리
                             def matcher = pattern.matcher(line)

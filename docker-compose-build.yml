@@ -1,37 +1,37 @@
 services:
 
   api-gateway:
-    image: 192.168.3.81/dlink/api-gateway:v2.0.9
+    image: 192.168.3.81/dlink/api-gateway:v2.0.10
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
 
   auth-service:
-    image: 192.168.3.81/dlink/auth-service:v2.0.10
+    image: 192.168.3.81/dlink/auth-service:v2.0.11
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
 
   alcohol-service:
-    image: 192.168.3.81/dlink/alcohol-service:v2.0.2
+    image: 192.168.3.81/dlink/alcohol-service:v2.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
 
   highball-service:
-    image: 192.168.3.81/dlink/highball-service:v2.0.2
+    image: 192.168.3.81/dlink/highball-service:v2.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
 
   review-service:
-    image: 192.168.3.81/dlink/review-service:v2.0.2
+    image: 192.168.3.81/dlink/review-service:v2.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
 
   pairing-service:
-    image: 192.168.3.81/dlink/pairing-service:v2.0.2
+    image: 192.168.3.81/dlink/pairing-service:v2.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
