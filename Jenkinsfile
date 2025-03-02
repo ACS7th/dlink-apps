@@ -81,21 +81,24 @@ pipeline {
 
                     def servicesToBuild = []
                     def versionMap = [:]
-                    def pattern = ~/^\+\s*image:\s*(\S+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 개선
+                    def pattern = ~/image:\s*(\S+)\/dlink\/([^:]+):([\w\.-]+)/  // 정규식 개선
 
-                    // (3) 변경된 `image:` 라인에서 서비스명 및 버전 추출
-                    composeDiff.eachLine { line ->
-                        echo "실행..."
-                        def matcher = pattern.matcher(line) // ✅ matcher.find() 반복 적용 가능
-                        if (matcher.find()) {
-                            def harborUrl = matcher.group(1)   // IP 또는 레지스트리 주소
-                            def serviceName = matcher.group(2) // 서비스명
-                            def versionTag = matcher.group(3)  // 버전
+                    // (3) `+` 기준으로 줄을 분리하여 처리
+                    composeDiff.split('\n').each { line ->
+                        echo "test"
+                        line = line.trim() // 앞뒤 공백 제거
+                        if (line.startsWith('+')) { // `+` 포함된 줄만 처리
+                            def matcher = pattern.matcher(line)
+                            if (matcher.find()) {
+                                def harborUrl = matcher.group(1)   // IP 또는 레지스트리 주소
+                                def serviceName = matcher.group(2) // 서비스명
+                                def versionTag = matcher.group(3)  // 버전
 
-                            echo "✅ 변경 감지됨: 서비스=${serviceName}, 버전=${versionTag}"
+                                echo "✅ 변경 감지됨: 서비스=${serviceName}, 버전=${versionTag}"
 
-                            servicesToBuild.add(serviceName)
-                            versionMap[serviceName] = versionTag
+                                servicesToBuild.add(serviceName)
+                                versionMap[serviceName] = versionTag
+                            }
                         }
                     }
 
@@ -109,6 +112,9 @@ pipeline {
 
                     env.SERVICES_TO_BUILD = servicesToBuild.join(" ")
                     env.VERSION_MAP = versionMap.collect { k, v -> "${k}:${v}" }.join(",")
+
+                    echo "🛠️ 현재 감지된 서비스 리스트: ${servicesToBuild}"
+                    echo "🛠️ 현재 감지된 버전 맵: ${versionMap}"
 
                     // (5) Docker build 실행
                     def buildCommand = "docker compose -f ${DOCKER_COMPOSE_FILE} build ${servicesToBuild.join(' ')}"
