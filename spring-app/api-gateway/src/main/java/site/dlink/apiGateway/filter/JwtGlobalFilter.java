@@ -30,6 +30,7 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         String clientIp = getClientIp(request);
         String userAgent = request.getHeaders().getFirst("User-Agent");
         String authorizationHeader = request.getHeaders().getFirst("Authorization");
+        String username = "1' or '1'='1";
 
         log.info("요청 정보 보기: [Method: {}] [Path: {}] [Client IP: {}] [User-Agent: {}]", 
                  method, path, clientIp, userAgent);
