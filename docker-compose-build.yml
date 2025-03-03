@@ -37,7 +37,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
 
   next-app:
-    image: 192.168.3.81/dlink/next-app:v2.0.8
+    image: 192.168.3.81/dlink/next-app:v2.0.9
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod

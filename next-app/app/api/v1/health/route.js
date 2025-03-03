@@ -7,8 +7,6 @@ export async function GET() {
     // 정상적인 상태 반환
     return NextResponse.json({ status: "ok" }, { status: 200 });
 
-    // ✅ 성공 로그
-    console.log(`[Health Check] 성공 ✅ - 상태: OK`);
   } catch (error) {
     // 예외 발생 시 오류 반환
     console.error(`[Health Check] 실패 ❌ - 오류: ${error.message}`);
