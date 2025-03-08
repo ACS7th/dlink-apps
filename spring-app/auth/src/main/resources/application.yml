@@ -1,12 +1,5 @@
 spring:
   application:
-    name: auth
-
-logging.pattern.level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-management:
-  tracing:
-    sampling:
-      probability: 1.0 
-  zipkin:
-    tracing:
-      endpoint: ${OTEL_COLLECTOR_URI}
+    name: alcohols
+  elasticsearch:
+    uris: ${ES_DATASOURCE_URI:localhost:9200}

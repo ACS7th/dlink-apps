@@ -1,11 +1,8 @@
 spring:
   application:
     name: alcohols
-
   elasticsearch:
-    uris: ${ES_DATASOURCE_URI}
-
-logging.pattern.level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+    uris: ${ES_DATASOURCE_URI:localhost:9200}
 
 management:
   tracing:
@@ -13,4 +10,10 @@ management:
       probability: 1.0 
   zipkin:
     tracing:
-      endpoint: ${OTEL_COLLECTOR_URI}
+      endpoint: ${OTEL_COLLECTOR_URI:localhost:4317}
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

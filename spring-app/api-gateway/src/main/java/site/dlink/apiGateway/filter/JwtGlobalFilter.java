@@ -29,9 +29,8 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         String method = request.getMethod().name();
         String clientIp = getClientIp(request);
         String userAgent = request.getHeaders().getFirst("User-Agent");
-        String authorizationHeader = request.getHeaders().getFirst("Authorization");
 
-        log.info("요청 정보 보기: [Method: {}] [Path: {}] [Client IP: {}] [User-Agent: {}]", 
+        log.info("요청 정보: [Method: {}] [Path: {}] [Client IP: {}] [User-Agent: {}]", 
                  method, path, clientIp, userAgent);
         if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
