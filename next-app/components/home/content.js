@@ -59,7 +59,6 @@ export default function Content() {
         >
           <NextImage src="/search2.svg" alt="search" width={24} height={24} />
         </Button>
-
         <ImageUploadButton />
       </div>
 

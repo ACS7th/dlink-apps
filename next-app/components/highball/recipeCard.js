@@ -1,14 +1,18 @@
 "use client";
 
+import { forwardRef } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Image, Textarea } from "@heroui/react";
 import CardMenu from "@/components/highball/cardmenu";
 import LoginUser from "../auth/loginUser";
 import LikeButton from "../buttons/likeButton";
 
-export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }) {
+const RecipeCard = forwardRef(({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }, ref) => {
   return (
-    <Card className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1 mb-4 relative`}>
+    <Card
+      ref={ref}
+      className={`${resolvedTheme === "dark" ? "bg-gray-800" : "bg-white"} p-1 mb-4 relative`}
+    >
       <CardBody>
         {item.writeUser === session?.user?.id && (
           <div className="absolute top-2 right-1">
@@ -30,7 +34,7 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
           <Textarea
             isReadOnly
             className="max-w-full"
-            value={item.making}  // 실시간 업데이트 위해 value 사용
+            value={item.making}
             variant="bordered"
           />
           <div className="text-base mt-2">
@@ -50,7 +54,9 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             <span className="text-xs text-gray-500">
               {new Date(item.createdAt).toLocaleString()}
             </span>
-          ) : <span className="text-xs text-gray-500">2025. 2. 5. 오후 2:13:15</span>}
+          ) : (
+            <span className="text-xs text-gray-500">2025. 2. 5. 오후 2:13:15</span>
+          )}
           <LikeButton
             itemId={item.id}
             userid={session?.user?.id}
@@ -64,4 +70,8 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
       </CardBody>
     </Card>
   );
-}
+});
+
+RecipeCard.displayName = "RecipeCard";
+
+export default RecipeCard;

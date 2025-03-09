@@ -75,7 +75,7 @@ export default function LikeButton({
     };
 
     return (
-        <div className={`${className} flex items-center gap-2`}>
+        <div className={`${className} flex items-center`}>
             <button
                 onClick={handleToggle}
                 disabled={isProcessing}
@@ -83,7 +83,7 @@ export default function LikeButton({
             >
                 <span className="like-icon like-icon-state" aria-live="polite"></span>
             </button>
-            <span className="text-xs mt-1">{likes}</span>
+            <span className="text-sm w-1">{likes}</span>
         </div>
     );
 }

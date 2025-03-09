@@ -40,7 +40,7 @@ public class HighballService {
     }
 
     public List<Highball> findByCategory(HighballCateEnum category) {
-        return highballRepository.findByCategory(category);
+        return highballRepository.findByCategory(category.name());
     }
 
     public Highball findHighballById(String id) {
