@@ -3,6 +3,16 @@
 import { useState, useEffect } from "react";
 import "@/styles/like-button.css";
 
+interface LikeButtonProps {
+    itemId: string;
+    userid?: string;
+    initialLikes?: number;
+    initialLiked?: boolean;
+    className?: string;
+    readOnly?: boolean;
+    onLikeToggle?: (id: string, newLikes: number) => void;
+}
+
 export default function LikeButton({
     itemId,
     userid,
@@ -10,21 +20,18 @@ export default function LikeButton({
     initialLiked = false,
     className = "",
     readOnly = false,
-    onLikeToggle, // 부모에 좋아요 수 업데이트를 알리기 위한 콜백
-}) {
-    const [likes, setLikes] = useState(initialLikes);
-    const [liked, setLiked] = useState(initialLiked);
-    const [isProcessing, setIsProcessing] = useState(false);
+    onLikeToggle,
+}: LikeButtonProps) {
+    const [likes, setLikes] = useState<number>(initialLikes);
+    const [liked, setLiked] = useState<boolean>(initialLiked);
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
         async function fetchLikeCounts() {
             try {
-                const res = await fetch(
-                    `/api/v1/highball/like-counts?id=${itemId}`,
-                    {
-                        method: "GET",
-                    }
-                );
+                const res = await fetch(`/api/v1/highball/like-counts?id=${itemId}`, {
+                    method: "GET",
+                });
                 if (!res.ok) {
                     throw new Error("좋아요 수 조회 실패");
                 }
@@ -68,16 +75,13 @@ export default function LikeButton({
     };
 
     return (
-        <div className={`${className}`}>
+        <div className={`${className} flex items-center gap-2`}>
             <button
                 onClick={handleToggle}
                 disabled={isProcessing}
                 className={`like ${liked ? "liked" : "unliked"}`}
             >
-                <span
-                    className="like-icon like-icon-state"
-                    aria-live="polite"
-                ></span>
+                <span className="like-icon like-icon-state" aria-live="polite"></span>
             </button>
             <span className="text-xs mt-1">{likes}</span>
         </div>
