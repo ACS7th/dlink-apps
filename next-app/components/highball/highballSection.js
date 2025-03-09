@@ -17,7 +17,7 @@ export default function HighballSection() {
   const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const category = searchParams.get("subcategory");
 
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
@@ -163,18 +163,20 @@ export default function HighballSection() {
           레시피 작성
         </Button>
       </div>
-
-      {sortedRecipes.map((item) => (
-        <RecipeCard
-          key={item.id}
-          item={item}
-          session={session}
-          resolvedTheme={resolvedTheme}
-          onDelete={handleDeleteRecipe}
-          onEdit={handleEditRecipe}
-          onLikeToggle={handleUpdateLike}
-        />
-      ))}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {sortedRecipes.map((item) => (
+          <RecipeCard
+            key={item.id}
+            item={item}
+            session={session}
+            resolvedTheme={resolvedTheme}
+            onDelete={handleDeleteRecipe}
+            onEdit={handleEditRecipe}
+            onLikeToggle={handleUpdateLike}
+          />
+        ))}
+      </div>
 
       {/* 등록 모달 (FormData 방식 사용) */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto" className="mx-4">

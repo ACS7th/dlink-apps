@@ -21,7 +21,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 // export default function SearchCategory({
 //   title,
 //   filters,
-//   category,
+//   alcoholCate,
 //   subcategory: propSubcategory,
 // }) {
 //   const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //     );
 
 //     if (
-//       category === "양주" &&
+//       alcoholCate === "양주" &&
 //       translatedSubcategory &&
 //       validCategoryFilters.type?.includes(translatedSubcategory)
 //     ) {
@@ -48,7 +48,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //     }
 
 //     return initialFilters;
-//   }, [validCategoryFilters, category, translatedSubcategory]);
+//   }, [validCategoryFilters, alcoholCate, translatedSubcategory]);
 
 //   const [selectedFilters, setSelectedFilters] = useState(getInitialFilters);
 
@@ -59,7 +59,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //   // 양주 서브카테고리 자동 적용
 //   useEffect(() => {
 //     if (
-//       category === "양주" &&
+//       alcoholCate === "양주" &&
 //       translatedSubcategory &&
 //       validCategoryFilters.type?.includes(translatedSubcategory)
 //     ) {
@@ -70,7 +70,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //         return prev;
 //       });
 //     }
-//   }, [translatedSubcategory, category, validCategoryFilters.type]);
+//   }, [translatedSubcategory, alcoholCate, validCategoryFilters.type]);
 
 //   // 필터 토글 함수
 //   const toggleFilter = (filterCategory, value) => {
@@ -87,7 +87,7 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //     <div className="w-full max-w-full mx-auto p-4 md:p-6">
 //       <h1 className="text-2xl font-bold text-primary mb-1">{title}</h1>
 //       <div className="h-[3px] bg-primary mb-4" />
-//       {category === "yangju" ?
+//       {alcoholCate === "yangju" ?
 //         <div className="flex flex-col md:flex-row space-x-5">
 //           {Object.entries(validCategoryFilters).map(([filterCategory, options]) => (
 //             <div key={filterCategory} className="bg-gray-100 p-2 rounded">
@@ -111,27 +111,19 @@ import YangjuResultsPage from "@/components/searchresults/yangjuSearchResults";
 //   );
 // }
 
-
-
-
-
-
-
 // ✅ 양주 카테고리 목록 (컬렉션과 매칭)
 const filterOptions = {
   type: ["gin", "rum", "vodka", "brandy", "liqueur", "whiskey", "tequila"],
 };
 
-export default function SearchCategory({ title, category }) {
+export default function SearchCategory({ title, alcoholCate }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-  // ✅ 현재 선택된 서브카테고리 상태
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("subcategory") || "");
-
-  // ✅ URL이 변경되면 서브카테고리 업데이트
+  // ✅ URL이 변경되면 카테고리 업데이트
   useEffect(() => {
-    setSelectedCategory(searchParams.get("subcategory") || "");
+    setSelectedCategory(searchParams.get("subcategory")?.toLocaleLowerCase() || "");
   }, [searchParams]);
 
   // ✅ 서브카테고리 버튼 클릭 시 필터링 적용
@@ -145,9 +137,8 @@ export default function SearchCategory({ title, category }) {
       <h1 className="text-2xl font-bold text-primary mb-1">{title}</h1>
       <div className="h-[3px] bg-primary mb-4" />
 
-      {/* ✅ 양주 카테고리 버튼 */}
-      {category === "yangju" && (
-        <div className="flex flex-wrap gap-2 mb-4">
+      {alcoholCate === "yangju" && (
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {filterOptions.type.map((type) => (
             <button
               key={type}
@@ -161,8 +152,7 @@ export default function SearchCategory({ title, category }) {
         </div>
       )}
 
-      {/* ✅ 필터링된 결과 표시 */}
-      {category === "yangju" ? (
+      {alcoholCate === "yangju" ? (
         <YangjuResultsPage subcategory={selectedCategory} />
       ) : (
         <WineSearchResultsPage />

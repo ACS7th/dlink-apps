@@ -125,7 +125,7 @@ export default function WineTabs({ alcohol }) {
               <Spinner />
             </div>
           ) : errorReview ? (
-            <div className="py-4 text-center text-red-500">
+            <div className="py-4 text-center">
               {errorReview}
             </div>
           ) : reviews && reviews.length > 0 ? (

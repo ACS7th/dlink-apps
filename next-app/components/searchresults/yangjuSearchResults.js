@@ -134,26 +134,18 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Card, CardBody, CardFooter, Image, Spinner, Tooltip } from "@heroui/react";
+import AlcoholsCard from "../cards/alcoholsCard";
 
 export const dynamic = "force-dynamic";
 
 export default function YangjuResultsPage({ subcategory }) {
   const searchParams = useSearchParams();
-  const keyword = searchParams.get("query"); // 검색어 (검색바에서 입력한 값)
+  const keyword = searchParams.get("query");
   const router = useRouter();
 
   const [searchResults, setSearchResults] = useState([]); // ✅ 필터링된 데이터 저장
@@ -163,21 +155,17 @@ export default function YangjuResultsPage({ subcategory }) {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
-  // ✅ 백엔드 API에서 데이터 가져오기
   const fetchResults = useCallback(
     async (pageNumber) => {
-      console.log(`[API 호출] 페이지: ${pageNumber}, 검색어: ${keyword}, 서브카테고리: ${subcategory}`);
       setLoading(true);
       try {
         let url = `/api/v1/alcohols/yangjus?page=${pageNumber}&size=${size}`;
 
-        // ✅ 검색어가 있는 경우 → 검색 API 호출
         if (keyword) {
           url = `/api/v1/alcohols/yangjus/search?keyword=${encodeURIComponent(keyword)}&page=${pageNumber}&size=${size}`;
         }
-        // ✅ 서브카테고리가 있는 경우 → 특정 컬렉션만 조회
         else if (subcategory) {
-          url = `/api/v1/alcohols/yangjus/${subcategory}?page=${pageNumber}&size=${size}`;
+          url = `/api/v1/alcohols/yangjus/filter?category=${subcategory}&page=${pageNumber}&size=${size}`;
         }
 
         const res = await fetch(url);
@@ -239,9 +227,7 @@ export default function YangjuResultsPage({ subcategory }) {
     };
   }, [loadMoreItems, loading, hasMore]);
 
-  // ✅ 카드 클릭 시 상세 페이지 이동
   const handleCardClick = (id) => {
-    console.log(`[카드 클릭]: ID = ${id}`);
     router.push(`/yangju-details/${id}`);
   };
 
@@ -261,28 +247,7 @@ export default function YangjuResultsPage({ subcategory }) {
         )}
       </h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {searchResults.map((result) => (
-          <Card isPressable onPress={() => handleCardClick(result.id)} key={result.id} className="pt-2 flex justify-center">
-            <CardBody className="overflow-visible pb-0">
-              <Image
-                isZoomed
-                shadow="sm"
-                alt={result.name}
-                className="object-cover rounded-xl"
-                src={result.image || "/LOGO4.png"}
-                width={270}
-              />
-            </CardBody>
-            <CardFooter className="flex flex-col justify-center">
-              <Tooltip content={result.name}>
-                <p className="font-bold text-md">{result.korName}</p>
-              </Tooltip>
-              <p className="text-default-400 text-sm">{result.origin}</p>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <AlcoholsCard searchResults={searchResults} handleCardClick={handleCardClick} />
 
       <div ref={loaderRef} className="h-10 flex justify-center items-center mt-4">
         {loading && <Spinner />}

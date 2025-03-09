@@ -8,8 +8,8 @@ export default function LoginUser({ userId }) {
 
   // 기본 사용자 정보 (조회 실패 시 fallback)
   const defaultUserData = {
-    name: "익명",
-    email: "일반회원",
+    name: "DLink",
+    email: "test@test.com",
     profileImageUri: "/favicon.ico",
   };
 

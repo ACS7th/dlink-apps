@@ -11,14 +11,11 @@ import ReviewCard from "@/components/review/reviewcard";
 import PairingCard from "@/components/cards/pairingCard";
 import RecipeCard from "@/components/highball/recipeCard";
 
-export default function YangjuTabs({ product, productCategory, productId }) {
+export default function YangjuTabs({ product }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  const category = productCategory;
-  const drinkId = productId;
-
+  const productId = product._id.$oid;
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [errorRecipe, setErrorRecipe] = useState(null);
@@ -27,105 +24,81 @@ export default function YangjuTabs({ product, productCategory, productId }) {
   const [loadingReview, setLoadingReview] = useState(false);
   const [errorReview, setErrorReview] = useState(null);
 
-  // // 하이볼 레시피 불러오기
-  // useEffect(() => {
-  //   if (!category) return;
-  //   setLoadingRecipe(true);
-  //   async function fetchHighballRecipe() {
-  //     try {
-  //       const categoryParam = encodeURIComponent(category);
-  //       const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
-  //       if (!res.ok) {
-  //         throw new Error(`HTTP error! status: ${res.status}`);
-  //       }
-  //       const data = await res.json();
-
-  //       setHighballRecipe(data);
-  //     } catch (error) {
-  //       console.error("하이볼 레시피 호출 오류:", error);
-  //       setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
-  //     } finally {
-  //       setLoadingRecipe(false);
-  //     }
-  //   }
-  //   fetchHighballRecipe();
-  // }, [category]);
-
   useEffect(() => {
-    if (!category) return;
+    if (!product.category) return;
     setLoadingRecipe(true);
-
-    async function fetchHighballRecipe() {
-      try {
-        const categoryParam = encodeURIComponent(category);
-        const res = await fetch(`/api/v1/highball/category?category=${categoryParam}`);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data = await res.json();
-        console.log("data:", data);
-        // 좋아요(likeCount) 기준 내림차순 정렬 후 상위 3개 선택
-        const sortedRecipes = data
-          .sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
-          .slice(0, 3);
-        console.log("sortedRecipes:", sortedRecipes);
-        setHighballRecipe(sortedRecipes);
-      } catch (error) {
-        console.error("하이볼 레시피 호출 오류:", error);
-        setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
-      } finally {
-        setLoadingRecipe(false);
-      }
-    }
-
     fetchHighballRecipe();
-  }, [category]);
+  }, [product.category]);
 
+  // 레시피 불러오기  
+  async function fetchHighballRecipe() {
+    try {
+      const res = await fetch(`/api/v1/highball/category?category=${product.category}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json();
+      // 좋아요(likeCount) 기준 내림차순 정렬 후 상위 3개 선택
+      const sortedRecipes = data
+        .sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
+        .slice(0, 3);
+      setHighballRecipe(sortedRecipes);
+    } catch (error) {
+      console.error("하이볼 레시피 호출 오류:", error);
+      setErrorRecipe("하이볼 레시피를 불러오지 못했습니다.");
+    } finally {
+      setLoadingRecipe(false);
+    }
+  }
 
   // 리뷰 목록 불러오기 
   useEffect(() => {
-    async function fetchReviews() {
-      try {
-        setLoadingReview(true);
-        const res = await fetch(
-          `/api/v1/reviews/search?category=${category}&drinkId=${drinkId}`
-        );
-        if (res.status === 404) {
-          // 리뷰가 없는 경우
-          setReviews([]);
-          setErrorReview("리뷰가 없습니다.");
-          return;
-        }
-        if (!res.ok) {
-          throw new Error(`리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`);
-        }
-        const data = await res.json();
-        if (!data || Object.keys(data).length === 0) {
-          setReviews([]);
-          return;
-        }
-        // 응답 객체를 배열로 변환 (각 리뷰의 key 값을 writeUser 및 id로 설정)
-        const transformedReviews = Object.entries(data).map(
-          ([userId, review]) => ({
-            ...review,
-            writeUser: userId,
-            id: userId,
-          })
-        );
-        setReviews(transformedReviews);
-        setErrorReview(null);
-      } catch (error) {
-        console.error("❌ 리뷰 불러오기 실패:", error.message);
-        setReviews([]);
-        setErrorReview(error.message);
-      } finally {
-        setLoadingReview(false);
-      }
-    }
-    if (category && drinkId) {
+    if (product.category && productId) {
       fetchReviews();
     }
-  }, [category, drinkId]);
+  }, [product]);
+
+  async function fetchReviews() {
+    try {
+      setLoadingReview(true);
+      const res = await fetch(
+        `/api/v1/reviews/search?category=${product.category}&drinkId=${productId}`
+      );
+      console.log(res)
+
+      if (res.status === 404) {
+        setReviews([]);
+        setErrorReview("리뷰가 없습니다.");
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(`리뷰 목록을 불러오지 못했습니다. 서버 응답 코드: ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (!data || Object.keys(data).length === 0) {
+        setReviews([]);
+        return;
+      }
+      // 응답 객체를 배열로 변환 (각 리뷰의 key 값을 writeUser 및 id로 설정)
+      const transformedReviews = Object.entries(data).map(
+        ([userId, review]) => ({
+          ...review,
+          writeUser: userId,
+          id: userId,
+        })
+      );
+      setReviews(transformedReviews);
+      setErrorReview(null);
+    } catch (error) {
+      console.error("❌ 리뷰 불러오기 실패:", error.message);
+      setReviews([]);
+      setErrorReview(error.message);
+    } finally {
+      setLoadingReview(false);
+    }
+  }
 
   const tabs = [
     {
@@ -138,7 +111,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
               <Spinner />
             </div>
           ) : errorReview ? (
-            <div className="py-4 text-center text-red-500">
+            <div className="py-4 text-center">
               {errorReview}
             </div>
           ) : reviews && reviews.length > 0 ? (
@@ -165,7 +138,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm cursor-pointer"
               onPress={() => {
-                router.push(`/reviews?category=${category}&drinkId=${drinkId}`);
+                router.push(`/reviews?category=${product.category}&drinkId=${productId}`);
               }}
             >
               다른 리뷰 더보기
@@ -191,7 +164,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
               <Spinner />
             </div>
           ) : errorRecipe ? (
-            <div className="py-4 text-center text-red-500">
+            <div className="py-4 text-center">
               {errorRecipe}
             </div>
           ) : highballRecipe &&
@@ -218,7 +191,7 @@ export default function YangjuTabs({ product, productCategory, productId }) {
               showAnchorIcon
               className="text-blue-500 hover:underline text-sm cursor-pointer"
               onPress={() => {
-                router.push(`/highballs?category=${category}`);
+                router.push(`/highballs?subcategory=${product.category}`);
               }}
             >
               전체 레시피 보기

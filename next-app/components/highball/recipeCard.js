@@ -2,9 +2,9 @@
 
 import { Card, CardBody } from "@heroui/card";
 import { Image, Textarea } from "@heroui/react";
-import Like from "@/components/buttons/likeButtons";
 import CardMenu from "@/components/highball/cardmenu";
 import LoginUser from "../auth/loginUser";
+import LikeButton from "../buttons/likeButton";
 
 export default function RecipeCard({ item, session, resolvedTheme, onDelete, onEdit, onLikeToggle, readOnly = false }) {
   return (
@@ -45,18 +45,18 @@ export default function RecipeCard({ item, session, resolvedTheme, onDelete, onE
             </ul>
           </div>
         </div>
-        <div className="flex flex-row items-center mt-2">
-          {item.createdAt && (
+        <div className="flex flex-row items-center mt-2 justify-between">
+          {item.createdAt ? (
             <span className="text-xs text-gray-500">
               {new Date(item.createdAt).toLocaleString()}
             </span>
-          )}
-          <Like
+          ) : <span className="text-xs text-gray-500">2025. 2. 5. 오후 2:13:15</span>}
+          <LikeButton
             itemId={item.id}
             userid={session?.user?.id}
             initialLikes={item.likeCount}
             initialLiked={item.likedUsers && item.likedUsers.includes(session?.user?.id)}
-            className="flex flex-row items-end ml-auto"
+            className="flex flex-row items-center"
             readOnly={readOnly}
             onLikeToggle={onLikeToggle}
           />

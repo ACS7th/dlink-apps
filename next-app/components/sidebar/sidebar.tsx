@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React from "react";
+import React, { useEffect } from "react";
 import { Sidebar } from "./sidebar.styles";
 import { Avatar, Tooltip } from "@heroui/react";
 import { CompaniesDropdown } from "./companies-dropdown";
@@ -22,6 +22,9 @@ import { ChangeLogIcon } from "../icons/sidebar/changelog-icon";
 import { usePathname } from "next/navigation";
 // import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { CocktailIcon } from "../icons/sidebar/cocktail-icon";
+import { BookIcon } from "../icons/sidebar/book-icon";
+import { WhiskeyIcon } from "../icons/sidebar/whiskey-icon";
 
 export const SidebarWrapper = () => {
     const pathname = usePathname();
@@ -53,11 +56,13 @@ export const SidebarWrapper = () => {
                             <SidebarItem
                                 isActive={pathname === "/categories/wine"}
                                 title="와인"
-                                icon={<BalanceIcon />}
+                                icon={<CocktailIcon />}
                                 href="/categories/wine"
                             />
                             <CollapseItems
-                                icon={<BalanceIcon />}
+                                href="/categories/yangju"
+                                icon={<WhiskeyIcon />}
+                                title="양주"
                                 items={[
                                     "Gin",
                                     "Tequila",
@@ -67,7 +72,22 @@ export const SidebarWrapper = () => {
                                     "Whiskey",
                                     "Rum",
                                 ]}
-                                title="양주"
+                            />
+                        </SidebarMenu>
+                        <SidebarMenu title="Highball">
+                            <CollapseItems
+                                href="/highballs"
+                                icon={<BookIcon />}
+                                items={[
+                                    "Gin",
+                                    "Tequila",
+                                    "Vodka",
+                                    "Brandy",
+                                    "Liqueur",
+                                    "Whiskey",
+                                    "Rum",
+                                ]}
+                                title="하이볼 레시피"
                             />
                         </SidebarMenu>
                         {/* <SidebarMenu title="Links">

@@ -20,20 +20,14 @@ import { useEffect } from "react";
 //   );
 // }
 
-
-
-export default function Page({ params, searchParams }) {
-  const { category } = params;
-  const subcategory = searchParams?.subcategory; // URL에서 서브카테고리 가져오기
-
+export default function Page({ params }) {
+  const { alcoholCate } = params;
   const convertCate = { wine: "와인", yangju: "양주" };
 
   return (
     <SearchCategory
-      title={convertCate[category] || category}
-      filters={category === "yangju" ? filterData[category] : null}
-      category={category}
-      subcategory={subcategory} // 서브카테고리 전달
+      title={convertCate[alcoholCate] || alcoholCate}
+      alcoholCate={alcoholCate}
     />
   );
 }
