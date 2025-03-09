@@ -29,15 +29,20 @@ export default function HighballSection() {
   // 레시피 목록에서 특정 항목을 찾기 위한 Ref
   const recipeRefs = useRef(new Map());
 
-  // ✅ 특정 highballId가 있다면 해당 RecipeCard로 스크롤
+  // 특정 highballId가 있다면 해당 RecipeCard로 스크롤
   useEffect(() => {
-    if (highballId && recipeRefs.current.has(highballId)) {
-      const targetCard = recipeRefs.current.get(highballId);
-      if (targetCard) {
-        targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+    if (highballId && recipes.length > 0) {
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const targetCard = recipeRefs.current.get(highballId);
+          if (targetCard) {
+            targetCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+          }
+        });
+      }, 100); // 100ms 지연을 추가하여 리스트가 렌더링된 후 실행
     }
   }, [recipes, highballId]);
+  
 
   // 레시피 목록 불러오기
   const fetchRecipes = useCallback(async () => {

@@ -2,9 +2,13 @@
 import React from 'react';
 
 const MessageParser = ({ children, actions }) => {
-  const parse = (message) => {
+  const handleParse = (message) => {
     if (message.includes('hello')) {
       actions.handleHello();
+    }
+
+    if(message.includes('추천')) {
+      actions.handleRecommend();
     }
   };
 
@@ -12,7 +16,7 @@ const MessageParser = ({ children, actions }) => {
     <div>
       {React.Children.map(children, (child) => {
         return React.cloneElement(child, {
-          parse: parse,
+          parse: handleParse,
           actions,
         });
       })}
