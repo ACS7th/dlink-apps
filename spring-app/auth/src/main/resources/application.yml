@@ -3,3 +3,15 @@ spring:
     name: alcohols
   elasticsearch:
     uris: ${ES_DATASOURCE_URI:localhost:9200}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: asordk@gmail.com
+    password: 'ccgo apfa skxs tpzm' 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
