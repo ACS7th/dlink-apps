@@ -5,7 +5,7 @@ import { Button } from "@heroui/react";
 const RecommendationWidget = () => {
   // 추천할 하이볼 레시피 (예제)
   const recommendations = [
-    { name: "진토닉", url: "/highballs?subcategory=gin&highballId=67c31c8427a37d2c8c9bfaf0" },
+    { name: "레몬 엘더 플라워 스플리처", url: "/highballs?subcategory=vodka&highballId=67b68ea27434c1d6076ec564" },
     { name: "위스키 사워", url: "/highballs?subcategory=gin&highballId=67c31c8427a37d2c8c9bfaf0" },
     { name: "블러디 메리", url: "/highballs?subcategory=gin&highballId=67c31c8427a37d2c8c9bfaf0" },
   ];

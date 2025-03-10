@@ -25,8 +25,8 @@ const RecipeCard = forwardRef(({ item, session, resolvedTheme, onDelete, onEdit,
         <div className="flex items-center">
           <LoginUser userId={item.writeUser} />
         </div>
-        <div className="mt-1 mb-2">
-          <h2 className="font-semibold text-lg">🍹 {item.name || "레시피"}</h2>
+        <div0 className="mt-1 mb-2">
+          <h2 className="font-semibold text-lg">{item.name || "레시피"}</h2>
           <div className="flex justify-between items-center mt-2">
             <Image src={item.imageUrl ? item.imageUrl : "/LOGO.png"} alt="Recipe Image" />
           </div>
@@ -48,7 +48,7 @@ const RecipeCard = forwardRef(({ item, session, resolvedTheme, onDelete, onEdit,
                 ))}
             </ul>
           </div>
-        </div>
+        </div0>
         <div className="flex flex-row items-center mt-2 justify-between">
           {item.createdAt ? (
             <span className="text-xs text-gray-500">

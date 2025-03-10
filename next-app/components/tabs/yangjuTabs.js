@@ -158,7 +158,7 @@ export default function YangjuTabs({ product }) {
       id: "highball",
       label: "하이볼 레시피",
       content: (
-        <>
+        <div>
           {loadingRecipe ? (
             <div className="py-4 text-center">
               <Spinner />
@@ -170,7 +170,7 @@ export default function YangjuTabs({ product }) {
           ) : highballRecipe &&
             Array.isArray(highballRecipe) &&
             highballRecipe.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-10">
               {highballRecipe.slice(0, 3).map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
@@ -197,7 +197,7 @@ export default function YangjuTabs({ product }) {
               전체 레시피 보기
             </Link>
           </div>
-        </>
+        </div>
       ),
     },
   ];
