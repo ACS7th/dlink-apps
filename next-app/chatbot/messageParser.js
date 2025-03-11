@@ -1,16 +1,13 @@
 // in MessageParser.js
+import axios from 'axios';
 import React from 'react';
 
 const MessageParser = ({ children, actions }) => {
+
   const handleParse = (message) => {
 
-    if (message.includes('hello')) {
-      actions.handleHello();
-    }
+    actions.handleChat(message)
 
-    if(message.includes('추천')) {
-      actions.handleRecommend();
-    }
   };
 
   return (

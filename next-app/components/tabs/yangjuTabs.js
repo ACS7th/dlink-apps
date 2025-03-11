@@ -115,7 +115,7 @@ export default function YangjuTabs({ product }) {
               {errorReview}
             </div>
           ) : reviews && reviews.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-2xl mx-auto">
               {reviews.slice(0, 3).map((review) => (
                 <ReviewCard
                   key={review.id}
@@ -158,7 +158,7 @@ export default function YangjuTabs({ product }) {
       id: "highball",
       label: "하이볼 레시피",
       content: (
-        <div>
+        <div className="max-w-2xl mx-auto">
           {loadingRecipe ? (
             <div className="py-4 text-center">
               <Spinner />

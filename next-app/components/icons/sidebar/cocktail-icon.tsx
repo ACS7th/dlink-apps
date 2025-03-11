@@ -12,7 +12,7 @@ export const CocktailIcon = () => {
             preserveAspectRatio="xMidYMid meet"
             xmlns="http://www.w3.org/2000/svg"
         >
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
             <g
                 id="SVGRepo_tracerCarrier"
                 stroke-linecap="round"
@@ -24,9 +24,9 @@ export const CocktailIcon = () => {
                     fill="#969696"
                     d="M19.1469 5H5.45312L12.3 11.125L19.1469 5Z"
                     stroke="none"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                 ></path>{" "}
                 <path
                     fill="#969696"

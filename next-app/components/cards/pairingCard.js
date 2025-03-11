@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardBody } from "@heroui/card";
-import { Button, Image } from "@heroui/react";
+import { Button, Image, Skeleton } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
@@ -87,7 +87,7 @@ const PairingCard = ({ alcohol }) => {
         console.error("Failed to fetch recommendation:", error);
       }
     }
-    
+
   }, [alcohol, fetchYoutubeLink]);
 
   // 초기 데이터 로드 (Meat 카테고리 기본값)
@@ -141,34 +141,34 @@ const PairingCard = ({ alcohol }) => {
           <LoadingAnimation />
         ) : (
           <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              {youtubeLink ? (
-                <a
-                  href={youtubeLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative block"
-                >
-                  <Image
-                    src={thumbnailUrl}
-                    alt="YouTube Thumbnail"
-                    className="w-24 h-40 rounded-md object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-10 h-10 text-white opacity-80"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                </a>
-              ) : (
-                <div className="w-24 h-24 bg-gray-300 rounded-md" />
-              )}
-            </div>
+
+            {youtubeLink ? (
+              <a
+                href={youtubeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block"
+              >
+                <Image
+                  src={thumbnailUrl}
+                  alt="YouTube Thumbnail"
+                  className="w-24 h-40 rounded-md object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-10 h-10 text-white opacity-80"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </a>
+            ) : (
+              <Skeleton className="w-24 h-40 rounded-md" />
+            )}
+
 
             <div className="w-full flex flex-col">
               {pairingData ? (

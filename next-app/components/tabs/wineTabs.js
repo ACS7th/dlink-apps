@@ -129,7 +129,7 @@ export default function WineTabs({ alcohol }) {
               {errorReview}
             </div>
           ) : reviews && reviews.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-4 mx-auto max-w-2xl">
               {/* 최대 3개의 리뷰만 보여줌 */}
               {reviews.slice(0, 3).map((review) => (
                 <ReviewCard
