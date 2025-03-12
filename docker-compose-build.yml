@@ -13,13 +13,13 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
 
   alcohol-service:
-    image: 192.168.3.81/dlink/alcohol-service:v2.0.5
+    image: 192.168.3.81/dlink/alcohol-service:v2.0.6
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
 
   highball-service:
-    image: 192.168.3.81/dlink/highball-service:v2.0.5
+    image: 192.168.3.81/dlink/highball-service:v2.0.6
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
