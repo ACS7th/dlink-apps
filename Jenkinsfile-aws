@@ -114,19 +114,26 @@ pipeline {
             }
         }
 
-        stage('Login & Push Changed Applications') {
+        stage('Push to AWS ECR') {
             when {
                 expression { env.SERVICES_TO_BUILD && env.SERVICES_TO_BUILD.trim() != "" }
             }
             steps {
                 script {
-                    // 1) Harbor 로그인
-                    withCredentials([usernamePassword(credentialsId: 'harbor-access', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-                        sh "docker login ${HARBOR_URL} -u ${HARBOR_USER} -p ${HARBOR_PASS}"
-                    }
-                    // 2) 이미지 푸시
-                    withDockerRegistry([credentialsId: 'harbor-access', url: "https://${HARBOR_URL}"]) {
-                        sh "docker compose -f ${DOCKER_COMPOSE_FILE} push ${env.SERVICES_TO_BUILD}"
+                    // AWS ECR 리포지토리 URL
+                    def ECR_URL = "084550838259.dkr.ecr.ap-northeast-2.amazonaws.com"
+
+                    // 변경된 서비스 리스트 반복
+                    env.SERVICES_TO_BUILD.split(" ").each { service ->
+                        def imageTag = env.VERSION_MAP.split(",").find { it.startsWith("${service}:") }?.split(":")[1] ?: "latest"
+                        def ecrRepository = "${ECR_URL}/dlink/${service}"
+
+                        echo "🚀 푸시할 서비스: ${service}, 태그: ${imageTag}"
+
+                        sh """
+                        docker tag dlink/${service}:${imageTag} ${ecrRepository}:${imageTag}
+                        docker push ${ecrRepository}:${imageTag}
+                        """
                     }
                 }
             }
@@ -181,7 +188,7 @@ pipeline {
                                 echo "🔄 ${patchFile} 업데이트 중 (버전: ${currentVersion})"
 
                                 sh """
-                                sed -i 's|image: ${HARBOR_URL}/dlink/${service}:.*|image: ${HARBOR_URL}/dlink/${service}:${currentVersion}|' dlink-manifests/overlays/production/patches/${patchFile}
+                                sed -i 's|image: .*/dlink/${service}:.*|image: ${ECR_URL}/dlink/${service}:${currentVersion}|' dlink-manifests/overlays/production/patches/${patchFile}
                                 """
                             } else {
                                 echo "⚠️ ${service}에 대한 패치 파일 또는 버전 정보 없음"
@@ -202,11 +209,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build & push to Harbor, and manifest update completed successfully!'
+            echo '✅ Build & push to AWS ECR, and manifest update completed successfully!'
         }
         failure {
             echo '❌ Build failed. Check logs.'
         }
     }
 }
-
