@@ -2,7 +2,8 @@ import { createChatBotMessage } from 'react-chatbot-kit';
 import ChatHeader from './chatHeader';
 import { Avatar } from '@heroui/react';
 import UserAvatar from '../components/avatar/userAvatar';
-import RecommendationWidget from './recommendationWidget';
+import HighballRecommendationWidget from './widgets/HighballRecommendationWidget';
+import YangjuRecommendationWidget from './widgets/YangjuRecommendationWidget';
 
 const config = {
   initialMessages: [createChatBotMessage(`안녕하세요 무엇을 도와드릴까요?`)],
@@ -17,9 +18,13 @@ const config = {
   },
   widgets: [
     {
-      widgetName: 'recommendationWidget',
-      widgetFunc: (props) => <RecommendationWidget {...props} />,
-    }
+      widgetName: 'highballRecommendationWidget',
+      widgetFunc: (props) => <HighballRecommendationWidget {...props} />,
+    },
+    {
+      widgetName: 'yangjuRecommendationWidget',
+      widgetFunc: (props) => <YangjuRecommendationWidget {...props} />,
+    },
   ],
   customComponents: {
     header: (props) => <ChatHeader {...props} />,

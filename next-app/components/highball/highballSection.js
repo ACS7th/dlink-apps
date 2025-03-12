@@ -183,17 +183,24 @@ export default function HighballSection() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {sortedRecipes.map((item) => (
-          <RecipeCard
-            key={item.id}
-            ref={(el) => el && recipeRefs.current.set(item.id, el)}
-            item={item}
-            session={session}
-            resolvedTheme={resolvedTheme}
-          />
-        ))}
-      </div>
+      {sortedRecipes ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {sortedRecipes.map((item) => (
+            <RecipeCard
+              key={item.id}
+              ref={(el) => el && recipeRefs.current.set(item.id, el)}
+              item={item}
+              session={session}
+              resolvedTheme={resolvedTheme}
+              onDelete={handleDeleteRecipe}
+              onEdit={handleEditRecipe}
+              onLikeToggle={handleUpdateLike}
+            />
+          ))}
+        </div>
+      ) : (
+        <Spinner />
+      )}
 
       {/* 등록 모달 (FormData 방식 사용) */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto" className="mx-4">

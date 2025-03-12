@@ -5,9 +5,7 @@ import React from 'react';
 const MessageParser = ({ children, actions }) => {
 
   const handleParse = (message) => {
-
     actions.handleChat(message)
-
   };
 
   return (

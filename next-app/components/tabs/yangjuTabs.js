@@ -15,7 +15,7 @@ export default function YangjuTabs({ product }) {
   const { resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
   const router = useRouter();
-  const productId = product._id.$oid;
+  const productId = product._id?.$oid;
   const [highballRecipe, setHighballRecipe] = useState(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [errorRecipe, setErrorRecipe] = useState(null);

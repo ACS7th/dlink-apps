@@ -1,7 +1,9 @@
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import React from "react";
 
 const ActionProvider = ({ createChatBotMessage, setState, children }) => {
+  const { data: session } = useSession();
 
   const handleChat = (message) => {
     const loadingMessage = createChatBotMessage("");
@@ -10,26 +12,21 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
     loadingMessage.requestFunc = () => {
       return axios.post("/api/v1/chatbot/chat", {
         user_input: message,
+        session_id: session?.user?.id || "testuuid"
       });
     };
 
-    loadingMessage.onResponse = (data) => {
-      console.log(data)
-      let response;
-      try {
-        response = JSON.parse(data.response);
-      } catch (error) {
-        response = { type: "chat", message: "JSON 형식의 응답을 받지 못했습니다.", data: null };
-      }
+    loadingMessage.onResponse = (res) => {
 
       setState((prev) => {
         const updatedMessages = prev.messages.map((msg) => {
           if (msg.id === loadingMessageId) {
             return {
               ...msg,
-              widget: response.type === "recommendation" ? "recommendationWidget" : null,
+              widget: getWidgetByType(res.type),
               loading: false,
-              message: response.message,
+              message: res.message,
+              payload: res.data,
             };
           }
           return msg;
@@ -38,7 +35,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
         return { ...prev, messages: updatedMessages };
       });
 
-      return response.message || "응답이 없습니다.";
+      return res.message || "응답이 없습니다.";
     };
 
     setState((prev) => ({
@@ -47,12 +44,25 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
     }));
   };
 
+  const getWidgetByType = (type) => {
+    switch (type) {
+      case "yangjuRecommendation":
+        return "yangjuRecommendationWidget";
+      case "highballRecommendation":
+        return "highballRecommendationWidget";
+      case "winelRecommendation":
+        return "wineRecommendationWidget";
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       {React.Children.map(children, (child) =>
         React.cloneElement(child, {
           actions: {
-            handleChat
+            handleChat,
           },
         })
       )}
