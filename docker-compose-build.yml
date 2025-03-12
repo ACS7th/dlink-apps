@@ -25,7 +25,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
 
   review-service:
-    image: 192.168.3.81/dlink/review-service:v2.0.5
+    image: 192.168.3.81/dlink/review-service:v2.0.7
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
