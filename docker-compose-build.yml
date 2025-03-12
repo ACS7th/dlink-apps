@@ -1,43 +1,43 @@
 services:
-
   api-gateway:
-    image: 192.168.3.81/dlink/api-gateway:v2.0.13
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/api-gateway:v2.0.13
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
 
   auth-service:
-    image: 192.168.3.81/dlink/auth-service:v2.0.13
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/auth-service:v2.0.13
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
 
   alcohol-service:
-    image: 192.168.3.81/dlink/alcohol-service:v2.0.6
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/alcohol-service:v2.0.6
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
 
   highball-service:
-    image: 192.168.3.81/dlink/highball-service:v2.0.8
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/highball-service:v2.0.8
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
 
   review-service:
-    image: 192.168.3.81/dlink/review-service:v2.0.8
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/review-service:v2.0.8
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
 
   pairing-service:
-    image: 192.168.3.81/dlink/pairing-service:v2.0.5
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/pairing-service:v2.0.5
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
 
   next-app:
-    image: 192.168.3.81/dlink/next-app:v2.0.10
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/next-app:v2.0.10
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
+
