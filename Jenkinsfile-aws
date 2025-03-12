@@ -31,19 +31,6 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        script{
-                            def qg = waitForQualityGate()
-                            echo "Status: ${qg.status}"
-                        }
-                    } 
-                }
-            }
-        }
-
         stage('Detect & Build Changed Applications') {
             steps {
                 script {
