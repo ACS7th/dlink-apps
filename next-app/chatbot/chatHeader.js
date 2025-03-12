@@ -47,7 +47,7 @@ const ChatHeader = () => {
   };
 
   return (
-    <div style={styles.heasdfder} className="flex justify-between items-center">
+    <div style={styles.header} className="flex justify-between items-center">
       <h2 style={styles.title}>🍷 DLink</h2>
       <Tabs
         items={tabs}
