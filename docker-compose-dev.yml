@@ -142,6 +142,7 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_GATEWAY_URI: ${AWS_GATEWAY_URI}
     volumes:
       - ./next-app:/app 
       # - /app/.next
