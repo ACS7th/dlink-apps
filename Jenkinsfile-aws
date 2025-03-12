@@ -19,12 +19,13 @@ pipeline {
 
                     def scannerHome = tool 'sonarqube-scanner'
                     withSonarQubeEnv('sonarqube-server') {
-                        sh "${scannerHome}/bin/sonar-scanner \\
+                        sh """${scannerHome}/bin/sonar-scanner \\
                             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \\
                             -Dsonar.sources=. \\
                             -Dsonar.java.binaries=\$(find . -type d -name "build" | paste -sd ",") \\
                             -Dsonar.ts.tslint.reportPaths=reports/tslint.json \\
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \\
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                            """
                     }
                 }
             }
