@@ -86,7 +86,7 @@ pipeline {
                     echo "🛠️ 현재 감지된 버전 맵: ${versionMap}"
 
                     // (5) Docker build 실행
-                    def buildCommand = "docker compose -f ${DOCKER_COMPOSE_FILE} build ${servicesToBuild.join(' ')}"
+                    def buildCommand = "docker-compose -f ${DOCKER_COMPOSE_FILE} build ${servicesToBuild.join(' ')}"
                     echo "🚀 실행할 Docker Build 명령어: ${buildCommand}"
                     sh buildCommand
                 }
