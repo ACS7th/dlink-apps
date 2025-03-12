@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_COMPOSE_FILE = "docker-compose-build.yml"
         HARBOR_URL          = "192.168.3.81"
-        SONAR_HOST_URL      = "http://192.168.3.81:10111"
         SONAR_PROJECT_KEY   = "dlink-apps"
     }
 
@@ -22,7 +21,7 @@ pipeline {
                     withSonarQubeEnv('sonarqube-server') {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                            -Dsonar.sources=." \
+                            -Dsonar.sources=. \
                             -Dsonar.java.binaries=spring-app/build/classes/java/main" 
                     }
                 }
