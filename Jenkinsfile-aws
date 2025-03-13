@@ -99,13 +99,27 @@ pipeline {
             }
             steps {
                 script {
-                    // AWS ECR 리포지토리 URL
+                    // AWS ECR 레지스트리 URL
                     def ECR_URL = "084550838259.dkr.ecr.ap-northeast-2.amazonaws.com"
+                    def AWS_REGION = "ap-northeast-2"
 
                     if (!env.VERSION_MAP) {
                         echo "⚠️ VERSION_MAP이 비어 있음. 푸시할 이미지가 없습니다."
                         return
                     }
+
+                    // AWS ECR 로그인 수행
+                    echo "🔐 AWS ECR 로그인 중..."
+                    def loginResult = sh(
+                        script: "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URL}",
+                        returnStatus: true
+                    )
+
+                    if (loginResult != 0) {
+                        error("❌ AWS ECR 로그인 실패! Push를 중단합니다.")
+                    }
+
+                    echo "✅ AWS ECR 로그인 성공!"
 
                     // 변경된 서비스 리스트 반복
                     env.SERVICES_TO_BUILD.split(" ").each { service ->
