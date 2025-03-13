@@ -204,7 +204,7 @@ pipeline {
                         // (5) Git commit & push
                         sh """
                         cd dlink-manifests
-                        git add overlays/production/patches
+                        git add overlays/cloud/patches
                         git diff --cached --quiet || (git commit -m "Update image versions for CI" && git push origin staging)
                         """
                     }
