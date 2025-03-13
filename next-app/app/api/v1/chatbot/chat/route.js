@@ -10,6 +10,7 @@ export async function POST(request) {
     );
 
     return NextResponse.json(response.data);
+
   } catch (error) {
     console.error("chatbot api request error:", error);
     return NextResponse.json(
