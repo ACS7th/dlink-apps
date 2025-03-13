@@ -102,15 +102,28 @@ pipeline {
                     // AWS ECR 리포지토리 URL
                     def ECR_URL = "084550838259.dkr.ecr.ap-northeast-2.amazonaws.com"
 
+                    if (!env.VERSION_MAP) {
+                        echo "⚠️ VERSION_MAP이 비어 있음. 푸시할 이미지가 없습니다."
+                        return
+                    }
+
                     // 변경된 서비스 리스트 반복
                     env.SERVICES_TO_BUILD.split(" ").each { service ->
-                        def imageTag = env.VERSION_MAP.split(",").find { it.startsWith("${service}:") }?.split(":")[1] ?: "latest"
+                        def imageEntry = env.VERSION_MAP.split(",").find { it.startsWith("${service}:") }
+                        def imageTag = imageEntry ? imageEntry.split(":")[1] : "latest"
                         def ecrRepository = "${ECR_URL}/dlink/${service}"
 
                         echo "🚀 푸시할 서비스: ${service}, 태그: ${imageTag}"
 
+                        // Docker 이미지가 실제로 존재하는지 확인
+                        def imageExists = sh(script: "docker images -q ${ecrRepository}:${imageTag}", returnStdout: true).trim()
+                        if (!imageExists) {
+                            echo "❌ 오류: ${ecrRepository}:${imageTag} 이미지가 존재하지 않습니다. Push를 스킵합니다."
+                            return
+                        }
+
+                        // Docker 이미지 푸시
                         sh """
-                        docker tag dlink/${service}:${imageTag} ${ecrRepository}:${imageTag}
                         docker push ${ecrRepository}:${imageTag}
                         """
                     }
