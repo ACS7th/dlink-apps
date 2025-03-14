@@ -1,11 +1,11 @@
-FROM node:18-bullseye
+FROM node:18-alpine
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+# 개발용 의존성 포함
+COPY package.json package-lock.json ./
 ENV NODE_OPTIONS=--openssl-legacy-provider
-
-RUN yarn install --frozen-lockfile
+RUN npm install  # devDependencies 포함
 
 COPY . .
 
-CMD ["yarn", "run", "dev"]
+CMD ["npm", "run", "dev"]
