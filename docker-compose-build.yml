@@ -1,42 +1,42 @@
 services:
   api-gateway:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/api-gateway:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/api-gateway:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-api-gateway
 
   auth-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/auth-service:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/auth-service:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-auth
 
   alcohol-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/alcohol-service:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/alcohol-service:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-alcohol
 
   highball-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/highball-service:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/highball-service:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-highball
 
   review-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/review-service:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/review-service:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-review
 
   pairing-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/pairing-service:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/pairing-service:v3.0.3
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
 
   next-app:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/next-app:v3.0.2
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/next-app:v3.0.3
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
