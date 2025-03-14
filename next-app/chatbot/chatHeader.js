@@ -49,7 +49,7 @@ const ChatHeader = () => {
   return (
     <div style={styles.header} className="flex justify-between items-center">
       <h2 style={styles.title}>🍷 DLink</h2>
-      <Tabs
+      {/* <Tabs
         items={tabs}
         aria-label="tabs"
         radius="sm"
@@ -57,7 +57,7 @@ const ChatHeader = () => {
         onSelectionChange={handleTabChange}
       >
         {(item) => <Tab key={item.id} title={item.label}></Tab>}
-      </Tabs>
+      </Tabs> */}
       <Button
         className="text-sm bg-[#f4f4f5]"
         color="default"
