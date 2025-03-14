@@ -33,6 +33,14 @@ pipeline {
             }
         }
 
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Detect & Build Changed Applications') {
             steps {
                 script {
@@ -49,7 +57,7 @@ pipeline {
                         return
                     }
 
-                    echo "📌 변경된 이미지 라인:\n${composeDiff}" // ✅ 디버깅용
+                    echo "📌 변경된 이미지 라인:\n${composeDiff}"
 
                     def servicesToBuild = []
                     def versionMap = [:]

@@ -122,7 +122,7 @@ services:
       - dlink_net
 
   next-app:
-    image: next-app:dev
+    image: dlink/next-app:dev
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-dev
