@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -102,11 +103,7 @@ public class JwtTokenProvider {
             // DB에서 사용자 조회
             User user;
             try {
-                user = userRepository.findById(userId).orElseGet(null);
-                if (user == null) {
-                    log.warn("DB에서 해당 사용자(userId={})를 찾을 수 없습니다.", userId);
-                    return null;
-                }
+                user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
             } catch (Exception e) {
                 log.error("DB 사용자 조회 중 에러 발생: {}", e.getMessage(), e);
                 return null;
