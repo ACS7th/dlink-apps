@@ -66,7 +66,7 @@ public class VerificationService {
     public boolean verifyCode(String email, String code) {
         VerificationEntry entry = verificationCodes.get(email);
         if (entry == null || entry.expiryTime.isBefore(LocalDateTime.now())) {
-            return false; // 코드가 없거나 만료됨
+            return false; 
         }
         return entry.code.equals(code);
     }

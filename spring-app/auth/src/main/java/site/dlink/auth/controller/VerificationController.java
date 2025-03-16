@@ -18,6 +18,7 @@ public class VerificationController {
 
     @PostMapping("/email/send")
     public ResponseEntity<?> sendVerificationCode(@RequestParam String email) {
+        log.info("이메일 인증 요청: email={}", email);
         verificationService.sendVerificationCode(email);
         return ResponseEntity.ok(Map.of("message", "인증 코드가 전송되었습니다."));
     }
