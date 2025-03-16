@@ -223,10 +223,23 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build & push to AWS ECR, and manifest update completed successfully!'
+            echo '✅ Build succeeded!'
+            slackSend(
+                channel: '#dlk-cicd-events',
+                color: 'good',
+                message: "✅ Jenkins Build 성공!\n - 프로젝트: ${env.JOB_NAME}\n - 빌드 번호: #${env.BUILD_NUMBER}\n - 확인: ${env.BUILD_URL}"
+            )
         }
         failure {
-            echo '❌ Build failed. Check logs.'
+            echo '❌ Build failed!'
+            slackSend(
+                channel: '#dlk-cicd-events',
+                color: 'danger',
+                message: "❌ Jenkins Build 실패!\n - 프로젝트: ${env.JOB_NAME}\n - 빌드 번호: #${env.BUILD_NUMBER}\n - 확인: ${env.BUILD_URL}"
+            )
+        }
+        always {
+            echo "📌 빌드 종료 (성공/실패 관계없이 실행됨)"
         }
     }
 }
