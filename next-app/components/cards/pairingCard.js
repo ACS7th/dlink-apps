@@ -3,25 +3,24 @@
 import { Card, CardBody } from "@heroui/card";
 import { Button, Image, Skeleton } from "@heroui/react";
 import { useTheme } from "next-themes";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-
-import { useRef } from "react";
+import LoadingAnimation from "@/components/cards/loadingAnimation";
 
 const PairingCard = ({ alcohol }) => {
   const { resolvedTheme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("Meat");
   const [alcoholCate, setAlcoholCate] = useState("");
-  const [isPairingLoading, setIsPairingLoading] = useState(true);
-  const [isThumbnailLoading, setIsThumbnailLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [pairingData, setPairingData] = useState(null);
   const [youtubeLink, setYoutubeLink] = useState("");
   const categories = ["Meat", "Sea Food", "Fried", "Snack"];
 
-  // AbortController를 위한 ref 생성
+  // AbortController 저장
   const pairingAbortControllerRef = useRef(null);
+  const youtubeAbortControllerRef = useRef(null);
 
-  // alcohol 객체의 tanin 유무에 따라 양주/와인 결정
+  // alcohol 객체의 tanin 유무에 따라 양주/와인 구분
   useEffect(() => {
     if (alcohol && Object.prototype.hasOwnProperty.call(alcohol, "tanin")) {
       setAlcoholCate("wine");
@@ -30,13 +29,22 @@ const PairingCard = ({ alcohol }) => {
     }
   }, [alcohol]);
 
-  // fetchYoutubeLink도 useCallback으로 감싸서 안정적인 참조를 유지
+  // YouTube API 요청 함수 (Abort 적용)
   const fetchYoutubeLink = useCallback(async (dishName) => {
-    setIsThumbnailLoading(true);
+    // 기존 YouTube 요청이 있으면 취소
+    if (youtubeAbortControllerRef.current) {
+      youtubeAbortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    youtubeAbortControllerRef.current = controller;
+
     try {
       const ytResponse = await axios.get("/api/v1/pairing/shorts/search", {
         params: { dish: dishName + " 레시피" },
+        signal: controller.signal,
       });
+
       setYoutubeLink(ytResponse.data.result);
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -44,12 +52,12 @@ const PairingCard = ({ alcohol }) => {
       } else {
         console.error("Failed to fetch YouTube link:", error);
       }
-    } finally {
-      setIsThumbnailLoading(false);
     }
   }, []);
 
-  const fetchPairing = useCallback(async (selectedCategory, category) => {
+  const fetchPairing = useCallback(async (category, alcoholCategory) => {
+    setIsLoading(true);
+    // 기존 Pairing 요청이 있으면 취소
     if (pairingAbortControllerRef.current) {
       pairingAbortControllerRef.current.abort();
     }
@@ -57,24 +65,21 @@ const PairingCard = ({ alcohol }) => {
     const controller = new AbortController();
     pairingAbortControllerRef.current = controller;
 
-    const pairingDataRequest = { ...alcohol, category: selectedCategory };
-    setIsPairingLoading(true);
-    setIsThumbnailLoading(true);
+    setIsLoading(true);
     setPairingData(null);
+    setYoutubeLink("");
 
     try {
-      const endpoint = category === "yangju" ? "/api/v1/pairing/yangju" : "/api/v1/pairing/wine";
-      const response = await axios.post(endpoint, pairingDataRequest, {
-        signal: controller.signal, // AbortController의 signal 사용
+      const endpoint = alcoholCategory === "yangju" ? "/api/v1/pairing/yangju" : "/api/v1/pairing/wine";
+      const response = await axios.post(endpoint, { ...alcohol, category }, {
+        signal: controller.signal,
       });
-
+      setIsLoading(false);
       setPairingData(response.data.data);
-      setIsPairingLoading(false);
 
       if (response.data.data && response.data.data.dish_name) {
         fetchYoutubeLink(response.data.data.dish_name);
-      } 
-      
+      }
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log("Pairing 요청이 취소되었습니다.");
@@ -82,29 +87,30 @@ const PairingCard = ({ alcohol }) => {
         console.error("Failed to fetch recommendation:", error);
       }
     }
-    
-    
+
   }, [alcohol, fetchYoutubeLink]);
 
+  // 초기 데이터 로드 (Meat 카테고리 기본값)
   useEffect(() => {
-    if (!alcoholCate) return;
-    fetchPairing(selectedCategory, alcoholCate);
-  }, [selectedCategory, fetchPairing, alcoholCate]);
+    if (alcoholCate) {
+      fetchPairing("Meat", alcoholCate);
+    }
+  }, [alcoholCate, fetchPairing]);
 
+  // 유튜브 썸네일 링크 변환 함수
   const getYoutubeThumbnailFromLink = (link) => {
     if (!link) return "";
-    const parts = link.split("/");
-    const videoId = parts[parts.length - 1];
+    const videoId = link.split("/").pop();
     return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
   };
 
   const thumbnailUrl = getYoutubeThumbnailFromLink(youtubeLink);
 
+  // 컴포넌트 언마운트 시 요청 취소
   useEffect(() => {
     return () => {
-      if (pairingAbortControllerRef.current) {
-        pairingAbortControllerRef.current.abort();
-      }
+      if (pairingAbortControllerRef.current) pairingAbortControllerRef.current.abort();
+      if (youtubeAbortControllerRef.current) youtubeAbortControllerRef.current.abort();
     };
   }, []);
 
@@ -120,18 +126,23 @@ const PairingCard = ({ alcohol }) => {
               className={`${selectedCategory === category
                 ? "bg-primary text-white"
                 : "bg-gray-200 text-black"
-                } transition duration-300`}
-              onPress={() => setSelectedCategory(category)}
+                } transition duration-300 flex-1`}
+              onPress={() => {
+                setSelectedCategory(category);
+                fetchPairing(category, alcoholCate);
+              }}
             >
               {category}
             </Button>
           ))}
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="flex-shrink-0">
-            {isThumbnailLoading ? (
-              <Skeleton className="w-24 h-40 rounded-xl" />
-            ) : youtubeLink ? (
+
+        {isLoading ? (
+          <LoadingAnimation />
+        ) : (
+          <div className="flex items-center space-x-4">
+
+            {youtubeLink ? (
               <a
                 href={youtubeLink}
                 target="_blank"
@@ -155,43 +166,34 @@ const PairingCard = ({ alcohol }) => {
                 </div>
               </a>
             ) : (
-              <div className="w-24 h-24 bg-gray-300 rounded-md" />
+              <Skeleton className="w-24 h-40 rounded-md" />
             )}
+
+
+            <div className="w-full flex flex-col">
+              {pairingData ? (
+                <>
+                  <p className="text-lg font-bold">{pairingData.dish_name}</p>
+                  <p className="text-sm text-gray-600">{pairingData.description}</p>
+                  {pairingData.side_dish && pairingData.side_dish.length > 0 && (
+                    <>
+                      <p className="mt-2 text-sm font-bold">곁들임 요리</p>
+                      <ul className="mt-2 list-disc pl-4">
+                        {pairingData.side_dish.map((item, index) => (
+                          <li key={index} className="text-sm">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-gray-500">추천 결과가 없습니다.</p>
+              )}
+            </div>
           </div>
-          <div className="w-full">
-            {isPairingLoading ? (
-              <>
-                <Skeleton className="rounded-xl w-24 h-4" />
-                <Skeleton className="rounded-xl w-36 h-4 mt-2" />
-                <Skeleton className="rounded-xl w-36 h-4 mt-2" />
-                <Skeleton className="rounded-xl w-24 h-4 mt-4" />
-                <ul className="mt-2 list-disc pl-2">
-                  <Skeleton className="rounded-xl w-26 h-4 mt-1" />
-                  <Skeleton className="rounded-xl w-26 h-4 mt-1" />
-                </ul>
-              </>
-            ) : pairingData ? (
-              <>
-                <p className="text-sm font-bold">{pairingData.dish_name}</p>
-                <p className="text-sm">{pairingData.description}</p>
-                {pairingData.side_dish && pairingData.side_dish.length > 0 && (
-                  <>
-                    <p className="mt-2 text-sm font-bold">곁들임 요리</p>
-                    <ul className="mt-2 list-disc pl-4">
-                      {pairingData.side_dish.map((item, index) => (
-                        <li key={index} className="text-sm">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </>
-            ) :
-              (<p className="text-sm">추천 결과가 없습니다.</p>)
-            }
-          </div>
-        </div>
+        )}
       </CardBody>
     </Card>
   );

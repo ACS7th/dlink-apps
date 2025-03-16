@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { Button, useDisclosure } from "@heroui/react";
@@ -11,13 +11,14 @@ import RecipeCard from "@/components/highball/recipeCard";
 import RecipeForm from "@/components/highball/recipeForm";
 import FilterDropdown from "@/components/dropdown/filterDropdown";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function HighballSection() {
   const { data: session, status } = useSession();
   const { resolvedTheme } = useTheme();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const category = searchParams.get("subcategory");
+  const highballId = searchParams.get("highballId");
 
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("최신순");
@@ -32,6 +33,24 @@ export default function HighballSection() {
   const [editMaking, setEditMaking] = useState("");
   const [editIngredients, setEditIngredients] = useState(""); // JSON 문자열
   const [editImageUrl, setEditImageUrl] = useState("");
+
+  // 레시피 목록에서 특정 항목을 찾기 위한 Ref
+  const recipeRefs = useRef(new Map());
+
+  // 특정 highballId가 있다면 해당 RecipeCard로 스크롤
+  useEffect(() => {
+    if (highballId && recipes.length > 0) {
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          const targetCard = recipeRefs.current.get(highballId);
+          if (targetCard) {
+            targetCard.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+          }
+        });
+      }, 100); // 100ms 지연을 추가하여 리스트가 렌더링된 후 실행
+    }
+  }, [recipes, highballId]);
+
 
   // 레시피 목록 불러오기
   const fetchRecipes = useCallback(async () => {
@@ -158,23 +177,30 @@ export default function HighballSection() {
         <Button
           onPress={onOpen}
           className="inline-flex items-center space-x-1 text-sm text-white bg-[#6F0029] px-3 py-1.5 rounded hover:bg-[#8F0033]"
-          isDisabled={status === "authenticated" ? false : true}
+          isDisabled={status !== "authenticated"}
         >
           레시피 작성
         </Button>
       </div>
 
-      {sortedRecipes.map((item) => (
-        <RecipeCard
-          key={item.id}
-          item={item}
-          session={session}
-          resolvedTheme={resolvedTheme}
-          onDelete={handleDeleteRecipe}
-          onEdit={handleEditRecipe}
-          onLikeToggle={handleUpdateLike}
-        />
-      ))}
+      {sortedRecipes ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {sortedRecipes.map((item) => (
+            <RecipeCard
+              key={item.id}
+              ref={(el) => el && recipeRefs.current.set(item.id, el)}
+              item={item}
+              session={session}
+              resolvedTheme={resolvedTheme}
+              onDelete={handleDeleteRecipe}
+              onEdit={handleEditRecipe}
+              onLikeToggle={handleUpdateLike}
+            />
+          ))}
+        </div>
+      ) : (
+        <Spinner />
+      )}
 
       {/* 등록 모달 (FormData 방식 사용) */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto" className="mx-4">
@@ -202,6 +228,7 @@ export default function HighballSection() {
           </ModalContent>
         </Modal>
       )}
+
     </div>
   );
 }

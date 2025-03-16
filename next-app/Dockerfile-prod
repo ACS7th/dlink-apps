@@ -1,12 +1,17 @@
-# ---- 1) 빌드 단계 ----
+# 1) 빌드 단계
 FROM node:20-alpine AS builder
 
 # 작업 디렉터리 생성
 WORKDIR /app
 
-# package.json, package-lock.json 복사 후 의존성 설치
-COPY package*.json ./
-RUN npm ci
+ENV NODE_OPTIONS=--openssl-legacy-provider
+COPY ./package.json ./
+# Git 설치 (GitHub 패키지 문제 방지)
+RUN apk add --no-cache git
+
+# 패키지 매니저 캐시 클리어 및 의존성 설치
+RUN npm cache clean --force
+RUN npm install --legacy-peer-deps
 
 # 소스 전체 복사
 COPY . .
@@ -14,28 +19,13 @@ COPY . .
 # Standalone 모드로 Next.js 프로덕션 빌드
 RUN npm run build
 
-# ---- 2) 실행 단계 ----
+# 2) 실행 단계
 FROM node:20-alpine AS runner
 
 # 실행 환경 설정
 WORKDIR /app
-ENV NODE_ENV=production
-
-# 1) standalone 폴더 복사
 COPY --from=builder /app/.next/standalone ./
-
-# 2) static 폴더 복사 (Next.js의 정적 파일)
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/static ./.next/static
 
-# 3) public 폴더 (이미지, 폰트 등)
-COPY --from=builder /app/public ./public
-
-# (추가) .env 파일이 필요하다면 복사
-# COPY --from=builder /app/.env ./.env
-
-# Next.js 기본 포트
-EXPOSE 3000
-
-# Standalone 모드 실행: server.js가 생성됩니다.
 CMD ["node", "server.js"]
-

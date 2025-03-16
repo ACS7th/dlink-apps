@@ -19,7 +19,7 @@ export default function ProductDetail({ product }) {
                 height={188}
               />
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center ml-6">
               <h6 className="font-bold text-xl mt-1">
                 {product.korName}
               </h6>

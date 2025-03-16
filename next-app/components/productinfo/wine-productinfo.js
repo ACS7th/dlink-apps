@@ -20,7 +20,7 @@ export default function wineDetail({ wine }) {
             height={188}
           />
         </div>
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center ml-6">
           <h6 className="font-bold text-xl mt-1">{wine.korName}</h6>
           <p className="text-tiny uppercase font-bold text-gray-500">{wine.engName}</p>
           <p className="text-sm mt-2">

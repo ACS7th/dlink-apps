@@ -26,19 +26,12 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        String clientIp = request.getHeaders().getFirst("X-Forwarded-For");
+        String method = request.getMethod().name();
+        String clientIp = getClientIp(request);
+        String userAgent = request.getHeaders().getFirst("User-Agent");
 
-        if (clientIp == null || clientIp.isEmpty()) {
-            InetSocketAddress remoteAddress = request.getRemoteAddress();
-            if (remoteAddress != null) {
-                clientIp = remoteAddress.getAddress().getHostAddress();
-            } else {
-                clientIp = "UNKNOWN"; // Fallback 값
-            }
-        }
-
-        log.info("API 요청 : {} by {}", path, clientIp);
-
+        log.info("요청 정보: [Method: {}] [Path: {}] [Client IP: {}] [User-Agent: {}]", 
+                 method, path, clientIp, userAgent);
         if (gatewayConstants.EXCLUDED_PATHS.stream().anyMatch(path::startsWith)) {
             return chain.filter(exchange);
         }
@@ -63,6 +56,15 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         }
 
         return chain.filter(exchange);
+    }
+
+    private String getClientIp(ServerHttpRequest request) {
+        String clientIp = request.getHeaders().getFirst("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            InetSocketAddress remoteAddress = request.getRemoteAddress();
+            clientIp = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : "UNKNOWN";
+        }
+        return clientIp;
     }
 
     @Override

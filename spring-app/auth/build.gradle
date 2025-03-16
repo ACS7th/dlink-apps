@@ -28,4 +28,8 @@ dependencies {
 
 	//  Database 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	// email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 }

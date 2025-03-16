@@ -20,6 +20,7 @@ services:
       HIGHBALL_SERVICE_URI: ${HIGHBALL_SERVICE_URI}
       REVIEW_SERVICE_URI: ${REVIEW_SERVICE_URI}
       PAIRING_SERVICE_URI: ${PAIRING_SERVICE_URI}
+      OTEL_COLLECTOR_URI: ${OTEL_COLLECTOR_URI}
     volumes:
       - ./spring-app/api-gateway/build:/app/api-gateway/build
     networks:
@@ -37,6 +38,8 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      GOOGLE_APP_USERNAME: ${GOOGLE_APP_USERNAME}
+      GOOGLE_APP_PASSWORD: ${GOOGLE_APP_PASSWORD}
       SERVER_PORT: 9991
     volumes:
       - ./spring-app/auth/build:/app/auth/build
@@ -56,6 +59,7 @@ services:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
       ES_DATASOURCE_URI: ${ES_DATASOURCE_URI}
       SERVER_PORT: 9992
+      OTEL_COLLECTOR_URI: ${OTEL_COLLECTOR_URI}
     volumes:
       - ./spring-app/alcohols/build:/app/alcohols/build
     networks:
@@ -138,8 +142,10 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_GATEWAY_URI: ${AWS_GATEWAY_URI}
     volumes:
       - ./next-app:/app 
-      - /app/.next
+      # - /app/.next
     networks:
       - dlink_net
+
