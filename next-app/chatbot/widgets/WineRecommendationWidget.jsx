@@ -6,19 +6,18 @@ const WineRecommendationWidget = ({ payload }) => {
     const router = useRouter();
 
     return (
-        <div className={`flex justify-center`}>
+        <div className={`gap-2 grid md:grid-cols-2 grid-cols-1 mx-10`}>
             {payload.map((item) => (
                 <Card
                     key={item._id}
                     isPressable
                     shadow="sm"
                     onPress={() => router.push(`/wine-details/${item._id}`)}
-                    className="w-1/2 mx-2"
                 >
                     <CardBody className="overflow-visible p-0">
                         <Image
                             alt={item._id}
-                            className="w-full object-cover max-h-[30vh]"
+                            className="w-full object-cover max-h-[60vh]"
                             radius="lg"
                             shadow="sm"
                             src={item.image}
