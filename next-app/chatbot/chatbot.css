@@ -64,13 +64,17 @@
     height: 80vh;
 }
 
+.react-chatbot-kit-chat-inner-container {
+    height: 100%;
+}
+
 .react-chatbot-kit-chat-message-container {
-    height: 64vh;
+    height: 90%;
 }
 
 @media screen and (max-width: 768px) {
-    .react-chatbot-kit-chat-message-container {
-        height: 62vh;
+    .react-chatbot-kit-chat-container {
+        height: 60vh;
     }
 }
 
