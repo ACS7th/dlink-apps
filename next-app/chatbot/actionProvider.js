@@ -50,7 +50,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
         return "yangjuRecommendationWidget";
       case "highballRecommendation":
         return "highballRecommendationWidget";
-      case "winelRecommendation":
+      case "wineRecommendation":
         return "wineRecommendationWidget";
       default:
         return null;

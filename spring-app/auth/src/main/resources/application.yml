@@ -1,6 +1,6 @@
 spring:
   application:
-    name: alcohols
+    name: auth
   elasticsearch:
     uris: ${ES_DATASOURCE_URI:localhost:9200}
 

@@ -4,6 +4,7 @@ import { Avatar } from '@heroui/react';
 import UserAvatar from '../components/avatar/userAvatar';
 import HighballRecommendationWidget from './widgets/HighballRecommendationWidget';
 import YangjuRecommendationWidget from './widgets/YangjuRecommendationWidget';
+import WineRecommendationWidget from './widgets/WineRecommendationWidget';
 
 const config = {
   initialMessages: [createChatBotMessage(`안녕하세요 무엇을 도와드릴까요?`)],
@@ -24,6 +25,10 @@ const config = {
     {
       widgetName: 'yangjuRecommendationWidget',
       widgetFunc: (props) => <YangjuRecommendationWidget {...props} />,
+    },
+    {
+      widgetName: 'wineRecommendationWidget',
+      widgetFunc: (props) => <WineRecommendationWidget {...props} />,
     },
   ],
   customComponents: {
