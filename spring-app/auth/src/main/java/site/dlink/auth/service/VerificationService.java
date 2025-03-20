@@ -58,7 +58,6 @@ public class VerificationService {
         message.setSubject("DLink 이메일 인증 코드");
         message.setText("이메일 인증 코드: " + code + "\n이 코드는 " + CODE_EXPIRY_MINUTES + "분 동안 유효합니다.");
         mailSender.send(message);
-
         log.info("이메일 인증 코드 전송 완료: {} -> {}", email, code);
     }
 

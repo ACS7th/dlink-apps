@@ -18,7 +18,7 @@ export async function GET(request) {
   } catch (error) {
     console.error("API 호출 오류:", error);
     return NextResponse.json(
-      { error: error.response?.data || '알 수 없는 오류' },
+      { error: error.response || '알 수 없는 오류' },
       { status: error.response?.status || 500 }
     );
   }

@@ -158,7 +158,7 @@ export default function YangjuTabs({ product }) {
       id: "highball",
       label: "하이볼 레시피",
       content: (
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto ">
           {loadingRecipe ? (
             <div className="py-4 text-center">
               <Spinner />
