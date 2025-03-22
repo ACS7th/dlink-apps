@@ -10,4 +10,6 @@ dependencies {
     // selenium
     implementation 'org.seleniumhq.selenium:selenium-java:4.19.1'
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }

@@ -3,7 +3,11 @@ package site.dlink.pairing.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.Duration;
+
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import site.dlink.pairing.dto.WinePairingRequest;
 import site.dlink.pairing.dto.YangjuPairingRequest;
@@ -14,48 +18,53 @@ public class PairingService {
 
     private final ObjectMapper objectMapper;
     private final ChatClient chatClient;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public PairingService(ChatClient.Builder builder, ObjectMapper objectMapper) {
+    public PairingService(ChatClient.Builder builder, ObjectMapper objectMapper,
+            RedisTemplate<String, String> redisTemplate) {
         this.chatClient = builder.build();
         this.objectMapper = objectMapper;
+        this.redisTemplate = redisTemplate;
     }
 
-    /**
-     * 와인용 안주 추천
-     */
     public JsonNode getWinePairingRecommendation(WinePairingRequest req) {
         try {
-            // 1) 프롬프트 생성 (모든 필드 활용)
+            String cacheKey = "wine:" + objectMapper.writeValueAsString(req);
+            String cached = redisTemplate.opsForValue().get(cacheKey);
+            if (cached != null) {
+                log.info("🔁 Redis Cache Hit (Wine)");
+                return objectMapper.readTree(cached);
+            }
+
             String prompt = createWinePrompt(req);
-
-            // 2) Bedrock 모델 호출
             String rawResponse = chatClient.prompt(prompt).call().content();
-            log.info("Bedrock raw response (Wine): {}", rawResponse);
+            log.info("📡 Bedrock raw response (Wine): {}", rawResponse);
 
-            // 3) JSON 변환 후 반환
+            redisTemplate.opsForValue().set(cacheKey, rawResponse, Duration.ofMinutes(1));
             return objectMapper.readTree(rawResponse);
         } catch (Exception e) {
-            log.error("Bedrock 모델 호출 중 오류 발생 (Wine)", e);
+            log.error("❌ Bedrock 호출 실패 (Wine)", e);
             throw new RuntimeException("Bedrock 모델 호출 실패 (Wine)", e);
         }
     }
 
-    /**
-     * 양주용 안주 추천
-     */
     public JsonNode getYangjuPairingRecommendation(YangjuPairingRequest req) {
         try {
-            // 1) 프롬프트 생성 (모든 필드 활용)
+            String cacheKey = "yangju:" + objectMapper.writeValueAsString(req);
+            String cached = redisTemplate.opsForValue().get(cacheKey);
+            if (cached != null) {
+                log.info("🔁 Redis Cache Hit (Yangju)");
+                return objectMapper.readTree(cached);
+            }
+
             String prompt = createYangjuPrompt(req);
-
-            // 2) Bedrock 모델 호출
             String rawResponse = chatClient.prompt(prompt).call().content();
-            log.info("Bedrock raw response (Yangju): {}", rawResponse);
+            log.info("📡 Bedrock raw response (Yangju): {}", rawResponse);
 
-            // 3) JSON 변환 후 반환
+            redisTemplate.opsForValue().set(cacheKey, rawResponse, Duration.ofMinutes(1));
             return objectMapper.readTree(rawResponse);
         } catch (Exception e) {
-            log.error("Bedrock 모델 호출 중 오류 발생 (Yangju)", e);
+            log.error("❌ Bedrock 호출 실패 (Yangju)", e);
             throw new RuntimeException("Bedrock 모델 호출 실패 (Yangju)", e);
         }
     }
