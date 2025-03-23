@@ -23,17 +23,19 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("이메일과 비밀번호를 입력하세요.");
                 }
                 try {
+                    const formData = new URLSearchParams();
+                    formData.append("username", credentials.email);
+                    formData.append("password", credentials.password);
+
                     const response = await fetch(
-                        `${process.env.SPRING_URI as string}/api/v1/auth/login`,
+                        `${process.env.SPRING_URI}/api/v1/auth/login`,
                         {
                             method: "POST",
                             headers: {
-                                "Content-Type": "application/json",
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded",
                             },
-                            body: JSON.stringify({
-                                username: credentials.email,
-                                password: credentials.password,
-                            }),
+                            body: formData.toString(),
                         }
                     );
 
@@ -51,7 +53,6 @@ export const authOptions: NextAuthOptions = {
                         email: credentials.email,
                         jwt: result.jwt,
                     };
-
                 } catch (error: any) {
                     throw new Error(error.message);
                 }

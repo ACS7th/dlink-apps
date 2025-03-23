@@ -132,13 +132,6 @@ export default function Login() {
                     <Button
                         isIconOnly
                         variant="light"
-                        onPress={() => signIn("naver")}
-                    >
-                        <Image src="/naver.svg" alt="Naver" className="p-1" />
-                    </Button>
-                    <Button
-                        isIconOnly
-                        variant="light"
                         onPress={() => signIn("kakao")}
                     >
                         <Image src="/kakao.svg" alt="Kakao" className="p-1" />
