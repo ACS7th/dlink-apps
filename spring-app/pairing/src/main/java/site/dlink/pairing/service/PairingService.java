@@ -61,7 +61,7 @@ public class PairingService {
             String rawResponse = chatClient.prompt(prompt).call().content();
             log.info("📡 Bedrock raw response (Yangju): {}", rawResponse);
 
-            redisTemplate.opsForValue().set(cacheKey, rawResponse, Duration.ofMinutes(1));
+            redisTemplate.opsForValue().set(cacheKey, rawResponse, Duration.ofMinutes(1) );
             return objectMapper.readTree(rawResponse);
         } catch (Exception e) {
             log.error("❌ Bedrock 호출 실패 (Yangju)", e);
