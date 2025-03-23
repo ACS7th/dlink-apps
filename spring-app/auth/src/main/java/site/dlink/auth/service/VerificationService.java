@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VerificationService {
     private final JavaMailSender mailSender;
     private static final int CODE_EXPIRY_MINUTES = 5;
+    private static final Random RANDOM = new Random(); 
 
     // 이메일과 인증 코드 저장 (서버 메모리에서 관리)
     private final Map<String, VerificationEntry> verificationCodes = new ConcurrentHashMap<>();
@@ -35,8 +36,7 @@ public class VerificationService {
 
     // 6자리 랜덤 인증 코드 생성
     private String generateVerificationCode() {
-        Random random = new Random();
-        return String.format("%06d", random.nextInt(1000000));
+        return String.format("%06d", RANDOM.nextInt(1000000));
     }
 
     // 이메일로 인증 코드 전송 및 메모리에 저장
