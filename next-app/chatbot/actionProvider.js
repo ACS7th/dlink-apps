@@ -32,7 +32,6 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
           return msg;
         });
 
-
         return { ...prev, messages: updatedMessages };
       });
 

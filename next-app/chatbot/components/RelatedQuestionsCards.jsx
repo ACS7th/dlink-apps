@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
 function RelatedQuestionsCards({ questions, handleChat }) {
-    const [clickedIndex, setClickedIndex] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const onClick = (question, index) => {
-        if (clickedIndex !== null) return; // 이미 클릭된 상태면 무시
-        setClickedIndex(index);
-        handleChat(question);
+        setSelectedIndex(index); // 선택 표시만 변경
+        handleChat(question);    // 클릭 시 처리
     };
 
     return (
@@ -15,10 +14,8 @@ function RelatedQuestionsCards({ questions, handleChat }) {
                 <button
                     key={index}
                     onClick={() => onClick(question, index)}
-                    disabled={clickedIndex !== null}
                     className={`flex-1 border px-1 py-2 rounded transition
-                        ${clickedIndex === index ? "bg-primary text-white font-semibold" : ""}
-                        ${clickedIndex !== null && clickedIndex !== index ? "opacity-50" : ""}
+                        ${selectedIndex === index ? "bg-primary text-white font-semibold" : ""}
                     `}
                 >
                     {question}

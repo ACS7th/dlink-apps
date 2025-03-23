@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import RelatedQuestionsCards from "../components/RelatedQuestionsCards";
 
-const WineRecommendationWidget = ({ payload }) => {
+const WineRecommendationWidget = ({ payload, actions}) => {
     const router = useRouter();
 
     return (
