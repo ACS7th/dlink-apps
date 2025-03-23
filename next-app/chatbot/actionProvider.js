@@ -26,7 +26,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
               widget: getWidgetByType(res.type),
               loading: false,
               message: res.message,
-              payload: res.data,
+              payload: res,
             };
           }
           return msg;
@@ -52,6 +52,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
         return "highballRecommendationWidget";
       case "wineRecommendation":
         return "wineRecommendationWidget";
+      case "priceRecommendation":
+        return "priceRecommendationWidget";
       default:
         return null;
     }

@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import RelatedQuestionsCards from "../components/RelatedQuestionsCards";
 
-const WineRecommendationWidget = ({ payload, actions}) => {
+const PriceRecommendationWidget = ({ payload, actions }) => {
     const router = useRouter();
 
     return (
@@ -41,4 +41,4 @@ const WineRecommendationWidget = ({ payload, actions}) => {
     );
 };
 
-export default WineRecommendationWidget;
+export default PriceRecommendationWidget;

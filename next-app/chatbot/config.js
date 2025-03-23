@@ -5,7 +5,7 @@ import UserAvatar from '../components/avatar/userAvatar';
 import HighballRecommendationWidget from './widgets/HighballRecommendationWidget';
 import YangjuRecommendationWidget from './widgets/YangjuRecommendationWidget';
 import WineRecommendationWidget from './widgets/WineRecommendationWidget';
-
+import PriceRecommendationWidget from './widgets/PriceRecommendationWidget';
 const config = {
   initialMessages: [createChatBotMessage(`안녕하세요 무엇을 도와드릴까요?`)],
   botName: 'DLink Bot',
@@ -29,6 +29,10 @@ const config = {
     {
       widgetName: 'wineRecommendationWidget',
       widgetFunc: (props) => <WineRecommendationWidget {...props} />,
+    },
+    {
+      widgetName: 'priceRecommendationWidget',
+      widgetFunc: (props) => <PriceRecommendationWidget {...props} />,
     },
   ],
   customComponents: {
