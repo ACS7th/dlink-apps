@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import RelatedQuestionsCards from "../components/RelatedQuestionsCards";
 
-const YangjuRecommendationWidget = ({ payload }) => {
+const PriceRecommendationWidget = ({ payload }) => {
     const router = useRouter();
 
     return (
@@ -14,14 +14,12 @@ const YangjuRecommendationWidget = ({ payload }) => {
                         key={item._id}
                         isPressable
                         shadow="sm"
-                        onPress={() =>
-                            router.push(`/yangju-details/${item._id}`)
-                        }
+                        onPress={() => router.push(`/wine-details/${item._id}`)}
                     >
                         <CardBody className="overflow-visible p-0">
                             <Image
                                 alt={item._id}
-                                className="w-full object-cover max-h-[30vh]"
+                                className="w-full object-cover max-h-[60vh]"
                                 radius="lg"
                                 shadow="sm"
                                 src={item.image}
@@ -43,4 +41,4 @@ const YangjuRecommendationWidget = ({ payload }) => {
     );
 };
 
-export default YangjuRecommendationWidget;
+export default PriceRecommendationWidget;
