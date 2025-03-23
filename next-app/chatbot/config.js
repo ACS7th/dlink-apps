@@ -6,8 +6,20 @@ import HighballRecommendationWidget from './widgets/HighballRecommendationWidget
 import YangjuRecommendationWidget from './widgets/YangjuRecommendationWidget';
 import WineRecommendationWidget from './widgets/WineRecommendationWidget';
 import PriceRecommendationWidget from './widgets/PriceRecommendationWidget';
+import RelatedQuestionsCards from './components/RelatedQuestionsCards';
 const config = {
-  initialMessages: [createChatBotMessage(`안녕하세요 무엇을 도와드릴까요?`)],
+  initialMessages: [
+    createChatBotMessage("안녕하세요 무엇을 도와드릴까요?", {
+      widget: "relatedQuestionsWidget",
+      payload: {
+        relatedQuestion: [
+          "와인 추천 해주세요",
+          "양주 종류는?",
+          "하이볼 만들기 쉬운가요?",
+        ],
+      },
+    }),
+  ],
   botName: 'DLink Bot',
   customStyles: {
     botMessageBox: {
@@ -33,6 +45,15 @@ const config = {
     {
       widgetName: 'priceRecommendationWidget',
       widgetFunc: (props) => <PriceRecommendationWidget {...props} />,
+    },
+    {
+      widgetName: "relatedQuestionsWidget",
+      widgetFunc: (props) => (
+        <RelatedQuestionsCards
+          questions={props.payload.relatedQuestion}
+          handleChat={props.actions.handleChat}
+        />
+      ),
     },
   ],
   customComponents: {

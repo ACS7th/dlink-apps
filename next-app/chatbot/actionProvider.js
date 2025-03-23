@@ -55,7 +55,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }) => {
       case "priceRecommendation":
         return "priceRecommendationWidget";
       default:
-        return null;
+        return "relatedQuestionsWidget";
     }
   };
 

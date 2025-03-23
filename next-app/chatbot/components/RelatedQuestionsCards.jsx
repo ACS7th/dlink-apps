@@ -9,7 +9,7 @@ function RelatedQuestionsCards({ questions, handleChat }) {
     };
 
     return (
-        <div className="flex gap-2 mt-10 text-tiny">
+        <div className="flex gap-2 mt-4 text-tiny">
             {questions.slice(0, 3).map((question, index) => (
                 <button
                     key={index}
