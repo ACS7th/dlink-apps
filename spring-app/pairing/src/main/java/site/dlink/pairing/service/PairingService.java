@@ -40,7 +40,7 @@ public class PairingService {
             String rawResponse = chatClient.prompt(prompt).call().content();
             log.info("📡 Bedrock raw response (Wine): {}", rawResponse);
 
-            redisTemplate.opsForValue().set(cacheKey, rawResponse, Duration.ofMinutes(1));
+            redisTemplate.opsForValue().set(cacheKey, rawResponse );
             return objectMapper.readTree(rawResponse);
         } catch (Exception e) {
             log.error("❌ Bedrock 호출 실패 (Wine)", e);
