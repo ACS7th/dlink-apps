@@ -6,7 +6,7 @@ import RelatedQuestionsCards from "../components/RelatedQuestionsCards";
 const PriceRecommendationWidget = ({ payload, actions }) => {
     return (
         <div>
-            <div className={`gap-4 grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 mx-10`}>
+            <div className={`gap-4 grid grid-cols-1 mx-10`}>
                 {payload.data.map((item, index) => (
                     <Card
                         key={index}
