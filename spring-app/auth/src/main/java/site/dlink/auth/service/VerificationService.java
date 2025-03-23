@@ -7,9 +7,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VerificationService {
     private final JavaMailSender mailSender;
     private static final int CODE_EXPIRY_MINUTES = 5;
-    private static final Random RANDOM = new Random(); 
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     // 이메일과 인증 코드 저장 (서버 메모리에서 관리)
     private final Map<String, VerificationEntry> verificationCodes = new ConcurrentHashMap<>();
