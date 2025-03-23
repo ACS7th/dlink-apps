@@ -1,38 +1,35 @@
-import { Card, CardBody, CardFooter, Image } from "@heroui/react";
+import { Card, CardBody, CardFooter } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import RelatedQuestionsCards from "../components/RelatedQuestionsCards";
 
 const PriceRecommendationWidget = ({ payload, actions }) => {
-    const router = useRouter();
-
     return (
         <div>
-            <div className={`gap-2 grid md:grid-cols-2 grid-cols-1 mx-10`}>
-                {payload.data.map((item) => (
+            <div className={`gap-4 grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 mx-10`}>
+                {payload.data.map((item, index) => (
                     <Card
-                        key={item._id}
+                        key={index}
                         isPressable
                         shadow="sm"
-                        onPress={() => router.push(`/wine-details/${item._id}`)}
+                        onPress={() =>
+                            window.open(
+                                `https://map.kakao.com/?q=${encodeURIComponent(item.address)}`,
+                                "_blank"
+                            )
+                        }
                     >
-                        <CardBody className="overflow-visible p-0">
-                            <Image
-                                alt={item._id}
-                                className="w-full object-cover max-h-[60vh]"
-                                radius="lg"
-                                shadow="sm"
-                                src={item.image}
-                                width="100%"
-                            />
+                        <CardBody>
+                            <p className="text-medium font-semibold">{item.name}</p>
+                            <p className="text-small text-default-500">{item.address}</p>
                         </CardBody>
-                        <CardFooter className="text-small justify-start flex flex-col">
-                            <b>{item.korName}</b>
-                            <p className="text-default-500">{item.category}</p>
+                        <CardFooter className="text-small text-right justify-end">
+                            💰 {item.price.toLocaleString()}원
                         </CardFooter>
                     </Card>
                 ))}
             </div>
+
             <RelatedQuestionsCards
                 questions={payload.relatedQuestion}
                 handleChat={actions.handleChat}

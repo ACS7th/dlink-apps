@@ -39,20 +39,15 @@ export const authOptions: NextAuthOptions = {
                         }
                     );
 
-                    const result = await response.json();
-                    if (!response.ok) {
-                        throw new Error(result.error || "로그인 실패");
-                    }
-
-                    if (!result.jwt) {
-                        throw new Error("JWT 토큰이 존재하지 않습니다.");
-                    }
-
+                    const token = response.headers.get("Authorization")?.replace("Bearer ", "");
+                    if (!token) throw new Error("JWT 토큰이 존재하지 않습니다.");
+                    
                     return {
                         id: credentials.email,
                         email: credentials.email,
-                        jwt: result.jwt,
+                        jwt: token,
                     };
+                    
                 } catch (error: any) {
                     throw new Error(error.message);
                 }
