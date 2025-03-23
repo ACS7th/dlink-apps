@@ -30,7 +30,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-review
 
   pairing-service:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/pairing-service:v3.0.8
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/pairing-service:v3.0.7
     build:
       context: ./spring-app
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
