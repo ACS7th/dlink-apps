@@ -36,7 +36,7 @@ services:
       dockerfile: ./dockerfiles-prod/Dockerfile-pairing
 
   next-app:
-    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/next-app:v3.1.8
+    image: 084550838259.dkr.ecr.ap-northeast-2.amazonaws.com/dlink/next-app:v3.1.9
     build:
       context: ./next-app
       dockerfile: ./Dockerfile-prod
