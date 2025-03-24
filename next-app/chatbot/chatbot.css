@@ -65,12 +65,12 @@
 }
 
 .react-chatbot-kit-chat-message-container {
-    height: 64vh;
+    height: 68vh;
 }
 
 @media screen and (max-width: 768px) {
     .react-chatbot-kit-chat-message-container {
-        height: 62vh;
+        height: 64vh;
     }
 }
 
@@ -82,8 +82,13 @@
 .react-chatbot-kit-chat-input {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: var(--heroui-radius-large);
+    border-top: 1px solid hsl(var(--heroui-primary) / var(--heroui-primary-opacity, var(--tw-bg-opacity)));
 }
 
 .react-chatbot-kit-chat-message-container {
+    background-color: hsl(var(--heroui-content1) / var(--heroui-content1-opacity, var(--tw-bg-opacity)))
+}
+
+.react-chatbot-kit-chat-inner-container {
     background-color: hsl(var(--heroui-content1) / var(--heroui-content1-opacity, var(--tw-bg-opacity)))
 }
