@@ -59,7 +59,7 @@ const ChatHeader = () => {
         {(item) => <Tab key={item.id} title={item.label}></Tab>}
       </Tabs> */}
       <Button
-        className="text-sm bg-[#f4f4f5]"
+        className="text-sm bg-content1"
         color="default"
         size="sm"
         onPress={handleReset}

@@ -84,3 +84,6 @@
     border-bottom-left-radius: var(--heroui-radius-large);
 }
 
+.react-chatbot-kit-chat-message-container {
+    background-color: hsl(var(--heroui-content1) / var(--heroui-content1-opacity, var(--tw-bg-opacity)))
+}
