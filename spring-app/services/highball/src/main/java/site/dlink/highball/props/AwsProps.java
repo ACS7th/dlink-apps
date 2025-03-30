@@ -19,4 +19,5 @@ public class AwsProps {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    
 }

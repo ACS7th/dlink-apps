@@ -50,14 +50,15 @@ public class AwsS3Service {
     }
     
     public String createFileName(String fileName) {
-        return UUID.randomUUID().toString().concat("-" + fileName);
+        String extension = getFileExtension(fileName);
+        return UUID.randomUUID().toString().concat(extension);
     }
 
     private String getFileExtension(String fileName) {
         try {
             return fileName.substring(fileName.lastIndexOf("."));
         } catch (StringIndexOutOfBoundsException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일" + fileName + ") 입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 형식의 파일" + fileName + "입니다.");
         }
     }
 

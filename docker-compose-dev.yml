@@ -33,7 +33,7 @@ services:
       PAIRING_SERVICE_URI: ${PAIRING_SERVICE_URI}
       OTEL_COLLECTOR_URI: ${OTEL_COLLECTOR_URI}
     volumes:
-      - ./spring-app/api-gateway/build:/app/api-gateway/build
+      - ./spring-app/services/api-gateway/build:/app/api-gateway/build
     networks:
       - dlink_net
 
@@ -53,7 +53,7 @@ services:
       GOOGLE_APP_PASSWORD: ${GOOGLE_APP_PASSWORD}
       SERVER_PORT: 9991
     volumes:
-      - ./spring-app/auth/build:/app/auth/build
+      - ./spring-app/services/auth/build:/app/auth/build
     networks:
       - dlink_net
 
@@ -91,7 +91,7 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       SERVER_PORT: 9993
     volumes:
-      - ./spring-app/highball/build:/app/highball/build
+      - ./spring-app/services/highball/build:/app/highball/build
     networks:
       - dlink_net
 
@@ -108,7 +108,7 @@ services:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
       SERVER_PORT: 9994
     volumes:
-      - ./spring-app/review/build:/app/review/build
+      - ./spring-app/services/review/build:/app/review/build
     networks:
       - dlink_net
 
@@ -162,3 +162,4 @@ services:
       # - /app/.next
     networks:
       - dlink_net
+

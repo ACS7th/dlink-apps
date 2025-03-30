@@ -34,4 +34,3 @@ public class SwaggerConfig {
             .addServersItem(new Server().url("/"));
     }
 }
-
