@@ -5,7 +5,7 @@ WORKDIR /app
 # Gradle 캐싱을 활용한 빌드 최적화
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
-COPY api-gateway api-gateway
+COPY services/api-gateway api-gateway
 RUN gradle :api-gateway:dependencies --no-daemon  # 종속성 캐싱
 COPY . .
 RUN gradle :api-gateway:bootJar --no-daemon
