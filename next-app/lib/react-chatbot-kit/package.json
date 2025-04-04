@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode=production",
     "build-watch": "NODE_OPTIONS=--openssl-legacy-provider webpack --watch",
-    "prepare": "NODE_OPTIONS=--openssl-legacy-provider yarn run build"
+    "prepare": "NODE_OPTIONS=--openssl-legacy-provider npm run build"
   },
   "author": {
     "name": "Fredrik Strand Oseberg",

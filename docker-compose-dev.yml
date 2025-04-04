@@ -3,14 +3,15 @@ networks:
     driver: bridge
 
 services:
-
   redis:
     image: redis:7
     container_name: redis
     restart: always
-    command: ["redis-server", "--requirepass", "k8spass#"]
     ports:
       - "6379:6379"
+    command: sh -c "redis-server --requirepass \"$SPRING_DATA_REDIS_PASSWORD\""
+    environment:
+      - SPRING_DATA_REDIS_PASSWORD=${SPRING_DATA_REDIS_PASSWORD}
     networks:
       - dlink_net
 
