@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/auth
+WORKDIR /app/services/auth
 
 CMD ["gradle", "bootRun", "--no-daemon"]

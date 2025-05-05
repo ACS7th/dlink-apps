@@ -141,3 +141,15 @@ services:
     networks:
       - dlink_net
 
+  chat-service:
+    image: harbor.asordk.synology.me/dlink/chat-service:v3.0.0
+    build:
+      context: ./chatbot-app
+      dockerfile: ./Dockerfile-prod
+    ports:
+      - "13956:13956"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+    networks:
+      - dlink_net

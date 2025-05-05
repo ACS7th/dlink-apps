@@ -24,6 +24,6 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/pairing
+WORKDIR /app/services/pairing
 
 CMD ["gradle", "bootRun", "--no-daemon"]

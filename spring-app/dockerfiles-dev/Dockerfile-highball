@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/highball
+WORKDIR /app/services/highball
 
 CMD ["gradle", "bootRun", "--no-daemon"]

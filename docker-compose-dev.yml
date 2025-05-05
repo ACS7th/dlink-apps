@@ -5,7 +5,6 @@ networks:
 services:
   redis:
     image: redis:7
-    container_name: redis
     restart: always
     ports:
       - "6379:6379"
@@ -34,7 +33,7 @@ services:
       PAIRING_SERVICE_URI: ${PAIRING_SERVICE_URI}
       OTEL_COLLECTOR_URI: ${OTEL_COLLECTOR_URI}
     volumes:
-      - ./spring-app/services/api-gateway/build:/app/api-gateway/build
+      - ./spring-app/services/api-gateway/build:/app/services/api-gateway/build
     networks:
       - dlink_net
 
@@ -54,7 +53,7 @@ services:
       GOOGLE_APP_PASSWORD: ${GOOGLE_APP_PASSWORD}
       SERVER_PORT: 9991
     volumes:
-      - ./spring-app/services/auth/build:/app/auth/build
+      - ./spring-app/services/auth/build:/app/services/auth/build
     networks:
       - dlink_net
 
@@ -73,7 +72,7 @@ services:
       SERVER_PORT: 9992
       OTEL_COLLECTOR_URI: ${OTEL_COLLECTOR_URI}
     volumes:
-      - ./spring-app/alcohols/build:/app/alcohols/build
+      - ./spring-app/services/alcohols/build:/app/services/alcohols/build
     networks:
       - dlink_net
 
@@ -92,7 +91,7 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       SERVER_PORT: 9993
     volumes:
-      - ./spring-app/services/highball/build:/app/highball/build
+      - ./spring-app/services/highball/build:/app/services/highball/build
     networks:
       - dlink_net
 
@@ -109,7 +108,7 @@ services:
       SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
       SERVER_PORT: 9994
     volumes:
-      - ./spring-app/services/review/build:/app/review/build
+      - ./spring-app/services/review/build:/app/services/review/build
     networks:
       - dlink_net
 
@@ -131,8 +130,7 @@ services:
       SPRING_DATA_REDIS_PORT: ${SPRING_DATA_REDIS_PORT}
       SPRING_DATA_REDIS_PASSWORD: ${SPRING_DATA_REDIS_PASSWORD}
     volumes:
-      - ./spring-app/pairing/build:/app/pairing/build
-      - ./spring-app/pairing/src/:/app/pairing/src 
+      - ./spring-app/services/pairing/build:/app/services/pairing/build
     networks:
       - dlink_net
 
@@ -160,7 +158,20 @@ services:
       AWS_GATEWAY_URI: ${AWS_GATEWAY_URI}
     volumes:
       - ./next-app:/app 
-      # - /app/.next
     networks:
       - dlink_net
 
+  chat-service:
+    image: chat-service:dev
+    build:
+      context: ./chatbot-app
+      dockerfile: ./Dockerfile-dev
+    ports:
+      - "13956:13956"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+    volumes:
+      - ./chatbot-app/:/app
+    networks:
+      - dlink_net

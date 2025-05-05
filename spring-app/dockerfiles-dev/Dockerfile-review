@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-WORKDIR /app/review
+WORKDIR /app/services/review
 
 CMD ["gradle", "bootRun", "--no-daemon"]
